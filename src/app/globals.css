@@ -10,15 +10,15 @@ body {
   box-sizing: border-box;
 }
 .leaflet-tile {
-  transition: opacity 0.6s linear;
+  transition: opacity 0.18s linear;
 }
 
 .leaflet-layer {
-  transition: opacity 0.6s linear;
+  transition: opacity 0.18s linear;
 }
 .smooth-wms {
   transition:
-    opacity 0.6s linear;
+    opacity 0.12s linear;
 }
 
 /* DISTRICT LABELS */
@@ -220,11 +220,6 @@ body {
     rgba(20,20,20,0.92);
 }
 
-.leaflet-overlay-pane svg {
-  animation:
-    weatherPulse 3s infinite;
-}
-
 @keyframes pulseRain {
   0% {
     transform: scale(1);
@@ -268,24 +263,7 @@ body {
 }
 /* LIVE MOSDAC ALERTS */
 
-.leaflet-overlay-pane svg {
-  animation:
-    mosdacPulse 3s infinite;
-}
 
-@keyframes mosdacPulse {
-  0% {
-    opacity: 0.72;
-  }
-
-  50% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0.72;
-  }
-}
 .weather-alert-icon {
   background: transparent;
   border: none;
@@ -492,19 +470,6 @@ input[type="range"]::-webkit-slider-thumb {
 
   backface-visibility:
     hidden;
-}
-
-.leaflet-pane,
-.leaflet-tile,
-.leaflet-marker-icon,
-.leaflet-image-layer {
-
-  will-change:
-    transform,
-    opacity;
-
-  transform:
-    translateZ(0);
 }
 
 .smooth-wms {

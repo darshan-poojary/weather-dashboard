@@ -43,11 +43,6 @@ const fallbackUrl =
     fallbackParams
   );
 
-    console.log(
-      "MOSDAC URL:",
-      targetUrl
-    );
-
     const controller =
   new AbortController();
 

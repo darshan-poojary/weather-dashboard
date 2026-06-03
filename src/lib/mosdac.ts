@@ -179,14 +179,6 @@ export function buildMosdacUrl(
       "boxfill/greyscale"
   );
 
-  console.log(
-    "MOSDAC URL:"
-  );
-
-  console.log(
-    url.toString()
-  );
-
   return url.toString();
 }
 export function getFallbackDatetime(

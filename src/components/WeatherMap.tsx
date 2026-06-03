@@ -57,17 +57,6 @@ const WMSTileLayer = dynamic(
   { ssr: false }
 );
 
-const ImageOverlay = dynamic(
-  async () => {
-    const mod = await import(
-      "react-leaflet"
-    );
-
-    return mod.ImageOverlay;
-  },
-  { ssr: false }
-);
-
 const GeoJSON = dynamic(
   async () => {
     const mod = await import(
@@ -87,18 +76,6 @@ const Circle = dynamic(
       );
 
     return mod.Circle;
-  },
-  { ssr: false }
-);
-
-const CircleMarker = dynamic(
-  async () => {
-    const mod =
-      await import(
-        "react-leaflet"
-      );
-
-    return mod.CircleMarker;
   },
   { ssr: false }
 );
@@ -176,9 +153,7 @@ const PALETTES = [
   "ferret",
 ];
 
-export default function WeatherMap() {
-
-  const blueRainIcon =
+const blueRainIcon =
   typeof window !==
   "undefined"
     ? new L.DivIcon({
@@ -247,6 +222,9 @@ filter:drop-shadow(0 0 3px black);
       })
     : undefined;
 
+export default function WeatherMap() {
+
+  
   const [opacity, setOpacity] =
     useState(0.7);
 
@@ -273,9 +251,6 @@ filter:drop-shadow(0 0 3px black);
 
   const [showOverlay, setShowOverlay] =
     useState(true);
-
-  const [loading, setLoading] =
-    useState(false);
 
   const [zoom, setZoom] =
   useState(5);
@@ -451,7 +426,7 @@ setCurrentFrame(
 
     const preload =
       new Image();
-
+    //  preload.decoding = "async";
     preload.src =
       `/api/mosdac-wms?datetime=${frames[nextFrame]}`;
 
@@ -734,13 +709,7 @@ const filteredAlerts =
     mosdacAlerts,
     zoom
   ]);
-  const layerKey = useMemo(() => {
-  return `${channel}-${palette}-${utcDatetime}`;
-}, [
-  channel,
-  palette,
-  utcDatetime,
-]);
+  
 
   return (
     <div
@@ -1240,7 +1209,7 @@ width: isMobile ? "calc(100vw - 24px)" : "340px",
 
             <input
               type="range"
-              min="1500"
+              min="1000"
               max="3500"
               step="100"
               value={speed}
@@ -1473,9 +1442,6 @@ width: isMobile ? "calc(100vw - 24px)" : "340px",
     transform:
       "translateZ(0)",
 
-    willChange:
-      "transform",
-
     backfaceVisibility:
       "hidden",
   }}
@@ -1568,15 +1534,13 @@ interactive={false}
 
   version="1.3.0"
 
-  keepBuffer={8}
+  keepBuffer={3}
 
   updateWhenIdle={true}
 
   updateWhenZooming={false}
 
-  updateInterval={1000}
-
-  tileSize={512}
+  tileSize={256}
 
   zIndex={100}
 
@@ -1585,13 +1549,6 @@ interactive={false}
   crossOrigin={true}
 
   className="smooth-wms"
-
-  eventHandlers={{
-
-    load: () => {
-      setLoading(false);
-    },
-  }}
 />
 
 {/* LIVE MOSDAC ALERTS */}
@@ -1599,83 +1556,7 @@ interactive={false}
 {
 showAlerts &&
 
-mosdacAlerts
-    .filter(
-  (
-    feature,
-    index,
-    self
-  ) => {
-    const coords =
-      feature.geometry
-        ?.coordinates;
-
-    if (!coords)
-      return false;
-
-    const [lng, lat] =
-      coords;
-
-    return !self.some(
-      (
-        other,
-        otherIndex
-      ) => {
-        if (
-          index ===
-          otherIndex
-        )
-          return false;
-
-        const otherCoords =
-          other.geometry
-            ?.coordinates;
-
-        if (
-          !otherCoords
-        )
-          return false;
-
-        const [
-          otherLng,
-          otherLat,
-        ] = otherCoords;
-
-        // DISTANCE CHECK
-
-        const distance =
-          Math.sqrt(
-            Math.pow(
-              lat -
-                otherLat,
-              2
-            ) +
-              Math.pow(
-                lng -
-                  otherLng,
-                2
-              )
-          );
-
-        // REMOVE NEARBY DUPLICATES
-
-        return (
-  distance <
-  (zoom >= 8
-    ? 0.2
-    : zoom >= 6
-    ? 0.4
-    : zoom >= 4
-    ? 1
-    : 2) &&
-  otherIndex <
-    index
-);
-      }
-    );
-  }
-)
-    
+filteredAlerts
     .map(
       (
         feature,
@@ -1698,7 +1579,7 @@ mosdacAlerts
           feature.properties ||
           feature ||
           {};
-          console.log(props);
+          
         const alertName =
   props.name || "";
 
@@ -1846,9 +1727,7 @@ const alertTime =
 
             
               <Circle
-  eventHandlers={{
-    click: () => {},
-  }}
+              
   center={[
     lat,
     lng,
