@@ -1533,15 +1533,6 @@ interactive={false}
     "/api/mosdac-wms?" +
     `datetime=${utcDatetime}`
   }
-  eventHandlers={{
-  loading: () => {
-    setTileLoading(true);
-  },
-
-  load: () => {
-    setTileLoading(false);
-  },
-}}
   layers={channel}
   updateInterval={300}
   styles={`boxfill/${palette}`}
