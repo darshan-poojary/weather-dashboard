@@ -12,17 +12,11 @@ import {
   useState,
 } from "react";
 
-let L:
-  typeof LeafletType;
-
-if (
+const Leaflet =
   typeof window !==
   "undefined"
-) {
-  L = require(
-    "leaflet"
-  );
-}
+    ? require("leaflet")
+    : null;
 
 const MapContainer = dynamic(
   async () => {
@@ -156,7 +150,7 @@ const PALETTES = [
 const blueRainIcon =
   typeof window !==
   "undefined"
-    ? new L.DivIcon({
+    ? new Leaflet.DivIcon({
         className:
           "weather-alert-icon",
 
@@ -178,7 +172,7 @@ filter:drop-shadow(0 0 2px black);
 const blackRainIcon =
   typeof window !==
   "undefined"
-    ? new L.DivIcon({
+    ? new Leaflet.DivIcon({
         className:
           "weather-alert-icon",
 
@@ -203,7 +197,7 @@ drop-shadow(0 0 2px black);
 const cloudburstIcon =
   typeof window !==
   "undefined"
-    ? new L.DivIcon({
+    ? new Leaflet.DivIcon({
         className:
           "weather-alert-icon",
 
