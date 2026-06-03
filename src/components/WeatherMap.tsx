@@ -432,21 +432,26 @@ useEffect(() => {
           : currentFrame + 1;
 
       const preload =
-        new Image();
+  typeof window !==
+  "undefined"
+    ? new window.Image()
+    : null;
 
-      preload.src =
+if (!preload) return;
+
+preload.onload = () => {
+
+  setCurrentFrame(
+    nextFrame
+  );
+
+  setDisplayFrame(
+    nextFrame
+  );
+};
+
+preload.src =
 `/api/mosdac-wms?datetime=${frames[nextFrame]}&layers=${channel}&styles=boxfill/${palette}`;
-
-      preload.onload = () => {
-
-        setCurrentFrame(
-          nextFrame
-        );
-
-        setDisplayFrame(
-          nextFrame
-        );
-      };
 
     }, speed);
 
