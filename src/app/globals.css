@@ -9,17 +9,6 @@ body {
 * {
   box-sizing: border-box;
 }
-.leaflet-tile {
-  transition: opacity 0.18s linear;
-}
-
-.leaflet-layer {
-  transition: opacity 0.18s linear;
-}
-.smooth-wms {
-  transition:
-    opacity 0.12s linear;
-}
 
 /* DISTRICT LABELS */
 
@@ -472,21 +461,15 @@ input[type="range"]::-webkit-slider-thumb {
     hidden;
 }
 
-.smooth-wms {
-
-  image-rendering:
-    auto;
-
-  filter:
-    contrast(1.08)
-    brightness(1.02);
-
-  transition:
-    opacity 0.25s ease;
-}
-
 .leaflet-control-container {
 
   transition:
     opacity 0.2s ease;
+}
+/* SIMPLE SMOOTH TILE FADE */
+
+.leaflet-tile {
+
+  transition:
+    opacity 0.18s linear;
 }

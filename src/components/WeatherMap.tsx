@@ -224,6 +224,8 @@ filter:drop-shadow(0 0 3px black);
 
 export default function WeatherMap() {
 
+  const [tileLoading, setTileLoading] =
+  useState(false);
   
   const [opacity, setOpacity] =
     useState(0.7);
@@ -279,6 +281,8 @@ const [districtGeoJson, setDistrictGeoJson] =
 
   const [currentFrame, setCurrentFrame] =
     useState(0);
+  const [displayFrame, setDisplayFrame] =
+  useState(0);
 
     const [
   mosdacAlerts,
@@ -396,43 +400,53 @@ current.setUTCMinutes(
       generatedFrames
     );
 
-    setCurrentFrame(
-      generatedFrames.length -
-        1
-    );
+    const latestFrame =
+  generatedFrames.length - 1;
+
+setCurrentFrame(
+  latestFrame
+);
+
+setDisplayFrame(
+  latestFrame
+);
 
   }, []);
 
   // PLAYBACK LOOP
 
-  useEffect(() => {
+useEffect(() => {
+
   if (
     !isPlaying ||
     frames.length === 0
-  )
-    return;
+  ) return;
 
   const interval =
     setInterval(() => {
-    
-setCurrentFrame(
-  (prev) => {
 
-    const nextFrame =
-      prev >=
-      frames.length - 1
-        ? 0
-        : prev + 1;
+      const nextFrame =
+        currentFrame >=
+        frames.length - 1
+          ? 0
+          : currentFrame + 1;
 
-    const preload =
-      new Image();
-    //  preload.decoding = "async";
-    preload.src =
-      `/api/mosdac-wms?datetime=${frames[nextFrame]}`;
+      const preload =
+        new Image();
 
-    return nextFrame;
-  }
-);
+      preload.src =
+`/api/mosdac-wms?datetime=${frames[nextFrame]}&layers=${channel}&styles=boxfill/${palette}`;
+
+      preload.onload = () => {
+
+        setCurrentFrame(
+          nextFrame
+        );
+
+        setDisplayFrame(
+          nextFrame
+        );
+      };
 
     }, speed);
 
@@ -443,6 +457,10 @@ setCurrentFrame(
   isPlaying,
   speed,
   frames,
+  currentFrame,
+  tileLoading,
+  channel,
+  palette,
 ]);
 
 useEffect(() => {
@@ -560,7 +578,7 @@ function getLatestMosdacTime() {
 
 let utcDatetime =
   frames.length > 0
-    ? frames[currentFrame]
+    ? frames[displayFrame]
     : getLatestMosdacTime();
 
   if (
@@ -1209,8 +1227,8 @@ width: isMobile ? "calc(100vw - 24px)" : "340px",
 
             <input
               type="range"
-              min="1000"
-              max="3500"
+              min="2500"
+              max="4000"
               step="100"
               value={speed}
               onChange={(
@@ -1264,16 +1282,18 @@ width: isMobile ? "calc(100vw - 24px)" : "340px",
               value={
                 currentFrame
               }
-              onChange={(
-                e
-              ) =>
-                setCurrentFrame(
-                  Number(
-                    e.target
-                      .value
-                  )
-                )
-              }
+              onChange={(e) => {
+
+  const frame =
+    Number(
+      e.target.value
+    );
+
+  setCurrentFrame(frame);
+
+  setDisplayFrame(frame);
+
+}}
               style={{
                 width:
                   "100%",
@@ -1419,17 +1439,16 @@ width: isMobile ? "calc(100vw - 24px)" : "340px",
 </div>
 
 <MapContainer
-  bounds={[ [5, 65], [38, 98], ]} boundsOptions={{ padding: [20, 20], }} maxBounds={[ [-5, 55], [42, 105], ]}
+key="weather-map"
+  bounds={[ [5, 65], [38, 98], ]} 
+  boundsOptions={{ padding: [20, 20], }} 
+  maxBounds={[ [-5, 55], [42, 105], ]}
 
   minZoom={4}
 
-  zoomAnimation={true}
-
-  fadeAnimation={true}
-
-  markerZoomAnimation={true}
-
   zoomAnimationThreshold={8}
+
+  // fadeAnimation={true}
 
   preferCanvas={true}
 
@@ -1438,9 +1457,6 @@ width: isMobile ? "calc(100vw - 24px)" : "340px",
   style={{
     height: "100%",
     width: "100%",
-
-    transform:
-      "translateZ(0)",
 
     backfaceVisibility:
       "hidden",
@@ -1488,12 +1504,13 @@ interactive={false}
 {/* DISTRICT BOUNDARIES */}
 
 {zoom >= 8 &&
+  !isPlaying &&
   districtGeoJson && (
     <GeoJSON
       data={
         districtGeoJson as any
       }
-
+      interactive= {false}
       style={() => ({
         color:
           "rgba(220,255,230,0.45)",
@@ -1504,7 +1521,7 @@ interactive={false}
 
         fillOpacity: 0,
 
-        interactive: false,
+        
       })}
     />
 )}
@@ -1517,9 +1534,17 @@ interactive={false}
     "/api/mosdac-wms?" +
     `datetime=${utcDatetime}`
   }
+  eventHandlers={{
+  loading: () => {
+    setTileLoading(true);
+  },
 
+  load: () => {
+    setTileLoading(false);
+  },
+}}
   layers={channel}
-
+  updateInterval={300}
   styles={`boxfill/${palette}`}
 
   format="image/png"
@@ -1534,21 +1559,15 @@ interactive={false}
 
   version="1.3.0"
 
-  keepBuffer={3}
+  keepBuffer={6}
 
   updateWhenIdle={true}
-
-  updateWhenZooming={false}
-
-  tileSize={256}
+  
+  tileSize={512}
 
   zIndex={100}
 
   attribution="MOSDAC"
-
-  crossOrigin={true}
-
-  className="smooth-wms"
 />
 
 {/* LIVE MOSDAC ALERTS */}
