@@ -393,3 +393,135 @@ body {
     opacity: 0.8;
   }
 }
+.leaflet-container {
+  background: #020617;
+
+  font-family:
+    'Inter',
+    sans-serif;
+}
+
+.leaflet-control-zoom {
+  display: none;
+}
+
+.leaflet-popup-content-wrapper {
+  border:
+    1px solid rgba(
+      255,
+      255,
+      255,
+      0.08
+    );
+}
+
+.leaflet-popup-tip {
+  border:
+    1px solid rgba(
+      255,
+      255,
+      255,
+      0.08
+    );
+}
+@keyframes glassFloat {
+
+  0% {
+    transform:
+      translateY(0px);
+  }
+
+  50% {
+    transform:
+      translateY(-2px);
+  }
+
+  100% {
+    transform:
+      translateY(0px);
+  }
+}
+@media (max-width: 768px) {
+  .yourButtonClass {
+    padding: 8px 14px;
+  }
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+
+  height: 6px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(255,255,255,0.15);
+
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+
+  width: 18px;
+  height: 18px;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      135deg,
+      #38bdf8,
+      #2563eb
+    );
+
+  cursor: pointer;
+
+  box-shadow:
+    0 0 12px
+    rgba(37,99,235,0.6);
+}
+.leaflet-container {
+
+  transform:
+    translateZ(0);
+
+  will-change:
+    transform;
+
+  backface-visibility:
+    hidden;
+}
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-image-layer {
+
+  will-change:
+    transform,
+    opacity;
+
+  transform:
+    translateZ(0);
+}
+
+.smooth-wms {
+
+  image-rendering:
+    auto;
+
+  filter:
+    contrast(1.08)
+    brightness(1.02);
+
+  transition:
+    opacity 0.25s ease;
+}
+
+.leaflet-control-container {
+
+  transition:
+    opacity 0.2s ease;
+}

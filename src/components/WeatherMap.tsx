@@ -57,6 +57,17 @@ const WMSTileLayer = dynamic(
   { ssr: false }
 );
 
+const ImageOverlay = dynamic(
+  async () => {
+    const mod = await import(
+      "react-leaflet"
+    );
+
+    return mod.ImageOverlay;
+  },
+  { ssr: false }
+);
+
 const GeoJSON = dynamic(
   async () => {
     const mod = await import(
@@ -176,7 +187,7 @@ export default function WeatherMap() {
 
         html: `
 <div style="
-font-size:13px;
+font-size:20px;
 filter:drop-shadow(0 0 2px black);
 ">
 🌧️
@@ -198,9 +209,9 @@ const blackRainIcon =
 
         html: `
 <div style="
-font-size:13px;
+font-size:20px;
 filter:
-grayscale(100%)
+grayscale(50%)
 brightness(0.2)
 drop-shadow(0 0 2px black);
 ">
@@ -223,7 +234,7 @@ const cloudburstIcon =
 
         html: `
           <div style="
-font-size:14px;
+font-size:20px;
 filter:drop-shadow(0 0 3px black);
 ">
 ⛈️
@@ -268,6 +279,17 @@ filter:drop-shadow(0 0 3px black);
 
   const [zoom, setZoom] =
   useState(5);
+  const [isMobile, setIsMobile] =
+  useState(false);
+  const [
+  showControls,
+  setShowControls,
+] = useState(true);
+
+const [
+  showAlerts,
+  setShowAlerts,
+] = useState(true);
 
 const [statesGeoJson, setStatesGeoJson] =
   useState(null);
@@ -288,7 +310,26 @@ const [districtGeoJson, setDistrictGeoJson] =
   setMosdacAlerts,
 ] = useState<any[]>([]);
 
+useEffect(() => {
+  const checkMobile = () => {
+    setIsMobile(
+      window.innerWidth < 768
+    );
+  };
 
+  checkMobile();
+
+  window.addEventListener(
+    "resize",
+    checkMobile
+  );
+
+  return () =>
+    window.removeEventListener(
+      "resize",
+      checkMobile
+    );
+}, []);
   // INDIA GEOJSON
 
   useEffect(() => {
@@ -398,21 +439,26 @@ current.setUTCMinutes(
 
   const interval =
     setInterval(() => {
-      setCurrentFrame(
-        (prev) => {
-          if (
-            prev >=
-            frames.length - 1
-          ) {
-            return 0;
-          }
+    
+setCurrentFrame(
+  (prev) => {
 
-          return Math.min(
-            prev + 1,
-            frames.length - 1
-          );
-        }
-      );
+    const nextFrame =
+      prev >=
+      frames.length - 1
+        ? 0
+        : prev + 1;
+
+    const preload =
+      new Image();
+
+    preload.src =
+      `/api/mosdac-wms?datetime=${frames[nextFrame]}`;
+
+    return nextFrame;
+  }
+);
+
     }, speed);
 
   return () =>
@@ -604,7 +650,90 @@ let utcDatetime =
     formatAnimationDate(
       utcDatetime
     );
+const filteredAlerts =
+  useMemo(() => {
 
+    return mosdacAlerts
+      .filter(
+        (
+          feature,
+          index,
+          self
+        ) => {
+
+          const coords =
+            feature.geometry
+              ?.coordinates;
+
+          if (!coords)
+            return false;
+
+          const [lng, lat] =
+            coords;
+
+          return !self.some(
+            (
+              other,
+              otherIndex
+            ) => {
+
+              if (
+                index ===
+                otherIndex
+              )
+                return false;
+
+              const otherCoords =
+                other.geometry
+                  ?.coordinates;
+
+              if (
+                !otherCoords
+              )
+                return false;
+
+              const [
+                otherLng,
+                otherLat,
+              ] = otherCoords;
+
+              const distance =
+                Math.sqrt(
+                  Math.pow(
+                    lat -
+                      otherLat,
+                    2
+                  ) +
+                    Math.pow(
+                      lng -
+                        otherLng,
+                      2
+                    )
+                );
+
+              return (
+                distance <
+                  (
+                    zoom >= 8
+                      ? 0.2
+                      : zoom >= 6
+                      ? 0.4
+                      : zoom >= 4
+                      ? 1
+                      : 2
+                  ) &&
+                otherIndex <
+                  index
+              );
+            }
+          );
+        }
+      );
+
+  }, [
+    mosdacAlerts,
+    zoom
+  ]);
   const layerKey = useMemo(() => {
   return `${channel}-${palette}-${utcDatetime}`;
 }, [
@@ -616,38 +745,168 @@ let utcDatetime =
   return (
     <div
       style={{
-        height: "100vh",
-        width: "100%",
+    
+height: "100dvh",
+width: "100%",
+overflow: "hidden",
+background: "#000",
+
       }}
     >
-      {/* CONTROL PANEL */}
 
-      <div
-        style={{
-          position: "absolute",
-          top: 10,
-          left: 10,
-          zIndex: 2000,
-          background: "white",
-          padding: "14px",
-          borderRadius: "10px",
-          boxShadow:
-            "0 4px 15px rgba(0,0,0,0.2)",
-          width:
-            "min(90vw, 320px)",
-          fontFamily:
-            "sans-serif",
-          maxHeight: "90vh",
-          overflowY: "auto",
-        }}
+      
+
+      {/* CONTROL PANEL */}
+{
+!showControls && (
+  <button
+    onClick={() =>
+      setShowControls(true)
+    }
+    style={{
+      position: "absolute",
+
+      top: 18,
+      left: 18,
+
+      zIndex: 5000,
+
+      width: "42px",
+      height: "42px",
+
+      borderRadius: "14px",
+
+      border:
+        "1px solid rgba(255,255,255,0.08)",
+
+      background:
+        "rgba(15,23,42,0.82)",
+
+      backdropFilter:
+        "blur(12px)",
+
+      color: "white",
+
+      fontSize: "22px",
+
+      cursor: "pointer",
+
+      boxShadow:
+        "0 8px 20px rgba(0,0,0,0.4)",
+    }}
+  >
+    ❯
+  </button>
+)
+}
+
+{
+showControls && (
+
+<div
+  style={{
+  position: "absolute",
+  top: 18,
+  left: 18,
+animation:
+  "glassFloat 6s ease-in-out infinite",
+
+  zIndex: 2000,
+maxHeight: "92vh", overflowY: "auto",
+  
+width: isMobile ? "calc(100vw - 24px)" : "340px",
+
+
+  padding: "18px",
+
+  borderRadius: "28px",
+
+  background: "linear-gradient( 180deg, rgba(15,23,42,0.78), rgba(15,23,42,0.58) )",
+
+  backdropFilter:
+    "blur(20px)",
+
+  WebkitBackdropFilter:
+    "blur(14px)",
+
+  border:
+    "1px solid rgba(255,255,255,0.12)",
+
+  boxShadow:
+    "0 10px 35px rgba(0,0,0,0.45)",
+
+  color: "white",
+
+  fontFamily:
+    "'Inter', sans-serif",
+
+  overflow: "hidden",
+}}
       >
-        <h2
-          style={{
-            marginTop: 0,
-          }}
-        >
-          INSAT-3DR
-        </h2>
+      
+<div
+  style={{
+    display: "flex",
+
+    alignItems: "center",
+
+    justifyContent:
+      "space-between",
+
+    marginBottom: "18px",
+  }}
+>
+  <h2
+    style={{
+      margin: 0,
+
+      fontSize: isMobile
+        ? "28px"
+        : "38px",
+
+      fontWeight: 800,
+
+      letterSpacing: "-1px",
+
+      color: "white",
+    }}
+  >
+    INSAT-3DR
+  </h2>
+
+  <button
+    onClick={() =>
+      setShowControls(false)
+    }
+    style={{
+      width: "38px",
+      height: "38px",
+
+      borderRadius: "12px",
+
+      border:
+        "1px solid rgba(255,255,255,0.08)",
+
+      background:
+        "rgba(255,255,255,0.08)",
+
+      color: "white",
+
+      fontSize: "22px",
+
+      cursor: "pointer",
+
+      display: "flex",
+
+      alignItems: "center",
+
+      justifyContent:
+        "center",
+    }}
+  >
+    ❮
+  </button>
+</div>
 
         {/* MODE BUTTONS */}
 
@@ -693,23 +952,35 @@ let utcDatetime =
                 }
               }}
               style={{
-                flex: 1,
-                padding: "8px",
-                border: "none",
-                borderRadius:
-                  "6px",
-                cursor: "pointer",
-                background:
-                  mode === item
-                    ? "#2563eb"
-                    : "#e5e7eb",
-                color:
-                  mode === item
-                    ? "white"
-                    : "black",
-                fontWeight:
-                  "bold",
-              }}
+  flex: 1,
+
+  padding: "10px",
+
+  border: "none",
+
+  borderRadius: "12px",
+
+  cursor: "pointer",
+
+  background:
+    mode === item
+      ? "linear-gradient(135deg,#2563eb,#38bdf8)"
+      : "rgba(255,255,255,0.08)",
+
+  color: "white",
+
+  fontWeight: 700,
+
+  fontSize: "14px",
+
+  transition:
+    "all 0.25s ease",
+
+  boxShadow:
+    mode === item
+      ? "0 4px 15px rgba(37,99,235,0.45)"
+      : "none",
+}}
             >
               {item}
             </button>
@@ -730,23 +1001,47 @@ let utcDatetime =
             )
           }
           style={{
-            width: "100%",
-            marginBottom:
-              "10px",
-          }}
+            WebkitAppearance: "none", 
+            MozAppearance: "none", 
+            appearance: "none",
+  width: "100%",
+
+  marginTop: "6px",
+
+  marginBottom: "14px",
+
+  padding: "10px",
+
+  borderRadius: "10px",
+
+  border:
+    "1px solid rgba(255,255,255,0.1)",
+
+  background:
+    "rgba(255,255,255,0.08)",
+
+  color: "white",
+
+  fontSize: "14px",
+
+  outline: "none",
+}}
         >
           {CHANNELS.map(
             (item) => (
-              <option
-                key={
-                  item.layer
-                }
-                value={
-                  item.layer
-                }
-              >
-                {item.label}
-              </option>
+      
+<option
+  key={item.layer}
+  value={item.layer}
+
+  style={{
+    background: "#111827",
+    color: "white",
+  }}
+>
+  {item.label}
+</option>
+
             )
           )}
         </select>
@@ -765,19 +1060,44 @@ let utcDatetime =
             )
           }
           style={{
-            width: "100%",
-            marginBottom:
-              "10px",
-          }}
+  width: "100%",
+
+  marginTop: "6px",
+
+  marginBottom: "14px",
+
+  padding: "10px",
+
+  borderRadius: "10px",
+
+  border:
+    "1px solid rgba(255,255,255,0.1)",
+
+  background:
+    "rgba(255,255,255,0.08)",
+
+  color: "white",
+
+  fontSize: "14px",
+
+  outline: "none",
+}}
         >
           {PALETTES.map(
             (item) => (
-              <option
-                key={item}
-                value={item}
-              >
-                {item}
-              </option>
+             
+<option
+  key={item}
+  value={item}
+
+  style={{
+    background: "#111827",
+    color: "white",
+  }}
+>
+  {item}
+</option>
+
             )
           )}
         </select>
@@ -811,6 +1131,33 @@ let utcDatetime =
           </b>
         </label>
 
+        <div
+  style={{
+    marginTop: "12px",
+    display: "flex",
+    alignItems:
+      "center",
+    gap: "10px",
+  }}
+>
+  <input
+    type="checkbox"
+    checked={
+      showAlerts
+    }
+    onChange={() =>
+      setShowAlerts(
+        !showAlerts
+      )
+    }
+  />
+
+  <b>
+    Show Heavy Rain &
+    Cloudburst
+  </b>
+</div>
+
         {/* OPACITY */}
 
         <label>
@@ -832,8 +1179,28 @@ let utcDatetime =
             )
           }
           style={{
-            width: "100%",
-          }}
+  width: "100%",
+
+  marginTop: "6px",
+
+  marginBottom: "14px",
+
+  padding: "10px",
+
+  borderRadius: "10px",
+
+  border:
+    "1px solid rgba(255,255,255,0.1)",
+
+  background:
+    "rgba(255,255,255,0.08)",
+
+  color: "white",
+
+  fontSize: "14px",
+
+  outline: "none",
+}}
         />
 
         {/* ANIMATION */}
@@ -1025,57 +1392,95 @@ let utcDatetime =
           </>
         )}
       </div>
-
+)
+}
       {/* MAP */}
 
       {/* LIVE TIMESTAMP OVERLAY */}
 
 <div
   style={{
-    position: "absolute",
-    top: 14,
-    left: "50%",
-    transform:
-      "translateX(-50%)",
-    zIndex: 3000,
+  position: "absolute",
 
-    background:
-      "rgba(0,0,0,0.65)",
+  top: 18,
 
-    color: "white",
+  left: "50%",
 
-    padding:
-      "8px 16px",
+  transform:
+    "translateX(-50%)",
 
-    borderRadius: "8px",
+  zIndex: 3000,
 
-    fontWeight: "bold",
+  padding:
+  isMobile
+    ? "8px 14px"
+    : "10px 22px",
 
-    fontSize: "18px",
+  borderRadius: "18px",
 
-    backdropFilter:
-      "blur(4px)",
+  background:
+    "rgba(0,0,0,0.62)",
 
-    boxShadow:
-      "0 2px 10px rgba(0,0,0,0.35)",
+  backdropFilter:
+    "blur(10px)",
 
-    pointerEvents: "none",
-  }}
+  WebkitBackdropFilter:
+    "blur(10px)",
+
+  color: "white",
+
+  fontWeight: 700,
+
+  fontSize: isMobile
+  ? "14px"
+  : "24px",
+
+  letterSpacing: "0.5px",
+
+  boxShadow:
+    "0 8px 20px rgba(0,0,0,0.4)",
+
+  border:
+    "1px solid rgba(255,255,255,0.12)",
+
+  pointerEvents: "none",
+}}
 >
   {animationLabel} | {channel}
 </div>
 
-      <MapContainer
-        center={[
-          22.5937,
-          78.9629,
-        ]}
-        zoom={5}
-        style={{
-          height: "100%",
-          width: "100%",
-        }}
-      >
+<MapContainer
+  bounds={[ [5, 65], [38, 98], ]} boundsOptions={{ padding: [20, 20], }} maxBounds={[ [-5, 55], [42, 105], ]}
+
+  minZoom={4}
+
+  zoomAnimation={true}
+
+  fadeAnimation={true}
+
+  markerZoomAnimation={true}
+
+  zoomAnimationThreshold={8}
+
+  preferCanvas={true}
+
+  wheelPxPerZoomLevel={120}
+  
+  style={{
+    height: "100%",
+    width: "100%",
+
+    transform:
+      "translateZ(0)",
+
+    willChange:
+      "transform",
+
+    backfaceVisibility:
+      "hidden",
+  }}
+>
+
         <MapEvents setZoom={setZoom} />
 
         {/* BASE MAP */}
@@ -1092,6 +1497,8 @@ let utcDatetime =
     data={
       statesGeoJson as any
     }
+
+interactive={false}
 
     style={{
       color:
@@ -1114,7 +1521,7 @@ let utcDatetime =
 
 {/* DISTRICT BOUNDARIES */}
 
-{zoom >= 7 &&
+{zoom >= 8 &&
   districtGeoJson && (
     <GeoJSON
       data={
@@ -1140,7 +1547,6 @@ let utcDatetime =
 
 <WMSTileLayer
   key={`${utcDatetime}-${channel}-${palette}`}
-
   url={
     "/api/mosdac-wms?" +
     `datetime=${utcDatetime}`
@@ -1162,15 +1568,15 @@ let utcDatetime =
 
   version="1.3.0"
 
-  keepBuffer={20}
+  keepBuffer={8}
 
   updateWhenIdle={true}
 
   updateWhenZooming={false}
 
-  updateInterval={500}
+  updateInterval={1000}
 
-  tileSize={256}
+  tileSize={512}
 
   zIndex={100}
 
@@ -1181,9 +1587,6 @@ let utcDatetime =
   className="smooth-wms"
 
   eventHandlers={{
-    loading: () => {
-      // keep previous tiles
-    },
 
     load: () => {
       setLoading(false);
@@ -1193,7 +1596,10 @@ let utcDatetime =
 
 {/* LIVE MOSDAC ALERTS */}
 
-  {mosdacAlerts
+{
+showAlerts &&
+
+mosdacAlerts
     .filter(
   (
     feature,
@@ -1255,13 +1661,13 @@ let utcDatetime =
 
         return (
   distance <
-    (zoom >= 8
-      ? 0.12
-      : zoom >= 6
-      ? 0.2
-      : zoom >= 3
-      ? 0.3
-      : 0.6) &&
+  (zoom >= 8
+    ? 0.2
+    : zoom >= 6
+    ? 0.4
+    : zoom >= 4
+    ? 1
+    : 2) &&
   otherIndex <
     index
 );
@@ -1297,13 +1703,19 @@ let utcDatetime =
   props.name || "";
 
 const alertValue =
-  props.value || "";
+  props.value ||
+  props.rad_inf ||
+  "";
 
 const alertDate =
-  props.event_date || "";
+  props.event_date ||
+  props.forecast_date ||
+  "";
 
 const alertTime =
-  props.event_time || "";
+  props.event_time ||
+  props.forecast_time ||
+  "";
 
         const forecast =
           props.forecast ||
@@ -1342,135 +1754,37 @@ const alertTime =
     : blueRainIcon
 }
             >
-              <Popup
-  closeButton={true}
-  autoPan={false}
->
-  <div
-    style={{
-      minWidth: "170px",
-      background:
-        "rgba(40,40,40,0.82)",
-      color: "white",
-      padding: "8px",
-      borderRadius: "10px",
-      fontFamily:
-        "sans-serif",
-      lineHeight: "1.45",
-    }}
-  >
-    <div
-      style={{
-        fontWeight: "bold",
-        fontSize: "14px",
-        textTransform:
-          "uppercase",
-        marginBottom: "8px",
-        textDecoration:
-          "underline",
-      }}
-    >
-      {alertName}
-    </div>
-
-    <div>
-      <b>LON LAT :</b>
-      <br />
-      {lng.toFixed(2)},
-      {" "}
-      {lat.toFixed(2)}
-    </div>
-
-    <div
-      style={{
-        marginTop: "8px",
-      }}
-    >
-      <b>Date & Time :</b>
-      <br />
-      {alertDate}
-      {" "}
-      {alertTime}
-    </div>
-
-    <div
-      style={{
-        marginTop: "8px",
-      }}
-    >
-      <b>Value :</b>
-      <br />
-      {alertValue} mm
-    </div>
-  </div>
-</Popup>
-            </Marker>
-
-            {/* SHOW RADIUS ONLY ON HIGH ZOOM */}
-
-            
-              <Circle
-  eventHandlers={{
-    click: () => {},
-  }}
-  center={[
-    lat,
-    lng,
-  ]}
-  radius={
-    zoom < 3
-      ? Math.max(
-          radiusKm * 500,
-          25000
-        )
-      : Math.max(
-          radiusKm * 1000,
-          zoom >= 7
-            ? 25000
-            : zoom >= 5
-            ? 40000
-            : 60000
-        )
-  }
-  pathOptions={{
-    color: "#ffe600",
-
-    fillOpacity:
-      radiusKm > 120
-        ? 0.08
-        : radiusKm > 80
-        ? 0.05
-        : 0.03,
-
-    weight:
-      radiusKm > 120
-        ? 3
-        : radiusKm > 80
-        ? 2
-        : 1.2,
-
-    opacity:
-      radiusKm > 120
-        ? 1
-        : 0.75,
-  }}
->
-  <Popup
+          <Popup
     closeButton={true}
     autoPan={false}
   >
     <div
       style={{
-        minWidth: "170px",
-        background:
-          "rgba(40,40,40,0.82)",
-        color: "white",
-        padding: "8px",
-        borderRadius: "10px",
-        fontFamily:
-          "sans-serif",
-        lineHeight: "1.45",
-      }}
+  minWidth: "190px",
+
+  background:
+    "rgba(15,23,42,0.88)",
+
+  color: "white",
+
+  padding: "14px",
+
+  borderRadius: "18px",
+
+  backdropFilter:
+    "blur(12px)",
+
+  border:
+    "1px solid rgba(255,255,255,0.08)",
+
+  fontFamily:
+    "'Inter', sans-serif",
+
+  lineHeight: "1.6",
+
+  boxShadow:
+    "0 10px 30px rgba(0,0,0,0.4)",
+}}
     >
       <div
         style={{
@@ -1507,14 +1821,154 @@ const alertTime =
       </div>
 
       <div
+  style={{
+    marginTop: "8px",
+  }}
+>
+  <b>
+    {props.value
+      ? "Rainfall"
+      : "Radius"}
+    :
+  </b>
+
+  <br />
+
+  {props.value
+    ? `${props.value} mm`
+    : `${props.rad_inf} km`}
+</div>
+    </div>
+  </Popup>
+            </Marker>
+
+            {/* SHOW RADIUS ONLY ON HIGH ZOOM */}
+
+            
+              <Circle
+  eventHandlers={{
+    click: () => {},
+  }}
+  center={[
+    lat,
+    lng,
+  ]}
+ radius={
+  zoom >= 7
+    ? radiusKm * 1200
+    : zoom >= 5
+    ? radiusKm * 1600
+    : zoom >= 3
+    ? radiusKm * 2200
+    : radiusKm * 3000
+}
+  pathOptions={{
+    color: "#ffe600",
+
+    fillOpacity:
+      radiusKm > 120
+        ? 0.08
+        : radiusKm > 80
+        ? 0.05
+        : 0.03,
+
+    weight:
+      radiusKm > 120
+        ? 3
+        : radiusKm > 80
+        ? 2
+        : 1.2,
+
+    opacity:
+      radiusKm > 120
+        ? 1
+        : 0.75,
+  }}
+>
+  <Popup
+    closeButton={true}
+    autoPan={false}
+  >
+    <div
+      style={{
+  minWidth: "190px",
+
+  background:
+    "rgba(15,23,42,0.88)",
+
+  color: "white",
+
+  padding: "14px",
+
+  borderRadius: "18px",
+
+  backdropFilter:
+    "blur(12px)",
+
+  border:
+    "1px solid rgba(255,255,255,0.08)",
+
+  fontFamily:
+    "'Inter', sans-serif",
+
+  lineHeight: "1.6",
+
+  boxShadow:
+    "0 10px 30px rgba(0,0,0,0.4)",
+}}
+    >
+      <div
+        style={{
+          fontWeight: "bold",
+          fontSize: "14px",
+          textTransform:
+            "uppercase",
+          marginBottom: "8px",
+          textDecoration:
+            "underline",
+        }}
+      >
+        {alertName}
+      </div>
+
+      <div>
+        <b>LON LAT :</b>
+        <br />
+        {lng.toFixed(2)},
+        {" "}
+        {lat.toFixed(2)}
+      </div>
+
+      <div
         style={{
           marginTop: "8px",
         }}
       >
-        <b>Value :</b>
+        <b>Date & Time :</b>
         <br />
-        {alertValue} mm
+        {alertDate}
+        {" "}
+        {alertTime}
       </div>
+
+      <div
+  style={{
+    marginTop: "8px",
+  }}
+>
+  <b>
+    {props.value
+      ? "Rainfall"
+      : "Radius"}
+    :
+  </b>
+
+  <br />
+
+  {props.value
+    ? `${props.value} mm`
+    : `${props.rad_inf} km`}
+</div>
     </div>
   </Popup>
 </Circle>
