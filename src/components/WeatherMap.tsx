@@ -278,6 +278,11 @@ const [districtGeoJson, setDistrictGeoJson] =
   const [displayFrame, setDisplayFrame] =
   useState(0);
 
+  const [frameLoading, setFrameLoading] =
+  useState(false);
+  
+const [framesReady, setFramesReady] =
+  useState(false);
     const [
   mosdacAlerts,
   setMosdacAlerts,
@@ -353,7 +358,7 @@ current.setUTCMilliseconds(
 
 current.setUTCMinutes(
   current.getUTCMinutes() -
-    45
+    60
 );
 
     current.setUTCMinutes(
@@ -406,14 +411,50 @@ setDisplayFrame(
 );
 
   }, []);
+const preloadFrames =
+  async () => {
 
+    setFramesReady(false);
+
+    await Promise.all(
+
+      frames.map(
+        (frame) =>
+          new Promise<void>(
+            (resolve) => {
+
+              const img =
+                new Image();
+
+              img.onload =
+                () =>
+                  resolve();
+
+              img.onerror =
+                () =>
+                  resolve();
+
+              img.src =
+                `/api/mosdac-wms?datetime=${frame}&layers=${channel}&styles=boxfill/${palette}`;
+
+            }
+          )
+      )
+
+    );
+
+    setFramesReady(true);
+
+  };
   // PLAYBACK LOOP
 
 useEffect(() => {
 
   if (
     !isPlaying ||
-    frames.length === 0
+    !framesReady ||
+    frames.length === 0 ||
+    frameLoading
   ) return;
 
   const interval =
@@ -425,27 +466,37 @@ useEffect(() => {
           ? 0
           : currentFrame + 1;
 
-      const preload =
-  typeof window !==
-  "undefined"
-    ? new window.Image()
-    : null;
+      setFrameLoading(true);
 
-if (!preload) return;
+      const img =
+        new window.Image();
 
-preload.onload = () => {
+      img.onload = () => {
 
-  setCurrentFrame(
-    nextFrame
-  );
+        setCurrentFrame(
+          nextFrame
+        );
 
-  setDisplayFrame(
-    nextFrame
-  );
-};
+        setDisplayFrame(
+          nextFrame
+        );
 
-preload.src =
-`/api/mosdac-wms?datetime=${frames[nextFrame]}&layers=${channel}&styles=boxfill/${palette}`;
+        setFrameLoading(
+          false
+        );
+
+      };
+
+      img.onerror = () => {
+
+        setFrameLoading(
+          false
+        );
+
+      };
+
+      img.src =
+        `/api/mosdac-wms?datetime=${frames[nextFrame]}&layers=${channel}&styles=boxfill/${palette}`;
 
     }, speed);
 
@@ -455,9 +506,10 @@ preload.src =
 }, [
   isPlaying,
   speed,
-  frames,
   currentFrame,
-  tileLoading,
+  frames.length,
+  framesReady,
+  frameLoading,
   channel,
   palette,
 ]);
@@ -571,28 +623,34 @@ function getLatestMosdacTime() {
 
   now.setUTCMinutes(
     now.getUTCMinutes() -
-      45
+      60
   );
 
   return now.toISOString();
 }
 
 let utcDatetime =
+  getLatestMosdacTime();
+
+if (
+  mode === "ANIMATION" &&
   frames.length > 0
-    ? frames[displayFrame]
-    : getLatestMosdacTime();
+) {
+  utcDatetime =
+    frames[displayFrame];
+}
 
-  if (
-    mode === "HISTORY"
-  ) {
-    const historyTime =
-      getHistoryUtcDatetime();
+if (
+  mode === "HISTORY"
+) {
+  const historyTime =
+    getHistoryUtcDatetime();
 
-    if (historyTime) {
-      utcDatetime =
-        historyTime;
-    }
+  if (historyTime) {
+    utcDatetime =
+      historyTime;
   }
+}
 
   // FORMAT LABEL
 
@@ -929,6 +987,9 @@ width: isMobile ? "calc(100vw - 24px)" : "340px",
                     frames.length -
                       1
                   );
+                  setDisplayFrame(
+    frames.length - 1
+  );
                 }
 
                 if (
@@ -1203,11 +1264,22 @@ width: isMobile ? "calc(100vw - 24px)" : "340px",
             </h3>
 
             <button
-              onClick={() =>
-                setIsPlaying(
-                  !isPlaying
-                )
-              }
+              onClick={async () => {
+
+  if (
+    !isPlaying &&
+    !framesReady
+  ) {
+
+    await preloadFrames();
+
+  }
+
+  setIsPlaying(
+    !isPlaying
+  );
+
+}}
               style={{
                 padding:
                   "8px 14px",
@@ -1535,6 +1607,7 @@ interactive={false}
     "/api/mosdac-wms?" +
     `datetime=${utcDatetime}`
   }
+  className="smooth-wms"
   layers={channel}
   updateInterval={300}
   styles={`boxfill/${palette}`}
@@ -1551,11 +1624,12 @@ interactive={false}
 
   version="1.3.0"
 
-  keepBuffer={6}
+  keepBuffer={12}
 
-  updateWhenIdle={true}
+  updateWhenIdle={false}
+  updateWhenZooming={false}
   
-  tileSize={512}
+  tileSize={256}
 
   zIndex={100}
 

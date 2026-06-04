@@ -478,3 +478,11 @@ input[type="range"]::-webkit-slider-thumb {
   transition:
     opacity 0.12s linear;
 }
+.smooth-wms {
+  opacity: 1;
+  transition: opacity 180ms linear;
+}
+
+.leaflet-tile {
+  transition: opacity 180ms linear;
+}

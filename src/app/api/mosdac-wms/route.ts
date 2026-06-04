@@ -67,20 +67,60 @@ const response =
 
 clearTimeout(timeout);
 
-    if (!response.ok) {
-      return new Response(
-  EMPTY_TILE,
-  {
-    headers: {
-      "Content-Type":
-        "image/png",
-    },
+    if (
+  !response.ok
+) {
+
+  const fallback =
+    await fetch(
+      fallbackUrl,
+      {
+        headers: {
+          Referer:
+            "https://www.mosdac.gov.in/live/index_one.php?url_name=india",
+
+          Origin:
+            "https://www.mosdac.gov.in",
+        },
+      }
+    );
+
+  if (
+    fallback.ok
+  ) {
+
+    const buffer =
+      await fallback.arrayBuffer();
+
+    return new Response(
+      buffer,
+      {
+        headers: {
+          "Content-Type":
+            "image/png",
+        },
+      }
+    );
   }
-);
+
+  return new Response(
+    EMPTY_TILE,
+    {
+      headers: {
+        "Content-Type":
+          "image/png",
+      },
     }
+  );
+}
 
     const imageBuffer =
       await response.arrayBuffer();
+
+console.log(
+  "MOSDAC SIZE:",
+  imageBuffer.byteLength
+);
 
     const isHistory =
   searchParams.has(
