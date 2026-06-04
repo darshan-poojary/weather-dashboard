@@ -462,6 +462,8 @@ preload.src =
   palette,
 ]);
 
+// new commit
+
 useEffect(() => {
   const fetchAlerts =
     async () => {
