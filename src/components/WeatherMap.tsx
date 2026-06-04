@@ -268,6 +268,8 @@ const [statesGeoJson, setStatesGeoJson] =
 const [districtGeoJson, setDistrictGeoJson] =
   useState(null);
 
+ 
+
   // NEW FRAME SYSTEM
 
   const [frames, setFrames] =
@@ -281,12 +283,16 @@ const [districtGeoJson, setDistrictGeoJson] =
   const [frameLoading, setFrameLoading] =
   useState(false);
   
-const [framesReady, setFramesReady] =
-  useState(false);
     const [
   mosdacAlerts,
   setMosdacAlerts,
 ] = useState<any[]>([]);
+
+ const loadedFrames =
+  useMemo(
+    () => new Set<string>(),
+    []
+  );
 
 useEffect(() => {
   const checkMobile = () => {
@@ -411,51 +417,16 @@ setDisplayFrame(
 );
 
   }, []);
-const preloadFrames =
-  async () => {
 
-    setFramesReady(false);
-
-    await Promise.all(
-
-      frames.map(
-        (frame) =>
-          new Promise<void>(
-            (resolve) => {
-
-              const img =
-                new Image();
-
-              img.onload =
-                () =>
-                  resolve();
-
-              img.onerror =
-                () =>
-                  resolve();
-
-              img.src =
-                `/api/mosdac-wms?datetime=${frame}&layers=${channel}&styles=boxfill/${palette}`;
-
-            }
-          )
-      )
-
-    );
-
-    setFramesReady(true);
-
-  };
   // PLAYBACK LOOP
 
 useEffect(() => {
 
   if (
-    !isPlaying ||
-    !framesReady ||
-    frames.length === 0 ||
-    frameLoading
-  ) return;
+  !isPlaying ||
+  frames.length === 0 ||
+  frameLoading
+) return;
 
   const interval =
     setInterval(() => {
@@ -508,13 +479,11 @@ useEffect(() => {
   speed,
   currentFrame,
   frames.length,
-  framesReady,
   frameLoading,
   channel,
   palette,
 ]);
 
-// new commit
 
 useEffect(() => {
   const fetchAlerts =
@@ -575,6 +544,62 @@ const parsed =
       interval
     );
 }, []);
+
+const preloadFrame = (
+  frame: string
+) => {
+
+  if (
+    loadedFrames.has(frame)
+  ) {
+    return;
+  }
+
+  const img =
+    new Image();
+
+  img.onload = () => {
+    loadedFrames.add(frame);
+  };
+
+  img.src =
+    `/api/mosdac-wms?datetime=${frame}&layers=${channel}&styles=boxfill/${palette}`;
+};
+useEffect(() => {
+
+  if (
+    frames.length === 0
+  ) {
+    return;
+  }
+
+  for (
+    let i = 0;
+    i < 4;
+    i++
+  ) {
+
+    const index =
+      currentFrame + i;
+
+    if (
+      index <
+      frames.length
+    ) {
+
+      preloadFrame(
+        frames[index]
+      );
+
+    }
+  }
+
+}, [
+  currentFrame,
+  frames,
+  channel,
+  palette,
+]);
 
   // HISTORY MODE
 
@@ -1264,16 +1289,7 @@ width: isMobile ? "calc(100vw - 24px)" : "340px",
             </h3>
 
             <button
-              onClick={async () => {
-
-  if (
-    !isPlaying &&
-    !framesReady
-  ) {
-
-    await preloadFrames();
-
-  }
+              onClick={() => {
 
   setIsPlaying(
     !isPlaying
