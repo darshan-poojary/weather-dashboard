@@ -1,31 +1,38 @@
 export async function GET() {
   try {
-    const response =
-      await fetch(
-        "https://www.mosdac.gov.in/live/backend/rain_cloudburst.php",
-        {
-          headers: {
-            Referer:
-              "https://www.mosdac.gov.in/live/index_one.php?url_name=india",
+    const response = await fetch(
+      "https://www.mosdac.gov.in/live/backend/rain_cloudburst.php",
+      {
+        headers: {
+          Referer:
+            "https://www.mosdac.gov.in/live/index_one.php?url_name=india",
 
-            Origin:
-              "https://www.mosdac.gov.in",
-          },
+          Origin:
+            "https://www.mosdac.gov.in",
+        },
 
-          cache: "no-store",
-        }
-      );
+        cache: "no-store",
+      }
+    );
 
     const text =
       await response.text();
 
+    console.log(
+      "MOSDAC STATUS:",
+      response.status
+    );
+
+    console.log(
+      "MOSDAC RESPONSE:"
+    );
+
+    console.log(text);
+
     return new Response(text, {
       headers: {
         "Content-Type":
-          "application/json",
-
-        "Cache-Control":
-          "public, max-age=300",
+          "text/plain",
       },
     });
   } catch (error) {

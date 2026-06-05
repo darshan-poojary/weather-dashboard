@@ -216,6 +216,28 @@ filter:drop-shadow(0 0 3px black);
       })
     : undefined;
 
+const nowcastRainIcon =
+  typeof window !==
+  "undefined"
+    ? new Leaflet.DivIcon({
+        className:
+          "weather-alert-icon",
+
+        html: `
+<div style="
+font-size:20px;
+filter:drop-shadow(0 0 2px black);
+">
+☔
+</div>
+        `,
+
+        iconSize: [14,14],
+
+        iconAnchor: [7,7],
+      })
+    : undefined;    
+
 export default function WeatherMap() {
 
   const [tileLoading, setTileLoading] =
@@ -268,6 +290,10 @@ const [statesGeoJson, setStatesGeoJson] =
 const [districtGeoJson, setDistrictGeoJson] =
   useState(null);
 
+const [
+  thunderstormCells,
+  setThunderstormCells
+] = useState<any[]>([]);  
  
 
   // NEW FRAME SYSTEM
@@ -283,6 +309,9 @@ const [districtGeoJson, setDistrictGeoJson] =
   const [frameLoading, setFrameLoading] =
   useState(false);
   
+  const [stormAlert, setStormAlert] =
+  useState<any>(null);
+
     const [
   mosdacAlerts,
   setMosdacAlerts,
@@ -601,6 +630,78 @@ useEffect(() => {
   palette,
 ]);
 
+useEffect(() => {
+
+  const loadStorms = async () => {
+
+    try {
+
+      const response =
+        await fetch(
+          "/thunderstorm-cells.json?t=" +
+          Date.now()
+        );
+
+      const data =
+        await response.json();
+
+      setThunderstormCells(
+        data
+      );
+if (data.length > 0) {
+
+  const strongest =
+    data.reduce(
+      (a: any, b: any) =>
+        a.count > b.count
+          ? a
+          : b
+    );
+
+  setStormAlert(
+    strongest
+  );
+  const geo =
+  await fetch(
+    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${strongest.lat}&lon=${strongest.lon}`
+  );
+
+const location =
+  await geo.json();
+
+setStormAlert({
+  ...strongest,
+  location,
+});
+}
+      console.log(
+        "Thunderstorm Cells:",
+        data.length
+      );
+
+    } catch (error) {
+
+      console.error(
+        error
+      );
+
+    }
+  };
+
+  loadStorms();
+
+  const interval =
+    setInterval(
+      loadStorms,
+      300000
+    );
+
+  return () =>
+    clearInterval(
+      interval
+    );
+
+}, []);
   // HISTORY MODE
 
   function getHistoryUtcDatetime() {
@@ -790,15 +891,19 @@ const filteredAlerts =
 
               return (
                 distance <
-                  (
-                    zoom >= 8
-                      ? 0.2
-                      : zoom >= 6
-                      ? 0.4
-                      : zoom >= 4
-                      ? 1
-                      : 2
-                  ) &&
+(
+  zoom >= 9
+    ? 0.15
+    : zoom >= 8
+    ? 0.4
+    : zoom >= 7
+    ? 0.8
+    : zoom >= 6
+    ? 1.5
+    : zoom >= 5
+    ? 3
+    : 5
+) &&
                 otherIndex <
                   index
               );
@@ -1653,7 +1758,6 @@ interactive={false}
 />
 
 {/* LIVE MOSDAC ALERTS */}
-
 {
 showAlerts &&
 
@@ -1702,21 +1806,32 @@ const alertTime =
         const forecast =
           props.forecast ||
           "";
+          const radiusKm =
+  parseFloat(
+    props.rad_inf || "0"
+  );
 
-        const radiusKm =
-          parseFloat(
-            props.rad_inf ||
-              "80"
-          );
+        const intensityColor =
+  radiusKm > 120
+    ? "#ff2d2d"
+    : radiusKm > 80
+    ? "#ff9900"
+    : "#00ff66";
 
         const isCloudburst =
-          forecast
-            .toLowerCase()
-            .includes(
-              "cloud"
-            );
+  forecast
+    .toLowerCase()
+    .includes(
+      "cloud"
+    );
 
-            const isSevere =
+const isCurrentRain =
+  !!props.value;
+
+const isNowcastRain =
+  !props.value;
+
+const isSevere =
   radiusKm > 120;
 
         return (
@@ -1731,8 +1846,10 @@ const alertTime =
               icon={
   isCloudburst
     ? cloudburstIcon
-    : isSevere
-    ? blackRainIcon
+
+    : isNowcastRain
+    ? nowcastRainIcon
+
     : blueRainIcon
 }
             >
@@ -1779,7 +1896,11 @@ const alertTime =
             "underline",
         }}
       >
-        {alertName}
+        {
+  isNowcastRain
+    ? "HEAVY RAIN (NOWCAST)"
+    : alertName
+}
       </div>
 
       <div>
@@ -1791,16 +1912,34 @@ const alertTime =
       </div>
 
       <div
-        style={{
-          marginTop: "8px",
-        }}
-      >
-        <b>Date & Time :</b>
-        <br />
-        {alertDate}
-        {" "}
-        {alertTime}
-      </div>
+  style={{
+    marginTop: "8px",
+  }}
+>
+  <b>Forecast Issued :</b>
+  <br />
+  {alertDate}
+  {" "}
+  {alertTime}
+</div>
+
+{
+  isNowcastRain && (
+    <div
+      style={{
+        marginTop: "8px",
+      }}
+    >
+      <b>Validity :</b>
+
+      <br />
+
+      {alertTime}
+      {" "}
+      (+6 hrs)
+    </div>
+  )
+}
 
       <div
   style={{
@@ -1827,7 +1966,8 @@ const alertTime =
             {/* SHOW RADIUS ONLY ON HIGH ZOOM */}
 
             
-              <Circle
+              {!isCurrentRain && (
+<Circle
               
   center={[
     lat,
@@ -1908,7 +2048,29 @@ const alertTime =
             "underline",
         }}
       >
-        {alertName}
+        <>
+  {
+    isNowcastRain &&
+    (
+      <span
+        style={{
+          color:
+            intensityColor,
+          marginRight:
+            "6px",
+        }}
+      >
+        ●
+      </span>
+    )
+  }
+
+  {
+    isNowcastRain
+      ? "HEAVY RAIN (NOWCAST)"
+      : alertName
+  }
+</>
       </div>
 
       <div>
@@ -1919,18 +2081,46 @@ const alertTime =
         {lat.toFixed(2)}
       </div>
 
-      <div
-        style={{
-          marginTop: "8px",
-        }}
-      >
-        <b>Date & Time :</b>
-        <br />
-        {alertDate}
-        {" "}
-        {alertTime}
-      </div>
+<div
+  style={{
+    marginTop: "8px",
+  }}
+>
+  <b>Forecast Issued :</b>
+  <br />
+  {alertDate}
+  {" "}
+  {alertTime}
+</div>
 
+{
+  isNowcastRain && (
+    <div
+      style={{
+        marginTop: "8px",
+      }}
+    >
+      <b>Validity :</b>
+
+      <br />
+
+      {alertTime}
+      {" "}
+      (+6 hrs)
+    </div>
+  )
+}
+<div
+  style={{
+    marginTop: "8px",
+  }}
+>
+  <b>Expected Within:</b>
+
+  <br />
+
+  Next 6 Hours
+</div>
       <div
   style={{
     marginTop: "8px",
@@ -1952,11 +2142,88 @@ const alertTime =
     </div>
   </Popup>
 </Circle>
-            
+ )}           
           </Fragment>
         );
       }
     )}
+    {/* THUNDERSTORM ALERTS */}
+
+{thunderstormCells.map(
+  (cell, index) => (
+    <Marker
+      key={`storm-${index}`}
+      position={[
+        cell.lat,
+        cell.lon,
+      ]}
+      icon={
+  new Leaflet.DivIcon({
+    className: "",
+   html: `
+<div style="
+  font-size:${Math.min(
+    18 + cell.count / 80,
+    55
+  )}px;
+
+  color:${
+    cell.temp < 190
+      ? 'red'
+      : cell.temp < 195
+      ? 'orange'
+      : 'yellow'
+  };
+
+  text-shadow:
+    0 0 5px black,
+    0 0 10px black;
+">
+&#9889;
+</div>
+`,
+    iconSize: [40, 40],
+  })
+      }
+    >
+      <Popup>
+  <b>Thunderstorm Cell</b>
+
+  <br />
+
+  Severity:
+  {" "}
+  {
+    cell.temp < 190
+      ? "🔴 Severe"
+      : cell.temp < 195
+      ? "🟠 Strong"
+      : "🟡 Moderate"
+  }
+
+  <br />
+
+  Temp:
+  {" "}
+  {cell.temp.toFixed(1)} K
+
+  <br />
+
+  Impact Radius:
+  {" "}
+  {Math.round(
+    Math.sqrt(cell.count) * 2
+  )} km
+
+  <br />
+
+  Cell Strength:
+  {" "}
+  {cell.count}
+</Popup>
+    </Marker>
+  )
+)}
         {/* LABELS */}
 
         <TileLayer
@@ -1964,7 +2231,115 @@ const alertTime =
           attribution="&copy; OpenStreetMap & CARTO"
           opacity={1}
         />
-      </MapContainer>
+            </MapContainer>
+
+      {stormAlert && (
+        <div
+          style={{
+            position: "fixed",
+            top: 20,
+            right: 20,
+            zIndex: 9999,
+            width: "340px",
+            background: "rgba(15,23,42,0.95)",
+            color: "white",
+            padding: "18px",
+            borderRadius: "16px",
+            border: "1px solid orange",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+          }}
+        >
+          <h3
+            style={{
+              marginTop: 0,
+              color: "#ffb347",
+            }}
+          >
+            ⚠ Thunderstorm Alert
+          </h3>
+
+          <div>
+            <b>Severity:</b>{" "}
+            {
+              stormAlert.temp < 190
+                ? "🔴 Severe"
+                : stormAlert.temp < 195
+                ? "🟠 Strong"
+                : "🟡 Moderate"
+            }
+          </div>
+
+          <br />
+
+          <div>
+            <b>Temperature:</b>{" "}
+            {stormAlert.temp.toFixed(1)} K
+          </div>
+
+          <div>
+            <b>Impact Radius:</b>{" "}
+            {Math.round(
+              Math.sqrt(stormAlert.count) * 2
+            )} km
+          </div>
+
+          <div>
+            <b>Risk Level:</b>{" "}
+            {
+              stormAlert.count > 1000
+                ? "🔴 HIGH"
+                : stormAlert.count > 500
+                ? "🟠 MEDIUM"
+                : "🟡 LOW"
+            }
+          </div>
+<div>
+  <b>Last Updated:</b>
+  {" "}
+  {stormAlert.updated}
+</div>
+          <br />
+<div>
+  <b>Location:</b>
+
+  <br />
+
+  {
+  stormAlert.location?.display_name
+  ||
+  `${stormAlert.lat.toFixed(2)}°N,
+    ${stormAlert.lon.toFixed(2)}°E`
+}
+</div>
+
+<br />
+          <div>
+            <b>Possible Hazards</b>
+            <br />
+            • Lightning
+            <br />
+            • Heavy Rainfall
+            <br />
+            • Gusty Winds
+          </div>
+
+          <button
+            onClick={() =>
+              setStormAlert(null)
+            }
+            style={{
+              marginTop: 12,
+              padding: "8px 12px",
+              borderRadius: "8px",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
     </div>
   );
 }
