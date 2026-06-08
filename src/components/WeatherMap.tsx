@@ -916,7 +916,22 @@ const filteredAlerts =
     mosdacAlerts,
     zoom
   ]);
-  
+const visibleThunderstorms =
+  thunderstormCells.filter(
+    (cell) => {
+
+      // Always show all detected storms
+      if (
+        cell.severity === "Severe" ||
+        cell.severity === "Strong" ||
+        cell.severity === "Moderate"
+      ) {
+        return true;
+      }
+
+      return false;
+    }
+  );
 
   return (
     <div
@@ -2149,7 +2164,7 @@ const isSevere =
     )}
     {/* THUNDERSTORM ALERTS */}
 
-{thunderstormCells.map(
+{visibleThunderstorms.map(
   (cell, index) => (
     <Marker
       key={`storm-${index}`}
@@ -2162,11 +2177,21 @@ const isSevere =
     className: "",
    html: `
 <div style="
-  font-size:${Math.min(
-    18 + cell.count / 80,
-    55
-  )}px;
+  font-size:${
+  zoom >= 9
+    ? Math.min(
+        22 + cell.count / 60,
+        65
+      )
 
+    : zoom >= 6
+    ? Math.min(
+        18 + cell.count / 80,
+        50
+      )
+
+    : 14
+}px;
   color:${
     cell.temp < 190
       ? 'red'

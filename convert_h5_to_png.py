@@ -243,7 +243,7 @@ with h5py.File(
     # =========================
 
     storm_mask = (
-        (temperature < 203)
+        (temperature < 208)
         &
         (temperature > 180)
         &
@@ -318,8 +318,8 @@ with h5py.File(
 
     for alert in alerts:
 
-        lat_key = round(alert["lat"] / 8) * 8
-        lon_key = round(alert["lon"] / 8) * 8
+        lat_key = round(alert["lat"] / 1) * 1
+        lon_key = round(alert["lon"] / 1) * 1
         clusters[
             (
                 lat_key,
@@ -340,7 +340,7 @@ with h5py.File(
             x["temp"]
         )
 
-        if len(group) >= 50:
+        if len(group) >= 20:
 
          storm_cells.append(
 {
