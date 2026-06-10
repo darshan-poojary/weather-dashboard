@@ -1,0 +1,45 @@
+name: Update Weather
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+
+  workflow_dispatch:
+
+jobs:
+  update-weather:
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install Packages
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Weather Update
+        run: |
+          python update_thunderstorms.py
+
+      - name: Commit Updated Files
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add public/cloud-grid.json
+          git add public/thunderstorm-cells.json
+
+          git commit -m "Automatic weather update" || echo "No changes"
+
+          git push
