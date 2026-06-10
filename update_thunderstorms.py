@@ -14,4 +14,11 @@ subprocess.run([
     "convert_h5_to_png.py"
 ])
 
+print("Pushing updates...")
+
+subprocess.run([
+    "python",
+    "auto_commit.py"
+])
+
 print("Done")
