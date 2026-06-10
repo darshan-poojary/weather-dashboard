@@ -122,7 +122,36 @@ const MapEvents = dynamic(
   },
   { ssr: false }
 );
+const MapClickHandler = dynamic(
+  async () => {
+    const mod =
+      await import(
+        "react-leaflet"
+      );
 
+    return function ClickHandler(
+      props: any
+    ) {
+
+      mod.useMapEvents({
+        click: (e) => {
+          console.log(
+            "Map click",
+            e.latlng
+          );
+
+          props.onClick(
+            e.latlng.lat,
+            e.latlng.lng
+          );
+        },
+      });
+
+      return null;
+    };
+  },
+  { ssr: false }
+);
 const CHANNELS = [
   {
     label: "TIR1",
@@ -146,6 +175,39 @@ const PALETTES = [
   "redblue",
   "ferret",
 ];
+const LEGENDS = {
+  IMG_TIR1: {
+    title: "Cloud Top Temperature (K)",
+    min: "180",
+    max: "320",
+  },
+
+  IMG_TIR2: {
+    title: "Thermal Infrared Temperature (K)",
+    min: "180",
+    max: "320",
+  },
+
+  IMG_MIR: {
+    title: "Mid Infrared Brightness",
+    min: "180",
+    max: "340",
+  },
+};
+
+const PALETTE_GRADIENTS = {
+  greyscale:
+    "linear-gradient(to right,#ffffff,#d9d9d9,#a6a6a6,#737373,#404040,#000000)",
+
+  rainbow:
+    "linear-gradient(to left,#0000ff,#00ffff,#00ff00,#ffff00,#ff8000,#ff0000)",
+
+  redblue:
+    "linear-gradient(to right,#ff0000,#ff8080,#ffffff,#80bfff,#0066ff)",
+
+  ferret:
+  "linear-gradient(to left,#c94cff,#8b5cf6,#3b82f6,#22d3ee,#22c55e,#ffff00,#ff9800,#ff0000)",
+};
 
 const blueRainIcon =
   typeof window !==
@@ -158,31 +220,6 @@ const blueRainIcon =
 <div style="
 font-size:20px;
 filter:drop-shadow(0 0 2px black);
-">
-🌧️
-</div>
-        `,
-
-        iconSize: [14, 14],
-
-        iconAnchor: [7, 7],
-      })
-    : undefined;
-
-const blackRainIcon =
-  typeof window !==
-  "undefined"
-    ? new Leaflet.DivIcon({
-        className:
-          "weather-alert-icon",
-
-        html: `
-<div style="
-font-size:20px;
-filter:
-grayscale(50%)
-brightness(0.2)
-drop-shadow(0 0 2px black);
 ">
 🌧️
 </div>
@@ -237,11 +274,44 @@ filter:drop-shadow(0 0 2px black);
         iconAnchor: [7,7],
       })
     : undefined;    
+// ── Cloud Cover Helpers ───────────────────────────────────────
 
+function getSkyIcon(cc: number): string {
+  if (cc < 10) return "☀️";
+  if (cc < 30) return "🌤️";
+  if (cc < 60) return "⛅";
+  if (cc < 87) return "🌥️";
+  return "☁️";
+}
+
+function getCloudLabel(cc: number): string {
+  if (cc < 10) return "Clear";
+  if (cc < 30) return "Few Clouds";
+  if (cc < 60) return "Partly Cloudy";
+  if (cc < 87) return "Mostly Cloudy";
+  return "Overcast";
+}
+
+function ccToColor(cc: number): string {
+  if (cc < 20) return "#fbbf24"; // sunny yellow
+  if (cc < 50) return "#93c5fd"; // sky blue
+  if (cc < 80) return "#e2e8f0"; // light grey
+  return "#94a3b8";              // overcast grey
+}
+
+function getCloudRainRisk(
+  temp: number,
+  cc: number
+): { label: string; color: string } | null {
+  if (temp > 100 && temp < 230)
+    return { label: "⛈️  Convective Risk",  color: "#ef4444" };
+  if (temp > 100 && temp < 252)
+    return { label: "🌧️  Heavy Rain Risk", color: "#f97316" };
+  if (cc > 68 && (temp === 0 || temp < 272))
+    return { label: "🌦️  Rain Possible",   color: "#3b82f6" };
+  return null;
+}
 export default function WeatherMap() {
-
-  const [tileLoading, setTileLoading] =
-  useState(false);
   
   const [opacity, setOpacity] =
     useState(0.7);
@@ -262,7 +332,7 @@ export default function WeatherMap() {
     useState(false);
 
   const [speed, setSpeed] =
-    useState(2500);
+    useState(4000);
 
   const [mode, setMode] =
     useState("LIVE");
@@ -278,10 +348,18 @@ export default function WeatherMap() {
   showControls,
   setShowControls,
 ] = useState(true);
-
+const [
+  showLegend,
+  setShowLegend,
+] = useState(true);
 const [
   showAlerts,
   setShowAlerts,
+] = useState(true);
+
+const [
+  showThunderstorms,
+  setShowThunderstorms,
 ] = useState(true);
 
 const [statesGeoJson, setStatesGeoJson] =
@@ -295,6 +373,15 @@ const [
   setThunderstormCells
 ] = useState<any[]>([]);  
  
+const [
+  cloudPoints,
+  setCloudPoints,
+] = useState<any[]>([]);
+
+const [
+  cloudPopup,
+  setCloudPopup,
+] = useState<any>(null);
 
   // NEW FRAME SYSTEM
 
@@ -308,9 +395,7 @@ const [
 
   const [frameLoading, setFrameLoading] =
   useState(false);
-  
-  const [stormAlert, setStormAlert] =
-  useState<any>(null);
+
 
     const [
   mosdacAlerts,
@@ -648,32 +733,7 @@ useEffect(() => {
       setThunderstormCells(
         data
       );
-if (data.length > 0) {
 
-  const strongest =
-    data.reduce(
-      (a: any, b: any) =>
-        a.count > b.count
-          ? a
-          : b
-    );
-
-  setStormAlert(
-    strongest
-  );
-  const geo =
-  await fetch(
-    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${strongest.lat}&lon=${strongest.lon}`
-  );
-
-const location =
-  await geo.json();
-
-setStormAlert({
-  ...strongest,
-  location,
-});
-}
       console.log(
         "Thunderstorm Cells:",
         data.length
@@ -687,14 +747,38 @@ setStormAlert({
 
     }
   };
+const loadCloudData = async () => {
+  try {
+    const res = await fetch(
+  "/cloud-grid.json?" +
+    Date.now()
+);
 
+    const data =
+      await res.json();
+console.log(
+  "Cloud grids:",
+  data.length
+);
+    setCloudPoints(data);
+  } catch (err) {
+    console.error(
+      "Cloud data error",
+      err
+    );
+  }
+};
   loadStorms();
-
+  loadCloudData();
   const interval =
     setInterval(
       loadStorms,
-      300000
+      1800000
     );
+    setInterval(
+  loadCloudData,
+  1800000
+);
 
   return () =>
     clearInterval(
@@ -889,24 +973,18 @@ const filteredAlerts =
                     )
                 );
 
-              return (
-                distance <
-(
-  zoom >= 9
-    ? 0.15
-    : zoom >= 8
-    ? 0.4
-    : zoom >= 7
-    ? 0.8
-    : zoom >= 6
-    ? 1.5
-    : zoom >= 5
-    ? 3
-    : 5
-) &&
-                otherIndex <
-                  index
-              );
+              const minDistance =
+  zoom >= 9 ? 0.08 :
+  zoom >= 8 ? 0.15 :
+  zoom >= 7 ? 0.25 :
+  zoom >= 6 ? 0.45 :
+  zoom >= 5 ? 0.8 :
+  1.2;
+
+return (
+  distance < minDistance &&
+  otherIndex < index
+);
             }
           );
         }
@@ -916,6 +994,17 @@ const filteredAlerts =
     mosdacAlerts,
     zoom
   ]);
+
+  const currentLegend =
+  LEGENDS[
+    channel as keyof typeof LEGENDS
+  ];
+
+const currentGradient =
+  PALETTE_GRADIENTS[
+    palette as keyof typeof PALETTE_GRADIENTS
+  ];
+
 const visibleThunderstorms =
   thunderstormCells.filter(
     (cell) => {
@@ -932,7 +1021,83 @@ const visibleThunderstorms =
       return false;
     }
   );
+const handleMapClick = (
+  clickLat: number,
+  clickLon: number
+) => {
 
+  if (
+    cloudPoints.length === 0
+  )
+    return;
+
+  const GRID_DEG =
+    12 / 111;
+
+  const gridLat =
+    Math.round(
+      clickLat /
+      GRID_DEG
+    ) * GRID_DEG;
+
+  const gridLon =
+    Math.round(
+      clickLon /
+      GRID_DEG
+    ) * GRID_DEG;
+
+  const cell =
+  cloudPoints.reduce(
+    (best, p) => {
+
+      const dist =
+        Math.abs(
+          p.gridLat -
+          gridLat
+        ) +
+        Math.abs(
+          p.gridLon -
+          gridLon
+        );
+
+      if (
+        !best ||
+        dist < best.dist
+      ) {
+        return {
+          dist,
+          point: p,
+        };
+      }
+
+      return best;
+    },
+    null
+  )?.point;
+  if (!cell)
+    return;
+console.log(
+  "Grid found:",
+  cell
+);
+console.log(
+  "Clicked:",
+  clickLat,
+  clickLon
+);
+  setCloudPopup({
+
+    lat: clickLat,
+
+    lon: clickLon,
+
+    cloudCover:
+      cell.cloudCover,
+
+    temp:
+      cell.temp,
+  });
+};
   return (
     <div
       style={{
@@ -1327,29 +1492,59 @@ width: isMobile ? "calc(100vw - 24px)" : "340px",
 
         <div
   style={{
-    marginTop: "12px",
+    marginTop: "18px",
     display: "flex",
-    alignItems:
-      "center",
-    gap: "10px",
+    flexDirection: "column",
+    gap: "14px",
   }}
 >
-  <input
-    type="checkbox"
-    checked={
-      showAlerts
-    }
-    onChange={() =>
-      setShowAlerts(
-        !showAlerts
-      )
-    }
-  />
 
-  <b>
-    Show Heavy Rain &
-    Cloudburst
-  </b>
+  <label
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "10px",
+      cursor: "pointer",
+    }}
+  >
+    <input
+      type="checkbox"
+      checked={showAlerts}
+      onChange={() =>
+        setShowAlerts(
+          !showAlerts
+        )
+      }
+    />
+
+    <b>
+      Show Heavy Rain &
+      Cloudburst
+    </b>
+  </label>
+
+  <label
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "10px",
+      cursor: "pointer",
+    }}
+  >
+    <input
+      type="checkbox"
+      checked={showThunderstorms}
+      onChange={() =>
+        setShowThunderstorms(
+          !showThunderstorms
+        )
+      }
+    />
+
+    <b>
+      Show Thunderstorms
+    </b>
+  </label>
 </div>
 
         {/* OPACITY */}
@@ -1436,8 +1631,8 @@ width: isMobile ? "calc(100vw - 24px)" : "340px",
 
             <input
               type="range"
-              min="2500"
-              max="4000"
+              min="3500"
+              max="5000"
               step="100"
               value={speed}
               onChange={(
@@ -1673,7 +1868,13 @@ key="weather-map"
 >
 
         <MapEvents setZoom={setZoom} />
+<MapClickHandler
 
+  onClick={
+    handleMapClick
+    
+  }
+/>
         {/* BASE MAP */}
 
         <TileLayer
@@ -1845,14 +2046,21 @@ const isCurrentRain =
 
 const isNowcastRain =
   !props.value;
+const showMarker =
+  zoom >= 8
+    ? true
+    : zoom >= 6
+    ? true
+    : zoom >= 5
+    ? index % 2 === 0
+    : index % 2 === 0;
 
-const isSevere =
-  radiusKm > 120;
+        if (!showMarker) return null;
 
-        return (
-          <Fragment
-            key={`alert-${index}`}
-          >
+return (
+  <Fragment
+    key={`alert-${index}`}
+  >
             <Marker
               position={[
                 lat,
@@ -2021,6 +2229,7 @@ const isSevere =
   }}
 >
   <Popup
+  pane="popupPane"
     closeButton={true}
     autoPan={false}
   >
@@ -2164,7 +2373,8 @@ const isSevere =
     )}
     {/* THUNDERSTORM ALERTS */}
 
-{visibleThunderstorms.map(
+{showThunderstorms &&
+visibleThunderstorms.map(
   (cell, index) => (
     <Marker
       key={`storm-${index}`}
@@ -2249,6 +2459,164 @@ const isSevere =
     </Marker>
   )
 )}
+{cloudPopup && (
+  <Popup
+    position={[
+      cloudPopup.lat,
+      cloudPopup.lon
+    ]}
+      autoPan={true}
+      closeButton={true}
+    >
+    <div style={{
+      width:              "200px",
+      background:         "rgba(10,16,30,0.97)",
+      color:              "white",
+      padding:            "16px",
+      borderRadius:       "20px",
+      backdropFilter:     "blur(20px)",
+      WebkitBackdropFilter: "blur(20px)",
+      border:             "1px solid rgba(255,255,255,0.09)",
+      boxShadow:          "0 14px 42px rgba(0,0,0,0.65)",
+      fontFamily:         "'Inter', sans-serif",
+    }}>
+
+      {/* ── HEADER ── */}
+      <div style={{
+        display:        "flex",
+        justifyContent: "space-between",
+        alignItems:     "center",
+        marginBottom:   "10px",
+      }}>
+        <span style={{
+          fontSize:      "11px",
+          fontWeight:    700,
+          letterSpacing: "1px",
+          color:         "#64748b",
+          textTransform: "uppercase",
+        }}>
+          ☁ &nbsp;Cloud Cover
+        </span>
+
+        <button
+          onClick={(e) => { e.stopPropagation(); setCloudPopup(null); }}
+          style={{
+            background:   "rgba(255,255,255,0.06)",
+            border:       "none",
+            color:        "#94a3b8",
+            width:        "20px",
+            height:       "20px",
+            borderRadius: "6px",
+            cursor:       "pointer",
+            fontSize:     "14px",
+            lineHeight:   "20px",
+            textAlign:    "center",
+          }}
+        >✕</button>
+      </div>
+
+      {/* ── MAIN VALUE ── */}
+      <div style={{
+        display:     "flex",
+        alignItems:  "flex-end",
+        gap:         "3px",
+        marginBottom:"8px",
+      }}>
+        <span style={{
+          fontSize:           "54px",
+          fontWeight:         800,
+          lineHeight:         1,
+          color:              ccToColor(cloudPopup.cloudCover),
+          fontVariantNumeric: "tabular-nums",
+        }}>
+          {cloudPopup.cloudCover}
+        </span>
+        <span style={{
+          fontSize:     "22px",
+          fontWeight:   700,
+          color:        "#475569",
+          paddingBottom:"6px",
+        }}>%</span>
+      </div>
+
+      {/* ── SKY CONDITION ── */}
+      <div style={{
+        display:      "flex",
+        alignItems:   "center",
+        gap:          "7px",
+        marginBottom: "12px",
+      }}>
+        <span style={{ fontSize: "22px" }}>
+          {getSkyIcon(cloudPopup.cloudCover)}
+        </span>
+        <span style={{ fontSize: "13px", fontWeight: 600, color: "#e2e8f0" }}>
+          {getCloudLabel(cloudPopup.cloudCover)}
+        </span>
+      </div>
+
+      {/* ── COVER BAR ── */}
+      <div style={{
+        height:       "5px",
+        borderRadius: "999px",
+        background:   "rgba(255,255,255,0.07)",
+        overflow:     "hidden",
+        marginBottom: "12px",
+      }}>
+        <div style={{
+          height:     "100%",
+          width:      `${cloudPopup.cloudCover}%`,
+          borderRadius: "999px",
+          background:
+            cloudPopup.cloudCover > 75
+              ? "linear-gradient(90deg,#64748b,#94a3b8)"
+              : cloudPopup.cloudCover > 40
+              ? "linear-gradient(90deg,#3b82f6,#93c5fd)"
+              : "linear-gradient(90deg,#f59e0b,#fcd34d)",
+          transition: "width 0.4s ease",
+        }} />
+      </div>
+
+      {/* ── RAIN RISK ── */}
+      {(() => {
+        const risk = getCloudRainRisk(cloudPopup.temp, cloudPopup.cloudCover);
+        return risk ? (
+          <div style={{
+            fontSize:     "12px",
+            fontWeight:   600,
+            color:        risk.color,
+            padding:      "5px 9px",
+            borderRadius: "8px",
+            background:   `${risk.color}1a`,
+            border:       `1px solid ${risk.color}35`,
+            marginBottom: "10px",
+          }}>
+            {risk.label}
+          </div>
+        ) : null;
+      })()}
+
+      {/* ── BT + COORDS ── */}
+      <div style={{
+        fontSize:       "10px",
+        color:          "#475569",
+        display:        "flex",
+        justifyContent: "space-between",
+      }}>
+        {cloudPopup.temp > 100 && (
+          <span>
+            BT&nbsp;{cloudPopup.temp}&nbsp;K
+            &nbsp;({(cloudPopup.temp - 273.15).toFixed(1)}°C)
+          </span>
+        )}
+        <span>
+          {cloudPopup.lat.toFixed(2)}°N&nbsp;
+          {cloudPopup.lon.toFixed(2)}°E
+        </span>
+      </div>
+
+    </div>
+  </Popup>
+)}
         {/* LABELS */}
 
         <TileLayer
@@ -2257,114 +2625,245 @@ const isSevere =
           opacity={1}
         />
             </MapContainer>
-
-      {stormAlert && (
-        <div
-          style={{
-            position: "fixed",
-            top: 20,
-            right: 20,
-            zIndex: 9999,
-            width: "340px",
-            background: "rgba(15,23,42,0.95)",
-            color: "white",
-            padding: "18px",
-            borderRadius: "16px",
-            border: "1px solid orange",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
-          }}
-        >
-          <h3
-            style={{
-              marginTop: 0,
-              color: "#ffb347",
-            }}
-          >
-            ⚠ Thunderstorm Alert
-          </h3>
-
-          <div>
-            <b>Severity:</b>{" "}
             {
-              stormAlert.temp < 190
-                ? "🔴 Severe"
-                : stormAlert.temp < 195
-                ? "🟠 Strong"
-                : "🟡 Moderate"
-            }
-          </div>
+!showLegend && (
+  <button
+    onClick={() =>
+      setShowLegend(true)
+    }
+    style={{
+      position: "absolute",
 
-          <br />
+      bottom: 22,
+      right: 22,
 
-          <div>
-            <b>Temperature:</b>{" "}
-            {stormAlert.temp.toFixed(1)} K
-          </div>
+      zIndex: 9999,
 
-          <div>
-            <b>Impact Radius:</b>{" "}
-            {Math.round(
-              Math.sqrt(stormAlert.count) * 2
-            )} km
-          </div>
+      width: "42px",
+      height: "42px",
 
-          <div>
-            <b>Risk Level:</b>{" "}
-            {
-              stormAlert.count > 1000
-                ? "🔴 HIGH"
-                : stormAlert.count > 500
-                ? "🟠 MEDIUM"
-                : "🟡 LOW"
-            }
-          </div>
-<div>
-  <b>Last Updated:</b>
-  {" "}
-  {stormAlert.updated}
+      borderRadius: "14px",
+
+      border:
+        "1px solid rgba(255,255,255,0.08)",
+
+      background:
+        "rgba(15,23,42,0.82)",
+
+      backdropFilter:
+        "blur(12px)",
+
+      color: "white",
+
+      fontSize: "22px",
+
+      cursor: "pointer",
+    }}
+  >
+    ❮
+  </button>
+)}
+{
+showLegend && (
+     <div
+  style={{
+    position: "absolute",
+
+    bottom: "22px",
+
+    right: "22px",
+
+    zIndex: 9999,
+
+    width: "320px",
+
+    background:
+      "linear-gradient(180deg,rgba(15,23,42,0.78),rgba(15,23,42,0.58))",
+
+    backdropFilter:
+      "blur(16px)",
+
+    border:
+      "1px solid rgba(255,255,255,0.12)",
+
+    borderRadius: "24px",
+
+    padding: "14px",
+
+    boxShadow:
+      "0 12px 35px rgba(0,0,0,0.5)",
+
+    color: "white",
+  }}
+>
+  <div
+    style={{
+      fontSize: "15px",
+fontWeight: 700,
+letterSpacing: "0.3px",
+fontFamily:
+  "'Inter', sans-serif",
+      marginBottom: "12px",
+    }}
+  >
+    <div
+  style={{
+    display: "flex",
+
+    justifyContent:
+      "space-between",
+
+    alignItems: "center",
+
+    marginBottom: "10px",
+  }}
+>
+  <div
+    style={{
+      fontSize: "15px",
+      fontWeight: 700,
+    }}
+  >
+  {currentLegend.title}
+  <div
+  style={{
+    width: "60px",
+    height: "3px",
+
+    borderRadius: "999px",
+
+    background:
+      "linear-gradient(90deg, #2563eb,#38bdf8)",
+
+    marginTop: "6px",
+    marginBottom: "10px",
+  }}
+/>  
+  </div>
+
+  <button
+    onClick={() =>
+      setShowLegend(false)
+    }
+    style={{
+  width: "38px",
+  height: "38px",
+
+  borderRadius: "12px",
+
+  border:
+    "1px solid rgba(255,255,255,0.08)",
+
+  background:
+    "rgba(255,255,255,0.08)",
+
+  color: "white",
+
+  fontSize: "22px",
+
+  cursor: "pointer",
+
+  display: "flex",
+
+  alignItems: "center",
+
+  justifyContent: "center",
+}}
+  >
+    ✕
+  </button>
 </div>
-          <br />
-<div>
-  <b>Location:</b>
+  </div>
 
-  <br />
+  <div
+    style={{
+      height: "18px",
 
-  {
-  stormAlert.location?.display_name
-  ||
-  `${stormAlert.lat.toFixed(2)}°N,
-    ${stormAlert.lon.toFixed(2)}°E`
+      borderRadius: "12px",
+
+      background:
+        currentGradient,
+
+      boxShadow:
+        "inset 0 0 10px rgba(255,255,255,0.25)",
+    }}
+  />
+
+  <div
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    marginTop: "8px",
+  }}
+>
+  {[...Array(6)].map((_, i) => (
+    <div
+      key={i}
+      style={{
+        width: "2px",
+        height: "10px",
+        background:
+          "rgba(255,255,255,0.8)",
+      }}
+    />
+  ))}
+</div>
+
+<div
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    marginTop: "6px",
+    fontSize: "11px",
+    fontWeight: 700,
+  }}
+>
+  <span>180</span>
+  <span>210</span>
+  <span>240</span>
+  <span>270</span>
+  <span>300</span>
+  <span>320</span>
+</div>
+
+  <div
+    style={{
+      marginTop: "10px",
+
+      fontSize: "10px",
+
+      color: "#cbd5e1",
+
+      display: "flex",
+
+      justifyContent:
+        "space-between",
+    }}
+  >
+    <span>
+  Severe Thunderstorms
+</span>
+
+<span>
+  Clear Sky / Surface
+</span>
+  </div>
+
+  <div
+    style={{
+      marginTop: "8px",
+
+      fontSize: "11px",
+
+      color: "#94a3b8",
+    }}
+  >
+    Palette: {palette}
+  </div>
+</div>       
+)
 }
-</div>
-
-<br />
-          <div>
-            <b>Possible Hazards</b>
-            <br />
-            • Lightning
-            <br />
-            • Heavy Rainfall
-            <br />
-            • Gusty Winds
-          </div>
-
-          <button
-            onClick={() =>
-              setStormAlert(null)
-            }
-            style={{
-              marginTop: 12,
-              padding: "8px 12px",
-              borderRadius: "8px",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            Dismiss
-          </button>
-        </div>
-      )}
-
     </div>
+    
   );
 }

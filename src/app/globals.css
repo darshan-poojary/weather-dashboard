@@ -486,3 +486,17 @@ input[type="range"]::-webkit-slider-thumb {
 .leaflet-tile {
   transition: opacity 180ms linear;
 }
+/* ── Cloud Cover Popup ──────────────────────── */
+.cloud-info-popup .leaflet-popup-content-wrapper {
+  background:    transparent !important;
+  border:        none        !important;
+  box-shadow:    none        !important;
+  padding:       0           !important;
+}
+.cloud-info-popup .leaflet-popup-content {
+  margin:  0 !important;
+  padding: 0 !important;
+}
+.cloud-info-popup .leaflet-popup-tip-container {
+  display: none !important;
+}
