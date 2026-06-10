@@ -93,15 +93,30 @@ download = requests.get(
     "https://mosdac.gov.in/download_api/download",
     headers={
         "Authorization":
-        f"Bearer {access_token}"
+        f"Bearer {access_token}",
+
+        "User-Agent":
+        "Mozilla/5.0",
+
+        "Accept":
+        "*/*",
+
+        "Referer":
+        "https://mosdac.gov.in/"
     },
     params={
-        "id": file_id
+        "fileId": file_id,
     },
-    stream=True,
 )
 
-download.raise_for_status()
+print("Status:", download.status_code)
+print("Headers:", download.headers)
+
+if download.status_code != 200:
+    print(download.text[:1000])
+    raise Exception(
+        f"Download failed: {download.status_code}"
+    )
 
 output_file = (
     DOWNLOAD_FOLDER
