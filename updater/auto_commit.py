@@ -31,7 +31,9 @@ subprocess.run([
     "commit",
     "-m",
     "Automatic weather update"
-])
+    ],
+    check=False
+)
 
 token = os.environ["GITHUB_TOKEN"]
 user = os.environ["GITHUB_USERNAME"]
