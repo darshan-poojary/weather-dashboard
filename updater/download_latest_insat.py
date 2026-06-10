@@ -108,8 +108,10 @@ output_file = (
     / filename
 )
 
+temp_file = str(output_file) + ".part"
+
 with open(
-    output_file,
+    temp_file,
     "wb"
 ) as f:
 
@@ -118,6 +120,13 @@ with open(
     ):
         if chunk:
             f.write(chunk)
+
+import os
+
+os.replace(
+    temp_file,
+    output_file
+)
 
 print(
     "Saved:",
