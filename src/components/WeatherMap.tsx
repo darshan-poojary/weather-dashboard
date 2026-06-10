@@ -353,6 +353,10 @@ const [
   setShowLegend,
 ] = useState(true);
 const [
+  showAlertLegend,
+  setShowAlertLegend,
+] = useState(true);
+const [
   showAlerts,
   setShowAlerts,
 ] = useState(true);
@@ -2466,14 +2470,15 @@ visibleThunderstorms.map(
       cloudPopup.lon
     ]}
       autoPan={true}
-      closeButton={true}
+      closeButton={false}
+  className="cloud-info-popup"
     >
     <div style={{
-      width:              "200px",
+      width:              "160px",
       background:         "rgba(10,16,30,0.97)",
       color:              "white",
-      padding:            "16px",
-      borderRadius:       "20px",
+      padding:            "8px",
+      borderRadius:       "14px",
       backdropFilter:     "blur(20px)",
       WebkitBackdropFilter: "blur(20px)",
       border:             "1px solid rgba(255,255,255,0.09)",
@@ -2523,7 +2528,7 @@ visibleThunderstorms.map(
         marginBottom:"8px",
       }}>
         <span style={{
-          fontSize:           "54px",
+          fontSize:           "32px",
           fontWeight:         800,
           lineHeight:         1,
           color:              ccToColor(cloudPopup.cloudCover),
@@ -2532,7 +2537,7 @@ visibleThunderstorms.map(
           {cloudPopup.cloudCover}
         </span>
         <span style={{
-          fontSize:     "22px",
+          fontSize:     "18px",
           fontWeight:   700,
           color:        "#475569",
           paddingBottom:"6px",
@@ -2544,36 +2549,14 @@ visibleThunderstorms.map(
         display:      "flex",
         alignItems:   "center",
         gap:          "7px",
-        marginBottom: "12px",
+        marginBottom: "8px",
       }}>
-        <span style={{ fontSize: "22px" }}>
+        <span style={{ fontSize: "18px" }}>
           {getSkyIcon(cloudPopup.cloudCover)}
         </span>
         <span style={{ fontSize: "13px", fontWeight: 600, color: "#e2e8f0" }}>
           {getCloudLabel(cloudPopup.cloudCover)}
         </span>
-      </div>
-
-      {/* ── COVER BAR ── */}
-      <div style={{
-        height:       "5px",
-        borderRadius: "999px",
-        background:   "rgba(255,255,255,0.07)",
-        overflow:     "hidden",
-        marginBottom: "12px",
-      }}>
-        <div style={{
-          height:     "100%",
-          width:      `${cloudPopup.cloudCover}%`,
-          borderRadius: "999px",
-          background:
-            cloudPopup.cloudCover > 75
-              ? "linear-gradient(90deg,#64748b,#94a3b8)"
-              : cloudPopup.cloudCover > 40
-              ? "linear-gradient(90deg,#3b82f6,#93c5fd)"
-              : "linear-gradient(90deg,#f59e0b,#fcd34d)",
-          transition: "width 0.4s ease",
-        }} />
       </div>
 
       {/* ── RAIN RISK ── */}
@@ -2625,6 +2608,236 @@ visibleThunderstorms.map(
           opacity={1}
         />
             </MapContainer>
+            {
+!showAlertLegend && (
+  <button
+    onClick={() =>
+      setShowAlertLegend(true)
+    }
+    style={{
+      position: "absolute",
+
+      bottom: 22,
+      left: 22,
+
+      zIndex: 9999,
+
+      width: "42px",
+      height: "42px",
+
+      borderRadius: "14px",
+
+      border:
+        "1px solid rgba(255,255,255,0.08)",
+
+      background:
+        "rgba(15,23,42,0.82)",
+
+      backdropFilter:
+        "blur(12px)",
+
+      color: "white",
+
+      fontSize: "22px",
+
+      cursor: "pointer",
+
+      boxShadow:
+        "0 8px 20px rgba(0,0,0,0.4)",
+    }}
+  >
+    ❯
+  </button>
+)}
+  {
+showAlertLegend && (     
+       <div
+  style={{
+    position: "absolute",
+    bottom: "22px",
+    left: "22px",
+
+    zIndex: 9999,
+
+    background:
+      "linear-gradient(180deg,rgba(15,23,42,0.78),rgba(15,23,42,0.58))",
+
+    backdropFilter: "blur(16px)",
+
+    border:
+      "1px solid rgba(255,255,255,0.12)",
+
+    borderRadius: "18px",
+
+    padding: "12px",
+
+    color: "white",
+
+    minWidth: "190px",
+
+    boxShadow:
+      "0 10px 25px rgba(0,0,0,0.45)",
+
+    fontFamily:
+      "'Inter', sans-serif",
+  }}
+>
+  <div
+  style={{
+    display: "flex",
+    justifyContent:
+      "space-between",
+    alignItems: "center",
+    marginBottom: "10px",
+  }}
+>
+  <div
+    style={{
+      fontSize: "14px",
+      fontWeight: 700,
+    }}
+  >
+    Weather Alerts
+  </div>
+
+  <button
+    onClick={() =>
+      setShowAlertLegend(false)
+    }
+    style={{
+      width: "30px",
+      height: "30px",
+
+      borderRadius: "10px",
+
+      border:
+        "1px solid rgba(255,255,255,0.08)",
+
+      background:
+        "rgba(255,255,255,0.08)",
+
+      color: "white",
+
+      fontSize: "18px",
+
+      cursor: "pointer",
+
+      display: "flex",
+
+      alignItems: "center",
+
+      justifyContent:
+        "center",
+    }}
+  >
+    ❮
+  </button>
+</div>
+
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+      marginBottom: "8px",
+    }}
+  >
+    <span style={{ fontSize: "18px" }}>
+      🌧️
+    </span>
+
+    <div>
+      <div
+        style={{
+          fontSize: "12px",
+          fontWeight: 600,
+        }}
+      >
+        Heavy Rain
+      </div>
+
+      <div
+        style={{
+          fontSize: "10px",
+          color: "#94a3b8",
+        }}
+      >
+        Forecast rainfall alert
+      </div>
+    </div>
+  </div>
+
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+      marginBottom: "8px",
+    }}
+  >
+    <span style={{ fontSize: "18px" }}>
+      ☔
+    </span>
+
+    <div>
+      <div
+        style={{
+          fontSize: "12px",
+          fontWeight: 600,
+        }}
+      >
+        Nowcast Rain
+      </div>
+
+      <div
+        style={{
+          fontSize: "10px",
+          color: "#94a3b8",
+        }}
+      >
+        Expected within 6 hours
+      </div>
+    </div>
+  </div>
+
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+    }}
+  >
+    <span
+      style={{
+        fontSize: "18px",
+        color: "#facc15",
+      }}
+    >
+      ⚡
+    </span>
+
+    <div>
+      <div
+        style={{
+          fontSize: "12px",
+          fontWeight: 600,
+        }}
+      >
+        Thunderstorm
+      </div>
+
+      <div
+        style={{
+          fontSize: "10px",
+          color: "#94a3b8",
+        }}
+      >
+        Deep convective cloud cell
+      </div>
+    </div>
+  </div>
+</div>
+)}
             {
 !showLegend && (
   <button
