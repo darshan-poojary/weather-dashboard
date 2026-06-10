@@ -6,7 +6,7 @@ while True:
     print("\nUpdating thunderstorms...\n")
 
     subprocess.run(
-        ["python", "update_thunderstorms.py"]
+        ["python", "updater/update_thunderstorms.py"]
     )
 
     print(
