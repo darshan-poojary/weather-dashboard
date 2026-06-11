@@ -18,7 +18,7 @@ export async function GET() {
       JSON.parse(data)
     );
 
-  } catch (error) {
+  } catch {
 
     return Response.json(
       [],

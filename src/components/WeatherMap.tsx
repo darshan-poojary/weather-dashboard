@@ -2,148 +2,99 @@
 
 import dynamic from "next/dynamic";
 
-import type * as LeafletType
-  from "leaflet";
-
+import type { ComponentType } from "react";
 import {
   Fragment,
+  useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
-const Leaflet =
-  typeof window !==
-  "undefined"
-    ? require("leaflet")
-    : null;
+type GeoJsonObject = unknown;
 
-const MapContainer = dynamic(
-  async () => {
-    const mod = await import(
-      "react-leaflet"
-    );
+type MosdacAlertFeatureProperties = {
+  name?: string;
+  value?: string;
+  rad_inf?: string;
+  event_date?: string;
+  forecast_date?: string;
+  event_time?: string;
+  forecast_time?: string;
+  forecast?: string;
+  [key: string]: unknown;
+};
 
-    return mod.MapContainer;
-  },
-  { ssr: false }
-);
+type MosdacAlertFeature = {
+  geometry?: { coordinates?: [number, number] };
+  properties?: MosdacAlertFeatureProperties;
+  [key: string]: unknown;
+};
 
-const TileLayer = dynamic(
-  async () => {
-    const mod = await import(
-      "react-leaflet"
-    );
+type CloudPoint = {
+  gridLat: number;
+  gridLon: number;
+  cloudCover: number;
+  temp: number;
+  [key: string]: unknown;
+};
 
-    return mod.TileLayer;
-  },
-  { ssr: false }
-);
+type ThunderstormCell = {
+  lat: number;
+  lon: number;
+  temp: number;
+  count: number;
+  severity: string;
+  [key: string]: unknown;
+};
 
-const WMSTileLayer = dynamic(
-  async () => {
-    const mod = await import(
-      "react-leaflet"
-    );
+type CloudPopup = {
+  lat: number;
+  lon: number;
+  cloudCover: number;
+  temp: number;
+};
 
-    return mod.WMSTileLayer;
-  },
-  { ssr: false }
-);
+type WeatherChannel =
+  | "IMG_TIR1"
+  | "IMG_TIR2"
+  | "IMG_MIR";
 
-const GeoJSON = dynamic(
-  async () => {
-    const mod = await import(
-      "react-leaflet"
-    );
+type Palette =
+  | "greyscale"
+  | "rainbow"
+  | "redblue"
+  | "ferret";
 
-    return mod.GeoJSON;
-  },
-  { ssr: false }
-);
+const loadLeafletComponent = <T extends ComponentType<Record<string, unknown>>>(
+  name: string
+) =>
+  dynamic(async () => {
+    const mod = await import("react-leaflet");
+    return (mod as unknown as Record<string, T>)[name];
+  }, { ssr: false }) as T;
 
-const Circle = dynamic(
-  async () => {
-    const mod =
-      await import(
-        "react-leaflet"
-      );
-
-    return mod.Circle;
-  },
-  { ssr: false }
-);
-
-const Marker = dynamic(
-  async () => {
-    const mod =
-      await import(
-        "react-leaflet"
-      );
-
-    return mod.Marker;
-  },
-  { ssr: false }
-);
-
-const Popup = dynamic(
-  async () => {
-    const mod =
-      await import(
-        "react-leaflet"
-      );
-
-    return mod.Popup;
-  },
-  { ssr: false }
-);
+const MapContainer = loadLeafletComponent("MapContainer");
+const TileLayer = loadLeafletComponent("TileLayer");
+const WMSTileLayer = loadLeafletComponent("WMSTileLayer");
+const GeoJSON = loadLeafletComponent("GeoJSON");
+const Circle = loadLeafletComponent("Circle");
+const Marker = loadLeafletComponent("Marker");
+const Popup = loadLeafletComponent("Popup");
 
 const MapEvents = dynamic(
   async () => {
-    const mod =
-      await import(
-        "react-leaflet"
-      );
+    const mod = await import("react-leaflet");
 
     return function Events({
       setZoom,
-    }: any) {
-      const map =
-        mod.useMapEvents({
-          zoomend() {
-            setZoom(
-              map.getZoom()
-            );
-          },
-        });
-
-      return null;
-    };
-  },
-  { ssr: false }
-);
-const MapClickHandler = dynamic(
-  async () => {
-    const mod =
-      await import(
-        "react-leaflet"
-      );
-
-    return function ClickHandler(
-      props: any
-    ) {
-
-      mod.useMapEvents({
-        click: (e) => {
-          console.log(
-            "Map click",
-            e.latlng
-          );
-
-          props.onClick(
-            e.latlng.lat,
-            e.latlng.lng
-          );
+    }: {
+      setZoom: (zoom: number) => void;
+    }) {
+      const map = mod.useMapEvents({
+        zoomend() {
+          setZoom(map.getZoom());
         },
       });
 
@@ -152,6 +103,28 @@ const MapClickHandler = dynamic(
   },
   { ssr: false }
 );
+
+const MapClickHandler = dynamic(
+  async () => {
+    const mod = await import("react-leaflet");
+
+    return function ClickHandler(
+      props: {
+        onClick: (lat: number, lon: number) => void;
+      }
+    ) {
+      mod.useMapEvents({
+        click: (e) => {
+          props.onClick(e.latlng.lat, e.latlng.lng);
+        },
+      });
+
+      return null;
+    };
+  },
+  { ssr: false }
+);
+
 const CHANNELS = [
   {
     label: "TIR1",
@@ -167,15 +140,22 @@ const CHANNELS = [
     label: "MIR",
     layer: "IMG_MIR",
   },
-];
+] as const;
 
 const PALETTES = [
   "greyscale",
   "rainbow",
   "redblue",
   "ferret",
-];
-const LEGENDS = {
+] as const;
+
+const MODES = [
+  "LIVE",
+  "HISTORY",
+  "ANIMATION",
+] as const;
+
+const LEGENDS: Record<WeatherChannel, { title: string; min: string; max: string }> = {
   IMG_TIR1: {
     title: "Cloud Top Temperature (K)",
     min: "180",
@@ -195,7 +175,7 @@ const LEGENDS = {
   },
 };
 
-const PALETTE_GRADIENTS = {
+const PALETTE_GRADIENTS: Record<Palette, string> = {
   greyscale:
     "linear-gradient(to right,#ffffff,#d9d9d9,#a6a6a6,#737373,#404040,#000000)",
 
@@ -206,74 +186,54 @@ const PALETTE_GRADIENTS = {
     "linear-gradient(to right,#ff0000,#ff8080,#ffffff,#80bfff,#0066ff)",
 
   ferret:
-  "linear-gradient(to left,#c94cff,#8b5cf6,#3b82f6,#22d3ee,#22c55e,#ffff00,#ff9800,#ff0000)",
+    "linear-gradient(to left,#c94cff,#8b5cf6,#3b82f6,#22d3ee,#22c55e,#ffff00,#ff9800,#ff0000)",
 };
 
-const blueRainIcon =
-  typeof window !==
-  "undefined"
-    ? new Leaflet.DivIcon({
-        className:
-          "weather-alert-icon",
+function createDivIcon(
+  leaflet: typeof import("leaflet"),
+  html: string,
+  iconSize: [number, number],
+  iconAnchor: [number, number]
+) {
+  return new leaflet.DivIcon({
+    className: "weather-alert-icon",
+    html,
+    iconSize,
+    iconAnchor,
+  });
+}
 
-        html: `
+function createThunderstormIcon(
+  leaflet: typeof import("leaflet"),
+  cell: ThunderstormCell,
+  zoom: number
+) {
+  const fontSize =
+    zoom >= 9
+      ? Math.min(22 + cell.count / 60, 65)
+      : zoom >= 6
+      ? Math.min(18 + cell.count / 80, 50)
+      : 14;
+
+  const color =
+    cell.temp < 190 ? "red" : cell.temp < 195 ? "orange" : "yellow";
+
+  return new leaflet.DivIcon({
+    className: "",
+    html: `
 <div style="
-font-size:20px;
-filter:drop-shadow(0 0 2px black);
+  font-size:${fontSize}px;
+  color:${color};
+  text-shadow:
+    0 0 5px black,
+    0 0 10px black;
 ">
-🌧️
+&#9889;
 </div>
-        `,
-
-        iconSize: [14, 14],
-
-        iconAnchor: [7, 7],
-      })
-    : undefined;
-
-const cloudburstIcon =
-  typeof window !==
-  "undefined"
-    ? new Leaflet.DivIcon({
-        className:
-          "weather-alert-icon",
-
-        html: `
-          <div style="
-font-size:20px;
-filter:drop-shadow(0 0 3px black);
-">
-⛈️
-</div>
-        `,
-
-        iconSize: [18, 18],
-
-        iconAnchor: [9, 9],
-      })
-    : undefined;
-
-const nowcastRainIcon =
-  typeof window !==
-  "undefined"
-    ? new Leaflet.DivIcon({
-        className:
-          "weather-alert-icon",
-
-        html: `
-<div style="
-font-size:20px;
-filter:drop-shadow(0 0 2px black);
-">
-☔
-</div>
-        `,
-
-        iconSize: [14,14],
-
-        iconAnchor: [7,7],
-      })
-    : undefined;    
+`,
+    iconSize: [40, 40],
+  });
+}
 // ── Cloud Cover Helpers ───────────────────────────────────────
 
 function getSkyIcon(cc: number): string {
@@ -317,10 +277,10 @@ export default function WeatherMap() {
     useState(0.7);
 
   const [channel, setChannel] =
-    useState("IMG_TIR1");
+    useState<WeatherChannel>("IMG_TIR1");
 
   const [palette, setPalette] =
-    useState("greyscale");
+    useState<Palette>("greyscale");
 
   const [date, setDate] =
     useState("");
@@ -335,7 +295,7 @@ export default function WeatherMap() {
     useState(4000);
 
   const [mode, setMode] =
-    useState("LIVE");
+    useState<"LIVE" | "HISTORY" | "ANIMATION">("LIVE");
 
   const [showOverlay, setShowOverlay] =
     useState(true);
@@ -366,36 +326,117 @@ const [
   setShowThunderstorms,
 ] = useState(true);
 
+const [leaflet, setLeaflet] = useState<
+  typeof import("leaflet") | null
+>(null);
+
+useEffect(() => {
+  let mounted = true;
+
+  import("leaflet")
+    .then((L) => {
+      if (mounted) setLeaflet(L);
+    })
+    .catch((error) => {
+      console.error("Leaflet import failed:", error);
+    });
+
+  return () => {
+    mounted = false;
+  };
+}, []);
+
+const {
+  blueRainIcon,
+  cloudburstIcon,
+  nowcastRainIcon,
+} = useMemo(() => {
+  if (!leaflet) {
+    return {
+      blueRainIcon: undefined,
+      cloudburstIcon: undefined,
+      nowcastRainIcon: undefined,
+    };
+  }
+
+  return {
+    blueRainIcon: createDivIcon(
+      leaflet,
+      `<div style="font-size:20px;filter:drop-shadow(0 0 2px black);">🌧️</div>`,
+      [14, 14],
+      [7, 7]
+    ),
+    cloudburstIcon: createDivIcon(
+      leaflet,
+      `<div style="font-size:20px;filter:drop-shadow(0 0 3px black);">⛈️</div>`,
+      [18, 18],
+      [9, 9]
+    ),
+    nowcastRainIcon: createDivIcon(
+      leaflet,
+      `<div style="font-size:20px;filter:drop-shadow(0 0 2px black);">☔</div>`,
+      [14, 14],
+      [7, 7]
+    ),
+  };
+}, [leaflet]);
+
 const [statesGeoJson, setStatesGeoJson] =
-  useState(null);
+  useState<GeoJsonObject | null>(null);
 
 const [districtGeoJson, setDistrictGeoJson] =
-  useState(null);
+  useState<GeoJsonObject | null>(null);
 
 const [
   thunderstormCells,
-  setThunderstormCells
-] = useState<any[]>([]);  
+  setThunderstormCells,
+] = useState<ThunderstormCell[]>([]);
  
 const [
   cloudPoints,
   setCloudPoints,
-] = useState<any[]>([]);
+] = useState<CloudPoint[]>([]);
 
 const [
   cloudPopup,
   setCloudPopup,
-] = useState<any>(null);
+] = useState<CloudPopup | null>(null);
 
   // NEW FRAME SYSTEM
 
-  const [frames, setFrames] =
-    useState<string[]>([]);
+  const frames = useMemo(() => {
+    const now = new Date();
+
+    const current = new Date(now);
+    current.setUTCMinutes(
+      Math.floor(current.getUTCMinutes() / 15) * 15
+    );
+    current.setUTCSeconds(0);
+    current.setUTCMilliseconds(0);
+
+    // IMPORTANT:
+    // latest valid slot
+    current.setUTCMinutes(current.getUTCMinutes() - 60);
+    current.setUTCMinutes(
+      Math.floor(current.getUTCMinutes() / 15) * 15
+    );
+    current.setUTCSeconds(0);
+    current.setUTCMilliseconds(0);
+
+    return Array.from({ length: 25 }, (_, index) => {
+      const frame = new Date(current);
+      frame.setTime(
+        current.getTime() -
+          (24 - index) * 15 * 60 * 1000
+      );
+      return frame.toISOString();
+    });
+  }, []);
 
   const [currentFrame, setCurrentFrame] =
-    useState(0);
+    useState(frames.length - 1);
   const [displayFrame, setDisplayFrame] =
-  useState(0);
+    useState(frames.length - 1);
 
   const [frameLoading, setFrameLoading] =
   useState(false);
@@ -404,13 +445,10 @@ const [
     const [
   mosdacAlerts,
   setMosdacAlerts,
-] = useState<any[]>([]);
+] = useState<MosdacAlertFeature[]>([]);
 
  const loadedFrames =
-  useMemo(
-    () => new Set<string>(),
-    []
-  );
+  useRef(new Set<string>());
 
 useEffect(() => {
   const checkMobile = () => {
@@ -451,90 +489,6 @@ useEffect(() => {
       setDistrictGeoJson(data);
     });
 }, []);
-
-  // GENERATE LIVE FRAMES
-
-  useEffect(() => {
-    const now =
-      new Date();
-
-    const generatedFrames =
-      [];
-
-    const current =
-      new Date(now);
-
-      current.setUTCMinutes(
-  Math.floor(
-    current.getUTCMinutes() /
-      15
-  ) * 15
-);
-
-current.setUTCSeconds(0);
-
-current.setUTCMilliseconds(
-  0
-);
-
-// IMPORTANT:
-// latest valid slot
-
-current.setUTCMinutes(
-  current.getUTCMinutes() -
-    60
-);
-
-    current.setUTCMinutes(
-      Math.floor(
-        current.getUTCMinutes() /
-          15
-      ) * 15
-    );
-
-    current.setUTCSeconds(0);
-
-    current.setUTCMilliseconds(0);
-
-    // LAST 6 HOURS
-
-    for (
-      let i = 24;
-      i >= 0;
-      i--
-    ) {
-      const frame =
-        new Date(current);
-
-      frame.setTime(
-  current.getTime() -
-    i *
-      15 *
-      60 *
-      1000
-);
-
-      generatedFrames.push(
-        frame.toISOString()
-      );
-    }
-
-    setFrames(
-      generatedFrames
-    );
-
-    const latestFrame =
-  generatedFrames.length - 1;
-
-setCurrentFrame(
-  latestFrame
-);
-
-setDisplayFrame(
-  latestFrame
-);
-
-  }, []);
 
   // PLAYBACK LOOP
 
@@ -596,7 +550,7 @@ useEffect(() => {
   isPlaying,
   speed,
   currentFrame,
-  frames.length,
+  frames,
   frameLoading,
   channel,
   palette,
@@ -663,26 +617,23 @@ const parsed =
     );
 }, []);
 
-const preloadFrame = (
-  frame: string
-) => {
+const preloadFrame = useCallback(
+  (frame: string) => {
+    if (loadedFrames.current.has(frame)) {
+      return;
+    }
 
-  if (
-    loadedFrames.has(frame)
-  ) {
-    return;
-  }
+    const img = new Image();
 
-  const img =
-    new Image();
+    img.onload = () => {
+      loadedFrames.current.add(frame);
+    };
 
-  img.onload = () => {
-    loadedFrames.add(frame);
-  };
-
-  img.src =
-    `/api/mosdac-wms?datetime=${frame}&layers=${channel}&styles=boxfill/${palette}`;
-};
+    img.src =
+      `/api/mosdac-wms?datetime=${frame}&layers=${channel}&styles=boxfill/${palette}`;
+  },
+  [channel, palette]
+);
 useEffect(() => {
 
   if (
@@ -715,8 +666,7 @@ useEffect(() => {
 }, [
   currentFrame,
   frames,
-  channel,
-  palette,
+  preloadFrame,
 ]);
 
 useEffect(() => {
@@ -774,20 +724,21 @@ console.log(
 };
   loadStorms();
   loadCloudData();
-  const interval =
+  const stormInterval =
     setInterval(
       loadStorms,
       1800000
     );
+  const cloudInterval =
     setInterval(
-  loadCloudData,
-  1800000
-);
-
-  return () =>
-    clearInterval(
-      interval
+      loadCloudData,
+      1800000
     );
+
+  return () => {
+    clearInterval(stormInterval);
+    clearInterval(cloudInterval);
+  };
 
 }, []);
   // HISTORY MODE
@@ -916,88 +867,51 @@ if (
     formatAnimationDate(
       utcDatetime
     );
-const filteredAlerts =
-  useMemo(() => {
+const filteredAlerts = useMemo(() => {
+  return mosdacAlerts.filter((feature, index, self) => {
+    const coords = feature.geometry?.coordinates;
 
-    return mosdacAlerts
-      .filter(
-        (
-          feature,
-          index,
-          self
-        ) => {
+    // If no coordinates, skip
+    if (!coords) return false;
 
-          const coords =
-            feature.geometry
-              ?.coordinates;
+    // Prefer properties.forecast to detect cloudburst alerts
+    const props = (feature.properties || feature) as MosdacAlertFeatureProperties;
+    const forecast = (props.forecast || "").toString().toLowerCase();
 
-          if (!coords)
-            return false;
+    // Always keep cloudburst/"cloud" alerts
+    if (forecast.includes("cloud")) return true;
 
-          const [lng, lat] =
-            coords;
+    const [lng, lat] = coords;
 
-          return !self.some(
-            (
-              other,
-              otherIndex
-            ) => {
+    return !self.some((other, otherIndex) => {
+      if (index === otherIndex) return false;
 
-              if (
-                index ===
-                otherIndex
-              )
-                return false;
+      const otherCoords = other.geometry?.coordinates;
+      if (!otherCoords) return false;
 
-              const otherCoords =
-                other.geometry
-                  ?.coordinates;
+      const [otherLng, otherLat] = otherCoords;
 
-              if (
-                !otherCoords
-              )
-                return false;
-
-              const [
-                otherLng,
-                otherLat,
-              ] = otherCoords;
-
-              const distance =
-                Math.sqrt(
-                  Math.pow(
-                    lat -
-                      otherLat,
-                    2
-                  ) +
-                    Math.pow(
-                      lng -
-                        otherLng,
-                      2
-                    )
-                );
-
-              const minDistance =
-  zoom >= 9 ? 0.08 :
-  zoom >= 8 ? 0.15 :
-  zoom >= 7 ? 0.25 :
-  zoom >= 6 ? 0.45 :
-  zoom >= 5 ? 0.8 :
-  1.2;
-
-return (
-  distance < minDistance &&
-  otherIndex < index
-);
-            }
-          );
-        }
+      const distance = Math.sqrt(
+        Math.pow(lat - otherLat, 2) + Math.pow(lng - otherLng, 2)
       );
 
-  }, [
-    mosdacAlerts,
-    zoom
-  ]);
+      const minDistance =
+        zoom >= 9
+          ? 0.08
+          : zoom >= 8
+          ? 0.15
+          : zoom >= 7
+          ? 0.25
+          : zoom >= 6
+          ? 0.45
+          : zoom >= 5
+          ? 0.8
+          : 1.2;
+
+      return distance < minDistance && otherIndex < index;
+    });
+  });
+}, [mosdacAlerts, zoom]);
 
   const currentLegend =
   LEGENDS[
@@ -1025,83 +939,54 @@ const visibleThunderstorms =
       return false;
     }
   );
-const handleMapClick = (
-  clickLat: number,
-  clickLon: number
-) => {
+const GRID_DEG = 12 / 111;
 
-  if (
-    cloudPoints.length === 0
-  )
-    return;
+const handleMapClick = useCallback(
+  (clickLat: number, clickLon: number) => {
+    if (cloudPoints.length === 0) {
+      return;
+    }
 
-  const GRID_DEG =
-    12 / 111;
+    const gridLat =
+      Math.round(clickLat / GRID_DEG) *
+      GRID_DEG;
 
-  const gridLat =
-    Math.round(
-      clickLat /
-      GRID_DEG
-    ) * GRID_DEG;
+    const gridLon =
+      Math.round(clickLon / GRID_DEG) *
+      GRID_DEG;
 
-  const gridLon =
-    Math.round(
-      clickLon /
-      GRID_DEG
-    ) * GRID_DEG;
+    const cell =
+      cloudPoints.reduce(
+        (best, p) => {
+          const dist =
+            Math.abs(p.gridLat - gridLat) +
+            Math.abs(p.gridLon - gridLon);
 
-  const cell =
-  cloudPoints.reduce(
-    (best, p) => {
+          if (!best || dist < best.dist) {
+            return {
+              dist,
+              point: p,
+            };
+          }
 
-      const dist =
-        Math.abs(
-          p.gridLat -
-          gridLat
-        ) +
-        Math.abs(
-          p.gridLon -
-          gridLon
-        );
+          return best;
+        },
+        null as { dist: number; point: CloudPoint } | null
+      )?.point;
 
-      if (
-        !best ||
-        dist < best.dist
-      ) {
-        return {
-          dist,
-          point: p,
-        };
-      }
+    if (!cell) {
+      return;
+    }
 
-      return best;
-    },
-    null
-  )?.point;
-  if (!cell)
-    return;
-console.log(
-  "Grid found:",
-  cell
+    setCloudPopup({
+      lat: clickLat,
+      lon: clickLon,
+      cloudCover: cell.cloudCover,
+      temp: cell.temp,
+    });
+  },
+  [cloudPoints, GRID_DEG]
 );
-console.log(
-  "Clicked:",
-  clickLat,
-  clickLon
-);
-  setCloudPopup({
-
-    lat: clickLat,
-
-    lon: clickLon,
-
-    cloudCover:
-      cell.cloudCover,
-
-    temp:
-      cell.temp,
-  });
-};
   return (
     <div
       style={{
@@ -1277,11 +1162,7 @@ width: isMobile ? "calc(100vw - 24px)" : "340px",
             marginBottom: "14px",
           }}
         >
-          {[
-            "LIVE",
-            "HISTORY",
-            "ANIMATION",
-          ].map((item) => (
+          {MODES.map((item) => (
             <button
               key={item}
               onClick={() => {
@@ -1360,7 +1241,7 @@ width: isMobile ? "calc(100vw - 24px)" : "340px",
           value={channel}
           onChange={(e) =>
             setChannel(
-              e.target.value
+              e.target.value as WeatherChannel
             )
           }
           style={{
@@ -1419,7 +1300,7 @@ width: isMobile ? "calc(100vw - 24px)" : "340px",
           value={palette}
           onChange={(e) =>
             setPalette(
-              e.target.value
+              e.target.value as Palette
             )
           }
           style={{
@@ -1891,7 +1772,7 @@ key="weather-map"
 {statesGeoJson && (
   <GeoJSON
     data={
-      statesGeoJson as any
+      statesGeoJson as object
     }
 
 interactive={false}
@@ -1922,7 +1803,7 @@ interactive={false}
   districtGeoJson && (
     <GeoJSON
       data={
-        districtGeoJson as any
+        districtGeoJson as object
       }
       interactive= {false}
       style={() => ({
@@ -2001,17 +1882,10 @@ filteredAlerts
           coords[1];
 
         const props =
-          feature.properties ||
-          feature ||
-          {};
+          (feature.properties || feature) as MosdacAlertFeatureProperties;
           
         const alertName =
   props.name || "";
-
-const alertValue =
-  props.value ||
-  props.rad_inf ||
-  "";
 
 const alertDate =
   props.event_date ||
@@ -2056,10 +1930,11 @@ const showMarker =
     : zoom >= 6
     ? true
     : zoom >= 5
-    ? index % 2 === 0
-    : index % 2 === 0;
+    ? index % 1 === 0
+    : index % 1 === 0;
 
-        if (!showMarker) return null;
+if (!isCloudburst && !showMarker)
+  return null;
 
 return (
   <Fragment
@@ -2202,12 +2077,12 @@ return (
   ]}
  radius={
   zoom >= 7
-    ? radiusKm * 1200
+    ? radiusKm * 1000
     : zoom >= 5
-    ? radiusKm * 1600
+    ? radiusKm * 1200
     : zoom >= 3
-    ? radiusKm * 2200
-    : radiusKm * 3000
+    ? radiusKm * 1500
+    : radiusKm * 1800
 }
   pathOptions={{
     color: "#ffe600",
@@ -2387,42 +2262,13 @@ visibleThunderstorms.map(
         cell.lon,
       ]}
       icon={
-  new Leaflet.DivIcon({
-    className: "",
-   html: `
-<div style="
-  font-size:${
-  zoom >= 9
-    ? Math.min(
-        22 + cell.count / 60,
-        65
-      )
-
-    : zoom >= 6
-    ? Math.min(
-        18 + cell.count / 80,
-        50
-      )
-
-    : 14
-}px;
-  color:${
-    cell.temp < 190
-      ? 'red'
-      : cell.temp < 195
-      ? 'orange'
-      : 'yellow'
-  };
-
-  text-shadow:
-    0 0 5px black,
-    0 0 10px black;
-">
-&#9889;
-</div>
-`,
-    iconSize: [40, 40],
-  })
+        leaflet
+          ? createThunderstormIcon(
+              leaflet,
+              cell,
+              zoom
+            )
+          : undefined
       }
     >
       <Popup>
