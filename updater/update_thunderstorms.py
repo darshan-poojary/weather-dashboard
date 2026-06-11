@@ -1,26 +1,25 @@
-import subprocess
+﻿import subprocess
+import sys
 from pathlib import Path
 
-script_dir = Path(__file__).resolve().parent
+ROOT_DIR = Path(__file__).resolve().parent.parent
+SCRIPT_DIR = ROOT_DIR / "updater"
 
-print("Downloading latest INSAT...")
 
-result = subprocess.run([
-    "python",
-    str(script_dir / "download_latest_insat.py")
-])
+def run_script(script_path: Path) -> None:
+    print(f"Running: {script_path.name}")
+    subprocess.run([sys.executable, str(script_path)], check=True)
 
-if result.returncode != 0:
-    print(
-        "Download failed. Stopping."
-    )
-    exit(1)
 
-print("Generating thunderstorm alerts...")
+def main() -> None:
+    print("Downloading latest INSAT...")
+    run_script(SCRIPT_DIR / "download_latest_insat.py")
 
-subprocess.run([
-    "python",
-    str(script_dir / "convert_h5_to_png.py")
-])
+    print("Generating thunderstorm alerts...")
+    run_script(SCRIPT_DIR / "convert_h5_to_png.py")
 
-print("Done")
+    print("Done")
+
+
+if __name__ == "__main__":
+    main()
