@@ -1846,7 +1846,7 @@ interactive={false}
 
   version="1.3.0"
 
-  keepBuffer={12}
+  keepBuffer={4}
 
   updateWhenIdle={false}
   updateWhenZooming={false}
