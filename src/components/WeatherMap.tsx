@@ -8,7 +8,6 @@ import type {
   CloudPopup,
   GeoJsonObject,
   MosdacAlertFeature,
-  MosdacAlertFeatureProperties,
   ThunderstormCell,
   Palette,
   WeatherChannel,
@@ -19,10 +18,11 @@ import {
   LEGENDS,
   PALETTE_GRADIENTS,
 } from "./weatherMapConfig";
-import { createDivIcon } from "./weatherMapHelpers";
+import { createDivIcon, createThunderstormIcon } from "./weatherMapHelpers";
+import type { MosdacAlertFeatureProperties } from "./weatherMapTypes";
+import { snapToSlotDate } from "../lib/mosdac";
 import WeatherMapControls from "./WeatherMapControls";
 import WeatherMapLegend from "./WeatherMapLegend";
-import WeatherMapAlertLayer from "./WeatherMapAlertLayer";
 import WeatherMapCloudPopup from "./WeatherMapCloudPopup";
 
 const loadLeafletComponent = <T extends ComponentType<Record<string, unknown>>>(name: string) =>
@@ -35,18 +35,27 @@ const MapContainer = loadLeafletComponent("MapContainer");
 const TileLayer = loadLeafletComponent("TileLayer");
 const WMSTileLayer = loadLeafletComponent("WMSTileLayer");
 const GeoJSON = loadLeafletComponent("GeoJSON");
-const Circle = loadLeafletComponent("Circle");
-const Marker = loadLeafletComponent("Marker");
 const Popup = loadLeafletComponent("Popup");
 
 const MapEvents = dynamic(
   async () => {
     const mod = await import("react-leaflet");
 
-    return function Events({ setZoom }: { setZoom: (zoom: number) => void }) {
+    return function Events({
+      onView,
+    }: {
+      onView: (zoom: number, bounds: [number, number, number, number]) => void;
+    }) {
+      const report = (map: import("leaflet").Map) => {
+        const b = map.getBounds().pad(0.25);
+        onView(map.getZoom(), [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]);
+      };
       const map = mod.useMapEvents({
         zoomend() {
-          setZoom(map.getZoom());
+          report(map);
+        },
+        moveend() {
+          report(map);
         },
       });
 
@@ -73,6 +82,164 @@ const MapClickHandler = dynamic(
   { ssr: false }
 );
 
+// Imperative alert + thunderstorm layer. Building Leaflet markers/circles/popups
+// directly (instead of hundreds of react-leaflet <Marker>/<Popup> components)
+// removes the per-marker React reconciliation and eager popup DOM that made
+// zoom/pan janky. Popups are bound lazily so their HTML is built only on open.
+const AlertLayer = dynamic(
+  async () => {
+    const mod = await import("react-leaflet");
+    const L = await import("leaflet");
+
+    const rainIcon = createDivIcon(
+      L,
+      `<div style="font-size:15px;line-height:15px;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.7));">🌧️</div>`,
+      [15, 15],
+      [7.5, 7.5]
+    );
+    const nowcastIcon = createDivIcon(
+      L,
+      `<div style="font-size:15px;line-height:15px;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.7));">☔</div>`,
+      [15, 15],
+      [7.5, 7.5]
+    );
+    const cloudburstIcon = createDivIcon(
+      L,
+      `<div style="font-size:17px;line-height:17px;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.75));">⛈️</div>`,
+      [17, 17],
+      [8.5, 8.5]
+    );
+
+    const card = (inner: string) =>
+      `<div style="min-width:186px;font-family:var(--font-inter),sans-serif;color:#fff;line-height:1.55">${inner}</div>`;
+    const row = (label: string, value: string) =>
+      `<div style="margin-top:8px;font-size:12px;color:#cbd5e1"><b style="color:#fff">${label}</b><br/>${value}</div>`;
+    const heading = (accent: string, text: string) =>
+      `<div style="display:flex;align-items:center;gap:8px;font-weight:800;font-size:13px;letter-spacing:.4px;margin-bottom:6px"><span style="width:8px;height:8px;border-radius:50%;background:${accent};box-shadow:0 0 8px ${accent}"></span>${text}</div>`;
+
+    return function AlertLayerInner({
+      alerts,
+      storms,
+      zoom,
+      showAlerts,
+      showThunderstorms,
+    }: {
+      alerts: MosdacAlertFeature[];
+      storms: ThunderstormCell[];
+      zoom: number;
+      showAlerts: boolean;
+      showThunderstorms: boolean;
+    }) {
+      const map = mod.useMap();
+
+      // Rain / nowcast / cloudburst markers — rebuild when the on-screen set
+      // changes (pan / zoom / data), which is cheap because it's viewport-culled.
+      useEffect(() => {
+        if (!showAlerts) return;
+        const group = L.layerGroup();
+
+        for (const feature of alerts) {
+          const coords = feature.geometry?.coordinates;
+          if (!coords) continue;
+          const [lng, lat] = coords;
+          const props = (feature.properties || feature) as MosdacAlertFeatureProperties;
+          const forecast = (props.forecast || "").toString().toLowerCase();
+          const isCloudburst = forecast.includes("cloud");
+          const isCurrentRain = !!props.value;
+          const radiusKm = parseFloat(props.rad_inf || "0");
+
+          if (!isCurrentRain && radiusKm > 0) {
+            L.circle([lat, lng], {
+              radius: radiusKm * 1000,
+              interactive: false,
+              color: isCloudburst ? "#fb923c" : "#facc15",
+              weight: 1.3,
+              opacity: 0.7,
+              fillColor: isCloudburst ? "#fb923c" : "#facc15",
+              fillOpacity: 0.05,
+            }).addTo(group);
+          }
+
+          const icon = isCloudburst
+            ? cloudburstIcon
+            : isCurrentRain
+            ? rainIcon
+            : nowcastIcon;
+
+          const marker = L.marker([lat, lng], { icon });
+          marker.bindPopup(
+            () => {
+              const accent = isCloudburst ? "#f97316" : "#38bdf8";
+              if (isCurrentRain) {
+                return card(
+                  heading(accent, "HEAVY RAIN (CURRENT)") +
+                    row("Location", `${lat.toFixed(2)}°N, ${lng.toFixed(2)}°E`) +
+                    row("Rainfall", `${parseFloat(props.value as string).toFixed(1)} mm`)
+                );
+              }
+              const date = props.forecast_date || props.event_date || "";
+              const time = props.forecast_time || props.event_time || "";
+              return card(
+                heading(accent, isCloudburst ? "CLOUDBURST (NOWCAST)" : "HEAVY RAIN (NOWCAST)") +
+                  row("Location", `${lat.toFixed(2)}°N, ${lng.toFixed(2)}°E`) +
+                  (date || time ? row("Forecast issued", `${date} ${time}`) : "") +
+                  row("Validity", "Next 6 hours") +
+                  (radiusKm > 0 ? row("Radius of influence", `${radiusKm.toFixed(1)} km`) : "")
+              );
+            },
+            { closeButton: true }
+          );
+          marker.addTo(group);
+        }
+
+        group.addTo(map);
+        return () => {
+          map.removeLayer(group);
+        };
+      }, [map, alerts, showAlerts]);
+
+      // Thunderstorm cells — rebuild only when the data or zoom (icon size)
+      // changes, so panning never touches these markers.
+      useEffect(() => {
+        if (!showThunderstorms) return;
+        const group = L.layerGroup();
+
+        for (const cell of storms) {
+          if (
+            cell.severity !== "Severe" &&
+            cell.severity !== "Strong" &&
+            cell.severity !== "Moderate"
+          )
+            continue;
+
+          const marker = L.marker([cell.lat, cell.lon], {
+            icon: createThunderstormIcon(L, cell, zoom),
+          });
+          marker.bindPopup(() =>
+            card(
+              heading("#facc15", "⚡ THUNDERSTORM CELL") +
+                `<div style="font-size:12px;color:#cbd5e1">Severity: ${
+                  cell.temp < 190 ? "🔴 Severe" : cell.temp < 195 ? "🟠 Strong" : "🟡 Moderate"
+                }<br/>Cloud-top temp: ${cell.temp.toFixed(1)} K<br/>Impact radius: ${Math.round(
+                  Math.sqrt(cell.count) * 2
+                )} km<br/>Cell strength: ${cell.count}</div>`
+            )
+          );
+          marker.addTo(group);
+        }
+
+        group.addTo(map);
+        return () => {
+          map.removeLayer(group);
+        };
+      }, [map, storms, zoom, showThunderstorms]);
+
+      return null;
+    };
+  },
+  { ssr: false }
+);
+
 export default function WeatherMap() {
   const [opacity, setOpacity] = useState(0.7);
   const [channel, setChannel] = useState<WeatherChannel>("IMG_TIR1");
@@ -90,38 +257,9 @@ export default function WeatherMap() {
   const [showAlertLegend, setShowAlertLegend] = useState(true);
   const [showAlerts, setShowAlerts] = useState(true);
   const [showThunderstorms, setShowThunderstorms] = useState(true);
-  const [leaflet, setLeaflet] = useState<typeof import("leaflet") | null>(null);
-
-  const { blueRainIcon, cloudburstIcon, nowcastRainIcon } = useMemo(() => {
-    if (!leaflet) {
-      return {
-        blueRainIcon: undefined,
-        cloudburstIcon: undefined,
-        nowcastRainIcon: undefined,
-      };
-    }
-
-    return {
-      blueRainIcon: createDivIcon(
-        leaflet,
-        `<div style="font-size:20px;filter:drop-shadow(0 0 2px black);">🌧️</div>`,
-        [14, 14],
-        [7, 7]
-      ),
-      cloudburstIcon: createDivIcon(
-        leaflet,
-        `<div style="font-size:20px;filter:drop-shadow(0 0 3px black);">⛈️</div>`,
-        [18, 18],
-        [9, 9]
-      ),
-      nowcastRainIcon: createDivIcon(
-        leaflet,
-        `<div style="font-size:20px;filter:drop-shadow(0 0 2px black);">☔</div>`,
-        [14, 14],
-        [7, 7]
-      ),
-    };
-  }, [leaflet]);
+  const [liveDatetime, setLiveDatetime] = useState<string | null>(null);
+  // Padded viewport [south, west, north, east] — used to only render alerts on screen.
+  const [viewBounds, setViewBounds] = useState<[number, number, number, number] | null>(null);
 
   const [statesGeoJson, setStatesGeoJson] = useState<GeoJsonObject | null>(null);
   const [districtGeoJson, setDistrictGeoJson] = useState<GeoJsonObject | null>(null);
@@ -131,42 +269,23 @@ export default function WeatherMap() {
   const [mosdacAlerts, setMosdacAlerts] = useState<MosdacAlertFeature[]>([]);
   const loadedFrames = useRef(new Set<string>());
 
+  // INSAT-3R live frames are half-hourly (:15 / :45). Anchor the timeline on
+  // the newest frame that actually exists (probed via /api/mosdac-latest) and
+  // step back in true 30-minute increments so animation has no duplicate frames.
+  const FRAME_COUNT = 20;
+  const SLOT_MS = 30 * 60 * 1000;
   const frames = useMemo(() => {
-    const now = new Date();
-    const current = new Date(now);
-    current.setUTCMinutes(Math.floor(current.getUTCMinutes() / 15) * 15);
-    current.setUTCSeconds(0);
-    current.setUTCMilliseconds(0);
-    current.setUTCMinutes(current.getUTCMinutes() - 60);
-    current.setUTCMinutes(Math.floor(current.getUTCMinutes() / 15) * 15);
-    current.setUTCSeconds(0);
-    current.setUTCMilliseconds(0);
+    const anchor = liveDatetime ? new Date(liveDatetime) : snapToSlotDate(new Date());
 
-    return Array.from({ length: 25 }, (_, index) => {
-      const frame = new Date(current);
-      frame.setTime(current.getTime() - (24 - index) * 15 * 60 * 1000);
+    return Array.from({ length: FRAME_COUNT }, (_, index) => {
+      const frame = new Date(anchor.getTime() - (FRAME_COUNT - 1 - index) * SLOT_MS);
       return frame.toISOString();
     });
-  }, []);
+  }, [liveDatetime]);
 
   const [currentFrame, setCurrentFrame] = useState(frames.length - 1);
   const [displayFrame, setDisplayFrame] = useState(frames.length - 1);
   const [frameLoading, setFrameLoading] = useState(false);
-
-  useEffect(() => {
-    let mounted = true;
-    import("leaflet")
-      .then((L) => {
-        if (mounted) setLeaflet(L);
-      })
-      .catch((error) => {
-        console.error("Leaflet import failed:", error);
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -186,6 +305,32 @@ export default function WeatherMap() {
     fetch("/geo/india-districts.geojson")
       .then((res) => res.json())
       .then((data) => setDistrictGeoJson(data));
+  }, []);
+
+  // Track the newest satellite frame that is actually available on MOSDAC.
+  useEffect(() => {
+    let active = true;
+
+    const fetchLatest = async () => {
+      try {
+        const res = await fetch(
+          "/api/mosdac-latest?layers=IMG_TIR1&styles=boxfill/greyscale"
+        );
+        const data = await res.json();
+        if (active && data?.datetime) {
+          setLiveDatetime((prev) => (prev === data.datetime ? prev : data.datetime));
+        }
+      } catch (error) {
+        console.error("Latest-frame probe failed:", error);
+      }
+    };
+
+    fetchLatest();
+    const interval = setInterval(fetchLatest, 5 * 60 * 1000);
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {
@@ -306,7 +451,7 @@ export default function WeatherMap() {
     return now.toISOString();
   }
 
-  let utcDatetime = getLatestMosdacTime();
+  let utcDatetime = liveDatetime ?? getLatestMosdacTime();
   if (mode === "ANIMATION" && frames.length > 0) {
     utcDatetime = frames[displayFrame];
   }
@@ -346,43 +491,106 @@ export default function WeatherMap() {
 
   const animationLabel = formatAnimationDate(utcDatetime);
 
-  const filteredAlerts = useMemo(() => {
-    return mosdacAlerts.filter((feature, index, self) => {
+  // Feed the frame time as a WMS param (updated via setParams) instead of the URL
+  // or the React key, so changing frames redraws in place rather than tearing
+  // down and rebuilding the whole tile layer — much smoother LIVE + animation.
+  const wmsParams = useMemo(() => ({ datetime: utcDatetime }), [utcDatetime]);
+
+  // The MOSDAC feed carries thousands of alerts. Rendering them all as DOM
+  // markers is what made zoom lag. Instead we render only what's on screen,
+  // decluttered by zoom (more markers as you zoom in — like MOSDAC), and hard
+  // capped so the marker count — and therefore zoom cost — stays bounded.
+  const visibleAlerts = useMemo(() => {
+    // Keep a CONSTANT on-screen spacing between current-rain icons (~64px) at
+    // every zoom. Deriving the degree gap from zoom this way means the visual
+    // density stays steady while zooming — icons don't pop in/out — and you get
+    // finer detail as you zoom in without ever blanketing the overview.
+    const degPerPixel = 360 / (256 * Math.pow(2, zoom));
+    const minGap = Math.max(0.05, 64 * degPerPixel);
+    const MAX_CURRENT = 260;
+
+    const [south, west, north, east] = viewBounds ?? [-90, -180, 90, 180];
+    const inView = (lat: number, lng: number) =>
+      lat >= south && lat <= north && lng >= west && lng <= east;
+
+    const grid = new Map<string, true>();
+    const nowcast: MosdacAlertFeature[] = [];
+    const current: MosdacAlertFeature[] = [];
+
+    for (const feature of mosdacAlerts) {
       const coords = feature.geometry?.coordinates;
-      if (!coords) return false;
-
-      const props = (feature.properties || feature) as MosdacAlertFeatureProperties;
-      const forecast = (props.forecast || "").toString().toLowerCase();
-      if (forecast.includes("cloud")) return true;
-
+      if (!coords) continue;
       const [lng, lat] = coords;
-      return !self.some((other, otherIndex) => {
-        if (index === otherIndex) return false;
-        const otherCoords = other.geometry?.coordinates;
-        if (!otherCoords) return false;
 
-        const [otherLng, otherLat] = otherCoords;
-        const distance = Math.sqrt(Math.pow(lat - otherLat, 2) + Math.pow(lng - otherLng, 2));
-        const minDistance =
-          zoom >= 9
-            ? 0.08
-            : zoom >= 8
-            ? 0.15
-            : zoom >= 7
-            ? 0.25
-            : zoom >= 6
-            ? 0.45
-            : zoom >= 5
-            ? 0.8
-            : 1.2;
+      const value = (feature.properties || feature)?.value;
 
-        return distance < minDistance && otherIndex < index;
-      });
-    });
-  }, [mosdacAlerts, zoom]);
+      // Nowcast / cloudburst alerts (few, important, carry ROI) are always kept
+      // — never viewport-culled or capped.
+      if (!value) {
+        nowcast.push(feature);
+        continue;
+      }
+
+      // Current-rain is viewport-culled + capped for performance.
+      if (!inView(lat, lng) || current.length >= MAX_CURRENT) continue;
+
+      // Current-rain grid: declutter by zoom + hard cap.
+      const key = `${Math.floor(lng / minGap)}:${Math.floor(lat / minGap)}`;
+      if (grid.has(key)) continue;
+      grid.set(key, true);
+      current.push(feature);
+    }
+
+    return [...current, ...nowcast];
+  }, [mosdacAlerts, zoom, viewBounds]);
 
   const currentLegend = LEGENDS[channel];
   const currentGradient = PALETTE_GRADIENTS[palette];
+
+  // Boundaries use a "cased line" — a dark halo under a bright core — so they
+  // stay legible over any palette (greyscale, rainbow, …) instead of blending
+  // in. Memoized on coarse zoom buckets to avoid re-styling on every zoom step.
+  const statesZoomBucket = zoom >= 7;
+  const statesCasingStyle = useMemo(
+    () => ({
+      color: "rgba(0,0,0,0.6)",
+      weight: statesZoomBucket ? 5 : 4,
+      opacity: 0.55,
+      fillOpacity: 0,
+      lineJoin: "round" as const,
+    }),
+    [statesZoomBucket]
+  );
+  const statesLineStyle = useMemo(
+    () => ({
+      color: "rgba(255,255,255,0.95)",
+      weight: statesZoomBucket ? 1.8 : 1.4,
+      opacity: 0.95,
+      fillOpacity: 0,
+      lineJoin: "round" as const,
+    }),
+    [statesZoomBucket]
+  );
+
+  const districtsZoomBucket = zoom >= 9;
+  const districtCasingStyle = useMemo(
+    () => () => ({
+      color: "rgba(0,0,0,0.45)",
+      weight: districtsZoomBucket ? 2.2 : 1.7,
+      opacity: 0.4,
+      fillOpacity: 0,
+    }),
+    [districtsZoomBucket]
+  );
+  const districtLineStyle = useMemo(
+    () => () => ({
+      color: "rgba(255,255,255,0.8)",
+      weight: districtsZoomBucket ? 0.9 : 0.6,
+      opacity: 0.7,
+      fillOpacity: 0,
+    }),
+    [districtsZoomBucket]
+  );
 
   const handleMapClick = useCallback(
     (clickLat: number, clickLon: number) => {
@@ -449,7 +657,7 @@ export default function WeatherMap() {
           <div
             style={{
               position: "absolute",
-              top: 18,
+              top: "calc(env(safe-area-inset-top, 0px) + 16px)",
               left: "50%",
               transform: "translateX(-50%)",
               zIndex: 3000,
@@ -531,40 +739,54 @@ export default function WeatherMap() {
         wheelPxPerZoomLevel={120}
         style={{ height: "100%", width: "100%", backfaceVisibility: "hidden" }}
       >
-        <MapEvents setZoom={setZoom} />
+        <MapEvents
+          onView={(z, bounds) => {
+            setZoom(z);
+            setViewBounds(bounds);
+          }}
+        />
         <MapClickHandler onClick={handleMapClick} />
 
         <TileLayer attribution="&copy; OpenStreetMap contributors" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
         {statesGeoJson && (
-          <GeoJSON
-            data={statesGeoJson as object}
-            interactive={false}
-            style={{
-              color: "rgba(80,255,120,0.75)",
-              weight: zoom >= 7 ? 2.2 : 1.8,
-              opacity: zoom >= 7 ? 0.85 : 0.7,
-              fillOpacity: 0,
-            }}
-          />
+          <>
+            <GeoJSON
+              key={`states-casing-${statesZoomBucket}`}
+              data={statesGeoJson as object}
+              interactive={false}
+              style={statesCasingStyle}
+            />
+            <GeoJSON
+              key={`states-line-${statesZoomBucket}`}
+              data={statesGeoJson as object}
+              interactive={false}
+              style={statesLineStyle}
+            />
+          </>
         )}
 
         {zoom >= 8 && !isPlaying && districtGeoJson && (
-          <GeoJSON
-            data={districtGeoJson as object}
-            interactive={false}
-            style={() => ({
-              color: "rgba(220,255,230,0.45)",
-              weight: zoom >= 9 ? 1 : 0.6,
-              opacity: 0.45,
-              fillOpacity: 0,
-            })}
-          />
+          <>
+            <GeoJSON
+              key={`districts-casing-${districtsZoomBucket}`}
+              data={districtGeoJson as object}
+              interactive={false}
+              style={districtCasingStyle}
+            />
+            <GeoJSON
+              key={`districts-line-${districtsZoomBucket}`}
+              data={districtGeoJson as object}
+              interactive={false}
+              style={districtLineStyle}
+            />
+          </>
         )}
 
         <WMSTileLayer
-          key={`${utcDatetime}-${channel}-${palette}`}
-          url={`/api/mosdac-wms?datetime=${utcDatetime}`}
+          key={`${channel}-${palette}`}
+          url="/api/mosdac-wms"
+          params={wmsParams}
           className="smooth-wms"
           layers={channel}
           updateInterval={300}
@@ -581,17 +803,12 @@ export default function WeatherMap() {
           attribution="MOSDAC"
         />
 
-        <WeatherMapAlertLayer
-          filteredAlerts={filteredAlerts}
+        <AlertLayer
+          alerts={visibleAlerts}
+          storms={thunderstormCells}
           zoom={zoom}
           showAlerts={showAlerts}
           showThunderstorms={showThunderstorms}
-          mosdacAlertIcons={{ blueRainIcon, cloudburstIcon, nowcastRainIcon }}
-          thunderstormCells={thunderstormCells}
-          leaflet={leaflet}
-          Marker={Marker}
-          Popup={Popup}
-          Circle={Circle}
         />
 
         {cloudPopup && (
@@ -605,7 +822,9 @@ export default function WeatherMap() {
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png"
           attribution="&copy; OpenStreetMap & CARTO"
+          className="map-labels"
           opacity={1}
+          zIndex={650}
         />
       </MapContainer>
 
@@ -617,6 +836,7 @@ export default function WeatherMap() {
         setShowLegend={setShowLegend}
         showAlertLegend={showAlertLegend}
         setShowAlertLegend={setShowAlertLegend}
+        isMobile={isMobile}
       />
     </div>
   );

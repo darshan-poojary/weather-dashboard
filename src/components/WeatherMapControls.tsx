@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { Palette, WeatherChannel, WeatherMode } from "./weatherMapTypes";
 import { CHANNELS, MODES, PALETTES } from "./weatherMapConfig";
 
@@ -34,7 +35,7 @@ interface WeatherMapControlsProps {
   setShowControls: (value: boolean) => void;
 }
 
-export default function WeatherMapControls({
+function WeatherMapControls({
   channel,
   setChannel,
   palette,
@@ -90,8 +91,8 @@ export default function WeatherMapControls({
           onClick={() => setShowControls(true)}
           style={{
             position: "absolute",
-            top: 18,
-            left: 18,
+            top: "calc(env(safe-area-inset-top, 0px) + 16px)",
+            left: "calc(env(safe-area-inset-left, 0px) + 16px)",
             zIndex: 5000,
             width: "42px",
             height: "42px",
@@ -114,23 +115,22 @@ export default function WeatherMapControls({
           className="glass-scroll"
           style={{
             position: "absolute",
-            top: 18,
-            left: 18,
-            animation: "glassFloat 6s ease-in-out infinite",
+            top: "calc(env(safe-area-inset-top, 0px) + 16px)",
+            left: "calc(env(safe-area-inset-left, 0px) + 16px)",
+            animation: isMobile ? "none" : "glassFloat 6s ease-in-out infinite",
             zIndex: 2000,
-            maxHeight: "92vh",
+            maxHeight: "calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 32px)",
             overflowY: "auto",
-            width: isMobile ? "calc(100vw - 24px)" : "340px",
-            padding: "18px",
-            borderRadius: "28px",
-            background: "linear-gradient( 180deg, rgba(15,23,42,0.78), rgba(15,23,42,0.58) )",
+            width: isMobile ? "min(88vw, 340px)" : "340px",
+            padding: isMobile ? "16px" : "18px",
+            borderRadius: isMobile ? "22px" : "28px",
+            background: "linear-gradient( 180deg, rgba(15,23,42,0.82), rgba(15,23,42,0.62) )",
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(14px)",
             border: "1px solid rgba(255,255,255,0.12)",
             boxShadow: "0 10px 35px rgba(0,0,0,0.45)",
             color: "white",
             fontFamily: "var(--font-inter), sans-serif",
-            overflow: "hidden",
           }}
         >
           <div
@@ -417,3 +417,5 @@ export default function WeatherMapControls({
     </>
   );
 }
+
+export default memo(WeatherMapControls);

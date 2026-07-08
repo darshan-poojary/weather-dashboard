@@ -104,7 +104,7 @@ def cluster_alerts(alerts: list[dict]) -> list[dict]:
 
     storm_cells = []
     for group in clusters.values():
-        if len(group) < 20:
+        if len(group) < 5:
             continue
 
         coldest = min(group, key=lambda x: x["temp"])
@@ -191,9 +191,9 @@ def main() -> None:
         )
 
         storm_mask = (
-            (temperature < 208)
+            (temperature < 214)
             & (temperature > 180)
-            & (wv_temp < 235)
+            & (wv_temp < 240)
             & earth_mask
             & india_mask
         )

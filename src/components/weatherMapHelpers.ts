@@ -19,30 +19,29 @@ export function createThunderstormIcon(
   cell: ThunderstormCell,
   zoom: number
 ) {
-  const fontSize =
-    zoom >= 9
-      ? Math.min(22 + cell.count / 60, 65)
-      : zoom >= 6
-      ? Math.min(18 + cell.count / 80, 50)
-      : 14;
+  // Grow steadily as you zoom in so cells become more prominent.
+  const size = Math.round(
+    Math.max(14, Math.min(12 + (zoom - 3) * 4.5 + cell.count / 120, 58))
+  );
 
-  const color =
-    cell.temp < 190 ? "red" : cell.temp < 195 ? "orange" : "yellow";
+  // Colder cloud tops = more severe convection.
+  const glow =
+    cell.temp < 190 ? "#ff3b3b" : cell.temp < 195 ? "#ff9500" : "#ffd21e";
+  const boltSize = Math.round(size * 0.54);
 
   return new leaflet.DivIcon({
-    className: "",
+    className: "ts-icon",
     html: `
-<div style="
-  font-size:${fontSize}px;
-  color:${color};
-  text-shadow:
-    0 0 5px black,
-    0 0 10px black;
-">
-&#9889;
-</div>
-`,
-    iconSize: [40, 40],
+<div class="ts-cell" style="--ts-glow:${glow};width:${size}px;height:${size}px;">
+  <span class="ts-glow"></span>
+  <svg class="ts-bolt" width="${boltSize}" height="${boltSize}" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M13 2 L5 13 h5 l-2 9 L19 10 h-6 z"
+      fill="#fff3b0" stroke="rgba(0,0,0,0.45)" stroke-width="0.8"
+      stroke-linejoin="round" />
+  </svg>
+</div>`,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
   });
 }
 
