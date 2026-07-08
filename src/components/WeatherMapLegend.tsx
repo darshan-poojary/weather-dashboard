@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { Palette } from "./weatherMapTypes";
 import { LEGENDS } from "./weatherMapConfig";
 
@@ -9,9 +10,10 @@ interface WeatherMapLegendProps {
   setShowLegend: (value: boolean) => void;
   showAlertLegend: boolean;
   setShowAlertLegend: (value: boolean) => void;
+  isMobile: boolean;
 }
 
-export default function WeatherMapLegend({
+function WeatherMapLegend({
   currentLegend,
   currentGradient,
   palette,
@@ -19,7 +21,12 @@ export default function WeatherMapLegend({
   setShowLegend,
   showAlertLegend,
   setShowAlertLegend,
+  isMobile,
 }: WeatherMapLegendProps) {
+  // Safe-area-aware anchors so panels clear the iPhone home indicator / notch.
+  const bottomInset = "calc(env(safe-area-inset-bottom, 0px) + 22px)";
+  const leftInset = "calc(env(safe-area-inset-left, 0px) + 22px)";
+  const rightInset = "calc(env(safe-area-inset-right, 0px) + 22px)";
   const minValue = Number(currentLegend.min);
   const maxValue = Number(currentLegend.max);
   const ticks =
@@ -36,8 +43,8 @@ export default function WeatherMapLegend({
           onClick={() => setShowAlertLegend(true)}
           style={{
             position: "absolute",
-            bottom: 22,
-            left: 22,
+            bottom: bottomInset,
+            left: leftInset,
             zIndex: 9999,
             width: "42px",
             height: "42px",
@@ -59,16 +66,17 @@ export default function WeatherMapLegend({
         <div
           style={{
             position: "absolute",
-            bottom: "22px",
-            left: "22px",
+            bottom: bottomInset,
+            left: leftInset,
             zIndex: 9999,
             background: "linear-gradient(180deg,rgba(15,23,42,0.78),rgba(15,23,42,0.58))",
             backdropFilter: "blur(16px)",
             border: "1px solid rgba(255,255,255,0.12)",
             borderRadius: "18px",
-            padding: "12px",
+            padding: isMobile ? "10px" : "12px",
             color: "white",
-            minWidth: "190px",
+            minWidth: isMobile ? "0" : "190px",
+            maxWidth: "min(46vw, 220px)",
             boxShadow: "0 10px 25px rgba(0,0,0,0.45)",
             fontFamily: "var(--font-inter), sans-serif",
           }}
@@ -102,24 +110,32 @@ export default function WeatherMapLegend({
             </button>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-            <span style={{ fontSize: "18px" }}>🌧️</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "9px", marginBottom: "9px" }}>
+            <span style={{ fontSize: "16px", width: "18px", textAlign: "center" }}>🌧️</span>
             <div>
-              <div style={{ fontSize: "12px", fontWeight: 600 }}>Heavy Rain</div>
-              <div style={{ fontSize: "10px", color: "#94a3b8" }}>Forecast rainfall alert</div>
+              <div style={{ fontSize: "12px", fontWeight: 600 }}>Current Heavy Rain</div>
+              <div style={{ fontSize: "10px", color: "#94a3b8" }}>Live rainfall observed now</div>
             </div>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-            <span style={{ fontSize: "18px" }}>☔</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "9px", marginBottom: "9px" }}>
+            <span style={{ fontSize: "16px", width: "18px", textAlign: "center" }}>☔</span>
             <div>
-              <div style={{ fontSize: "12px", fontWeight: 600 }}>Nowcast Rain</div>
+              <div style={{ fontSize: "12px", fontWeight: 600 }}>Nowcast Rain + Radius</div>
               <div style={{ fontSize: "10px", color: "#94a3b8" }}>Expected within 6 hours</div>
             </div>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span style={{ fontSize: "18px", color: "#facc15" }}>⚡</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "9px", marginBottom: "9px" }}>
+            <span style={{ fontSize: "16px", width: "18px", textAlign: "center" }}>⛈️</span>
+            <div>
+              <div style={{ fontSize: "12px", fontWeight: 600 }}>Cloudburst</div>
+              <div style={{ fontSize: "10px", color: "#94a3b8" }}>Intense localized downpour</div>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "9px" }}>
+            <span style={{ fontSize: "16px", width: "18px", textAlign: "center", color: "#facc15" }}>⚡</span>
             <div>
               <div style={{ fontSize: "12px", fontWeight: 600 }}>Thunderstorm</div>
               <div style={{ fontSize: "10px", color: "#94a3b8" }}>Deep convective cloud cell</div>
@@ -133,8 +149,8 @@ export default function WeatherMapLegend({
           onClick={() => setShowLegend(true)}
           style={{
             position: "absolute",
-            bottom: 22,
-            right: 22,
+            bottom: bottomInset,
+            right: rightInset,
             zIndex: 9999,
             width: "42px",
             height: "42px",
@@ -155,15 +171,16 @@ export default function WeatherMapLegend({
         <div
           style={{
             position: "absolute",
-            bottom: "22px",
-            right: "22px",
+            bottom: bottomInset,
+            right: rightInset,
             zIndex: 9999,
-            width: "320px",
+            width: isMobile ? "min(66vw, 260px)" : "320px",
+            maxWidth: "calc(100vw - 32px)",
             background: "linear-gradient(180deg,rgba(15,23,42,0.78),rgba(15,23,42,0.58))",
             backdropFilter: "blur(16px)",
             border: "1px solid rgba(255,255,255,0.12)",
-            borderRadius: "24px",
-            padding: "14px",
+            borderRadius: isMobile ? "18px" : "24px",
+            padding: isMobile ? "12px" : "14px",
             boxShadow: "0 12px 35px rgba(0,0,0,0.5)",
             color: "white",
           }}
@@ -229,3 +246,5 @@ export default function WeatherMapLegend({
     </>
   );
 }
+
+export default memo(WeatherMapLegend);

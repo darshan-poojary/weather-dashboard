@@ -87,6 +87,53 @@ body {
   animation: pulseCloud 2s infinite;
 }
 
+/* WINDY-STYLE THUNDERSTORM CELLS */
+
+.ts-icon {
+  background: transparent;
+  border: none;
+}
+
+.ts-cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Very faint convective tint — barely-there, professional */
+.ts-cell .ts-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    var(--ts-glow) 0%,
+    transparent 60%
+  );
+  opacity: 0.16;
+  animation: tsGlow 3.2s ease-in-out infinite;
+}
+
+/* Crisp lightning bolt — soft dark shadow for legibility, steady (no flicker) */
+.ts-cell .ts-bolt {
+  position: relative;
+  filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.75));
+}
+
+@keyframes tsGlow {
+  0%,
+  100% {
+    transform: scale(0.92);
+    opacity: 0.12;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 0.24;
+  }
+}
+
+
 /* HEAVY RAIN CORE */
 
 .rain-alert-core {
@@ -205,6 +252,12 @@ body {
 
 .leaflet-control-zoom {
   display: none;
+}
+
+/* Place-name labels: dark halo so they stay readable over bright overlays. */
+.map-labels {
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.95))
+    drop-shadow(0 0 1.5px rgba(0, 0, 0, 0.85));
 }
 
 .leaflet-popup-content-wrapper {

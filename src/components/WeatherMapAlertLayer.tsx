@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, memo } from "react";
 import type { ComponentType } from "react";
 import type {
   MosdacAlertFeature,
@@ -8,7 +8,7 @@ import type {
 import { createThunderstormIcon } from "./weatherMapHelpers";
 
 interface WeatherMapAlertLayerProps {
-  filteredAlerts: MosdacAlertFeature[];
+  visibleAlerts: MosdacAlertFeature[];
   zoom: number;
   showAlerts: boolean;
   showThunderstorms: boolean;
@@ -24,8 +24,21 @@ interface WeatherMapAlertLayerProps {
   Circle: ComponentType<any>;
 }
 
-export default function WeatherMapAlertLayer({
-  filteredAlerts,
+const popupCardStyle: React.CSSProperties = {
+  minWidth: "190px",
+  background: "rgba(15,23,42,0.9)",
+  color: "white",
+  padding: "13px",
+  borderRadius: "16px",
+  backdropFilter: "blur(12px)",
+  border: "1px solid rgba(255,255,255,0.08)",
+  fontFamily: "var(--font-inter), sans-serif",
+  lineHeight: "1.55",
+  boxShadow: "0 12px 32px rgba(0,0,0,0.45)",
+};
+
+function WeatherMapAlertLayer({
+  visibleAlerts,
   zoom,
   showAlerts,
   showThunderstorms,
@@ -36,172 +49,125 @@ export default function WeatherMapAlertLayer({
   Popup,
   Circle,
 }: WeatherMapAlertLayerProps) {
-  const visibleThunderstorms = thunderstormCells.filter((cell) => {
-    return cell.severity === "Severe" || cell.severity === "Strong" || cell.severity === "Moderate";
-  });
+  const visibleThunderstorms = thunderstormCells.filter(
+    (cell) =>
+      cell.severity === "Severe" ||
+      cell.severity === "Strong" ||
+      cell.severity === "Moderate"
+  );
 
   return (
     <>
       {showAlerts &&
-        filteredAlerts.map((feature, index) => {
+        visibleAlerts.map((feature, index) => {
           const coords = feature.geometry?.coordinates;
           if (!coords) return null;
 
           const [lng, lat] = coords;
           const props = (feature.properties || feature) as MosdacAlertFeatureProperties;
-          const alertName = props.name || "";
-          const alertDate = props.event_date || props.forecast_date || "";
-          const alertTime = props.event_time || props.forecast_time || "";
-          const forecast = props.forecast || "";
-          const radiusKm = parseFloat(props.rad_inf || "0");
-          const intensityColor = radiusKm > 120 ? "#ff2d2d" : radiusKm > 80 ? "#ff9900" : "#00ff66";
-          const isCloudburst = forecast.toLowerCase().includes("cloud");
+          const forecast = (props.forecast || "").toString().toLowerCase();
+          const isCloudburst = forecast.includes("cloud");
           const isCurrentRain = !!props.value;
-          const isNowcastRain = !props.value;
-          // Thin out rain markers at low zoom to reduce clutter; cloudbursts always show.
-          const density = zoom >= 6 ? 1 : zoom >= 5 ? 2 : 3;
-          const showMarker = index % density === 0;
-          if (!isCloudburst && !showMarker) return null;
+          const radiusKm = parseFloat(props.rad_inf || "0");
+
+          const alertDate = props.forecast_date || props.event_date || "";
+          const alertTime = props.forecast_time || props.event_time || "";
+
+          const icon = isCloudburst
+            ? mosdacAlertIcons.cloudburstIcon
+            : isCurrentRain
+            ? mosdacAlertIcons.blueRainIcon
+            : mosdacAlertIcons.nowcastRainIcon;
+
+          const title = isCloudburst
+            ? "CLOUDBURST (NOWCAST)"
+            : isCurrentRain
+            ? "HEAVY RAIN (CURRENT)"
+            : "HEAVY RAIN (NOWCAST)";
+          const accent = isCloudburst ? "#f97316" : "#38bdf8";
 
           return (
             <Fragment key={`alert-${index}`}>
-              <Marker
-                position={[lat, lng]}
-                icon={
-                  isCloudburst
-                    ? mosdacAlertIcons.cloudburstIcon
-                    : isNowcastRain
-                    ? mosdacAlertIcons.nowcastRainIcon
-                    : mosdacAlertIcons.blueRainIcon
-                }
-              >
-                <Popup closeButton={true} autoPan={false}>
-                  <div
-                    style={{
-                      minWidth: "190px",
-                      background: "rgba(15,23,42,0.88)",
-                      color: "white",
-                      padding: "14px",
-                      borderRadius: "18px",
-                      backdropFilter: "blur(12px)",
-                      border: "1px solid rgba(255,255,255,0.08)",
-                      fontFamily: "var(--font-inter), sans-serif",
-                      lineHeight: "1.6",
-                      boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
-                    }}
-                  >
+              {/* True radius-of-influence circle (rad_inf km) for nowcast alerts. */}
+              {!isCurrentRain && radiusKm > 0 && (
+                <Circle
+                  center={[lat, lng]}
+                  radius={radiusKm * 1000}
+                  interactive={false}
+                  pathOptions={{
+                    color: isCloudburst ? "#fb923c" : "#facc15",
+                    weight: 1.3,
+                    opacity: 0.7,
+                    fillColor: isCloudburst ? "#fb923c" : "#facc15",
+                    fillOpacity: 0.05,
+                  }}
+                />
+              )}
+
+              <Marker position={[lat, lng]} icon={icon}>
+                <Popup closeButton autoPan={false}>
+                  <div style={popupCardStyle}>
                     <div
                       style={{
-                        fontWeight: "bold",
-                        fontSize: "14px",
-                        textTransform: "uppercase",
-                        marginBottom: "8px",
-                        textDecoration: "underline",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        fontWeight: 800,
+                        fontSize: "13px",
+                        letterSpacing: "0.4px",
+                        marginBottom: "10px",
                       }}
                     >
-                      {isNowcastRain ? "HEAVY RAIN (NOWCAST)" : alertName}
+                      <span
+                        style={{
+                          width: "8px",
+                          height: "8px",
+                          borderRadius: "50%",
+                          background: accent,
+                          boxShadow: `0 0 8px ${accent}`,
+                        }}
+                      />
+                      {title}
                     </div>
-                    <div>
-                      <b>LON LAT :</b>
+
+                    <div style={{ fontSize: "12px", color: "#cbd5e1" }}>
+                      <b style={{ color: "#fff" }}>Location</b>
                       <br />
-                      {lng.toFixed(2)}, {lat.toFixed(2)}
+                      {lat.toFixed(2)}°N, {lng.toFixed(2)}°E
                     </div>
-                    <div style={{ marginTop: "8px" }}>
-                      <b>Forecast Issued :</b>
-                      <br />
-                      {alertDate} {alertTime}
-                    </div>
-                    {isNowcastRain && (
-                      <div style={{ marginTop: "8px" }}>
-                        <b>Validity :</b>
+
+                    {isCurrentRain ? (
+                      <div style={{ marginTop: "8px", fontSize: "12px", color: "#cbd5e1" }}>
+                        <b style={{ color: "#fff" }}>Rainfall</b>
                         <br />
-                        {alertTime} (+6 hrs)
+                        {parseFloat(props.value as string).toFixed(1)} mm
                       </div>
+                    ) : (
+                      <>
+                        {(alertDate || alertTime) && (
+                          <div style={{ marginTop: "8px", fontSize: "12px", color: "#cbd5e1" }}>
+                            <b style={{ color: "#fff" }}>Forecast issued</b>
+                            <br />
+                            {alertDate} {alertTime}
+                          </div>
+                        )}
+                        <div style={{ marginTop: "8px", fontSize: "12px", color: "#cbd5e1" }}>
+                          <b style={{ color: "#fff" }}>Validity</b>
+                          <br />
+                          Next 6 hours
+                        </div>
+                        {radiusKm > 0 && (
+                          <div style={{ marginTop: "8px", fontSize: "12px", color: "#cbd5e1" }}>
+                            <b style={{ color: "#fff" }}>Radius of influence</b>
+                            <br />
+                            {radiusKm.toFixed(1)} km
+                          </div>
+                        )}
+                      </>
                     )}
-                    <div style={{ marginTop: "8px" }}>
-                      <b>{props.value ? "Rainfall" : "Radius"} :</b>
-                      <br />
-                      {props.value ? `${props.value} mm` : `${props.rad_inf} km`}
-                    </div>
                   </div>
                 </Popup>
               </Marker>
-
-              {!isCurrentRain && (
-                <Circle
-                  center={[lat, lng]}
-                  radius={
-                    zoom >= 7 ? radiusKm * 1000 : zoom >= 5 ? radiusKm * 1200 : zoom >= 3 ? radiusKm * 1500 : radiusKm * 1800
-                  }
-                  pathOptions={{
-                    color: "#ffe600",
-                    fillOpacity: radiusKm > 120 ? 0.08 : radiusKm > 80 ? 0.05 : 0.03,
-                    weight: radiusKm > 120 ? 3 : radiusKm > 80 ? 2 : 1.2,
-                    opacity: radiusKm > 120 ? 1 : 0.75,
-                  }}
-                >
-                  <Popup pane="popupPane" closeButton={true} autoPan={false}>
-                    <div
-                      style={{
-                        minWidth: "190px",
-                        background: "rgba(15,23,42,0.88)",
-                        color: "white",
-                        padding: "14px",
-                        borderRadius: "18px",
-                        backdropFilter: "blur(12px)",
-                        border: "1px solid rgba(255,255,255,0.08)",
-                        fontFamily: "var(--font-inter), sans-serif",
-                        lineHeight: "1.6",
-                        boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: "bold",
-                          fontSize: "14px",
-                          textTransform: "uppercase",
-                          marginBottom: "8px",
-                          textDecoration: "underline",
-                        }}
-                      >
-                        <>
-                          {isNowcastRain && (
-                            <span style={{ color: intensityColor, marginRight: "6px" }}>●</span>
-                          )}
-                          {isNowcastRain ? "HEAVY RAIN (NOWCAST)" : alertName}
-                        </>
-                      </div>
-                      <div>
-                        <b>LON LAT :</b>
-                        <br />
-                        {lng.toFixed(2)}, {lat.toFixed(2)}
-                      </div>
-                      <div style={{ marginTop: "8px" }}>
-                        <b>Forecast Issued :</b>
-                        <br />
-                        {alertDate} {alertTime}
-                      </div>
-                      {isNowcastRain && (
-                        <div style={{ marginTop: "8px" }}>
-                          <b>Validity :</b>
-                          <br />
-                          {alertTime} (+6 hrs)
-                        </div>
-                      )}
-                      <div style={{ marginTop: "8px" }}>
-                        <b>Expected Within:</b>
-                        <br />
-                        Next 6 Hours
-                      </div>
-                      <div style={{ marginTop: "8px" }}>
-                        <b>{props.value ? "Rainfall" : "Radius"} :</b>
-                        <br />
-                        {props.value ? `${props.value} mm` : `${props.rad_inf} km`}
-                      </div>
-                    </div>
-                  </Popup>
-                </Circle>
-              )}
             </Fragment>
           );
         })}
@@ -214,18 +180,37 @@ export default function WeatherMapAlertLayer({
             icon={leaflet ? createThunderstormIcon(leaflet, cell, zoom) : undefined}
           >
             <Popup>
-              <b>Thunderstorm Cell</b>
-              <br />
-              Severity: {cell.temp < 190 ? "🔴 Severe" : cell.temp < 195 ? "🟠 Strong" : "🟡 Moderate"}
-              <br />
-              Temp: {cell.temp.toFixed(1)} K
-              <br />
-              Impact Radius: {Math.round(Math.sqrt(cell.count) * 2)} km
-              <br />
-              Cell Strength: {cell.count}
+              <div style={popupCardStyle}>
+                <div
+                  style={{
+                    fontWeight: 800,
+                    fontSize: "13px",
+                    letterSpacing: "0.4px",
+                    marginBottom: "8px",
+                  }}
+                >
+                  ⚡ THUNDERSTORM CELL
+                </div>
+                <div style={{ fontSize: "12px", color: "#cbd5e1" }}>
+                  Severity:{" "}
+                  {cell.temp < 190
+                    ? "🔴 Severe"
+                    : cell.temp < 195
+                    ? "🟠 Strong"
+                    : "🟡 Moderate"}
+                  <br />
+                  Cloud-top temp: {cell.temp.toFixed(1)} K
+                  <br />
+                  Impact radius: {Math.round(Math.sqrt(cell.count) * 2)} km
+                  <br />
+                  Cell strength: {cell.count}
+                </div>
+              </div>
             </Popup>
           </Marker>
         ))}
     </>
   );
 }
+
+export default memo(WeatherMapAlertLayer);

@@ -193,3 +193,21 @@ export function getFallbackDatetime(
 
   return date.toISOString();
 }
+
+// Snap a time to MOSDAC's live half-hourly slot (:15 / :45).
+// Mirrors the grouping used by generateMosdacPath above.
+export function snapToSlotDate(input: Date): Date {
+  const date = new Date(input.getTime());
+  const minutes = date.getUTCMinutes();
+
+  if (minutes >= 15 && minutes <= 44) {
+    date.setUTCMinutes(15, 0, 0);
+  } else {
+    if (minutes <= 14) {
+      date.setUTCHours(date.getUTCHours() - 1);
+    }
+    date.setUTCMinutes(45, 0, 0);
+  }
+
+  return date;
+}
