@@ -361,11 +361,7 @@ export default function WeatherMap() {
     const fetchAlerts = async () => {
       try {
         const response = await fetch("/api/mosdac-alerts");
-        const text = await response.text();
-        const jsonStart = text.indexOf("{");
-        const jsonEnd = text.lastIndexOf("}");
-        const cleanJson = text.slice(jsonStart, jsonEnd + 1);
-        const parsed = JSON.parse(cleanJson);
+        const parsed = await response.json();
         if (parsed.features) {
           setMosdacAlerts(parsed.features);
         }
@@ -442,13 +438,13 @@ export default function WeatherMap() {
     return new Date(istDate.getTime() - 5.5 * 60 * 60 * 1000).toISOString();
   }
 
+  // Fallback frame shown before the /api/mosdac-latest probe resolves. Snap to
+  // the live half-hourly slot (shared with the proxy), then step back an hour
+  // for safety since the newest slot may not be published yet.
   function getLatestMosdacTime() {
-    const now = new Date();
-    now.setUTCMinutes(Math.floor(now.getUTCMinutes() / 15) * 15);
-    now.setUTCSeconds(0);
-    now.setUTCMilliseconds(0);
-    now.setUTCMinutes(now.getUTCMinutes() - 60);
-    return now.toISOString();
+    const slot = snapToSlotDate(new Date());
+    slot.setUTCMinutes(slot.getUTCMinutes() - 60);
+    return slot.toISOString();
   }
 
   let utcDatetime = liveDatetime ?? getLatestMosdacTime();

@@ -45,3 +45,6 @@ h5-data/
 # python
 __pycache__/
 *.pyc
+
+# orphaned data snapshot (not served; not referenced by the app)
+/thunderstorm-alerts.json
