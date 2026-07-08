@@ -1,17 +1,10 @@
 import { Fragment } from "react";
 import type { ComponentType } from "react";
 import type {
-  Circle as CircleComponent,
-  Marker as MarkerComponent,
-  Popup as PopupComponent,
-} from "react-leaflet";
-import type {
   MosdacAlertFeature,
   MosdacAlertFeatureProperties,
   ThunderstormCell,
 } from "./weatherMapTypes";
-import type { WeatherChannel } from "./weatherMapTypes";
-import type { WeatherChannel as ChannelType } from "./weatherMapTypes";
 import { createThunderstormIcon } from "./weatherMapHelpers";
 
 interface WeatherMapAlertLayerProps {
@@ -65,7 +58,9 @@ export default function WeatherMapAlertLayer({
           const isCloudburst = forecast.toLowerCase().includes("cloud");
           const isCurrentRain = !!props.value;
           const isNowcastRain = !props.value;
-          const showMarker = zoom >= 8 ? true : zoom >= 6 ? true : zoom >= 5 ? index % 1 === 0 : index % 1 === 0;
+          // Thin out rain markers at low zoom to reduce clutter; cloudbursts always show.
+          const density = zoom >= 6 ? 1 : zoom >= 5 ? 2 : 3;
+          const showMarker = index % density === 0;
           if (!isCloudburst && !showMarker) return null;
 
           return (
@@ -90,7 +85,7 @@ export default function WeatherMapAlertLayer({
                       borderRadius: "18px",
                       backdropFilter: "blur(12px)",
                       border: "1px solid rgba(255,255,255,0.08)",
-                      fontFamily: "'Inter', sans-serif",
+                      fontFamily: "var(--font-inter), sans-serif",
                       lineHeight: "1.6",
                       boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
                     }}
@@ -155,7 +150,7 @@ export default function WeatherMapAlertLayer({
                         borderRadius: "18px",
                         backdropFilter: "blur(12px)",
                         border: "1px solid rgba(255,255,255,0.08)",
-                        fontFamily: "'Inter', sans-serif",
+                        fontFamily: "var(--font-inter), sans-serif",
                         lineHeight: "1.6",
                         boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
                       }}

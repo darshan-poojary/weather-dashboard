@@ -20,6 +20,15 @@ export default function WeatherMapLegend({
   showAlertLegend,
   setShowAlertLegend,
 }: WeatherMapLegendProps) {
+  const minValue = Number(currentLegend.min);
+  const maxValue = Number(currentLegend.max);
+  const ticks =
+    Number.isFinite(minValue) && Number.isFinite(maxValue)
+      ? Array.from({ length: 6 }, (_, i) =>
+          Math.round(minValue + ((maxValue - minValue) * i) / 5)
+        )
+      : [180, 210, 240, 270, 300, 320];
+
   return (
     <>
       {!showAlertLegend && (
@@ -61,7 +70,7 @@ export default function WeatherMapLegend({
             color: "white",
             minWidth: "190px",
             boxShadow: "0 10px 25px rgba(0,0,0,0.45)",
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "var(--font-inter), sans-serif",
           }}
         >
           <div
@@ -159,7 +168,7 @@ export default function WeatherMapLegend({
             color: "white",
           }}
         >
-          <div style={{ fontSize: "15px", fontWeight: 700, letterSpacing: "0.3px", fontFamily: "'Inter', sans-serif", marginBottom: "12px" }}>
+          <div style={{ fontSize: "15px", fontWeight: 700, letterSpacing: "0.3px", fontFamily: "var(--font-inter), sans-serif", marginBottom: "12px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
               <div style={{ fontSize: "15px", fontWeight: 700 }}>
                 {currentLegend.title}
@@ -198,18 +207,15 @@ export default function WeatherMapLegend({
           <div style={{ height: "18px", borderRadius: "12px", background: currentGradient, boxShadow: "inset 0 0 10px rgba(255,255,255,0.25)" }} />
 
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: "8px" }}>
-            {[...Array(6)].map((_, i) => (
+            {ticks.map((_, i) => (
               <div key={i} style={{ width: "2px", height: "10px", background: "rgba(255,255,255,0.8)" }} />
             ))}
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: "6px", fontSize: "11px", fontWeight: 700 }}>
-            <span>180</span>
-            <span>210</span>
-            <span>240</span>
-            <span>270</span>
-            <span>300</span>
-            <span>320</span>
+            {ticks.map((value, i) => (
+              <span key={i}>{value}</span>
+            ))}
           </div>
 
           <div style={{ marginTop: "10px", fontSize: "10px", color: "#cbd5e1", display: "flex", justifyContent: "space-between" }}>

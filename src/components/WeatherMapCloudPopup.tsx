@@ -27,7 +27,7 @@ export default function WeatherMapCloudPopup({ cloudPopup, setCloudPopup, Popup 
           WebkitBackdropFilter: "blur(20px)",
           border: "1px solid rgba(255,255,255,0.09)",
           boxShadow: "0 14px 42px rgba(0,0,0,0.65)",
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "var(--font-inter), sans-serif",
         }}
       >
         <div

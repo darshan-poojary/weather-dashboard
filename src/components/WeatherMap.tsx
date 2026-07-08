@@ -15,20 +15,11 @@ import type {
   WeatherMode,
 } from "./weatherMapTypes";
 import {
-  CHANNELS,
   GRID_DEG,
   LEGENDS,
-  MODES,
   PALETTE_GRADIENTS,
-  PALETTES,
 } from "./weatherMapConfig";
-import {
-  createDivIcon,
-  getCloudLabel,
-  getCloudRainRisk,
-  getSkyIcon,
-  ccToColor,
-} from "./weatherMapHelpers";
+import { createDivIcon } from "./weatherMapHelpers";
 import WeatherMapControls from "./WeatherMapControls";
 import WeatherMapLegend from "./WeatherMapLegend";
 import WeatherMapAlertLayer from "./WeatherMapAlertLayer";
@@ -451,29 +442,83 @@ export default function WeatherMap() {
         setShowControls={setShowControls}
       />
 
-      <div
-        style={{
-          position: "absolute",
-          top: 18,
-          left: "50%",
-          transform: "translateX(-50%)",
-          zIndex: 3000,
-          padding: isMobile ? "8px 14px" : "10px 22px",
-          borderRadius: "18px",
-          background: "rgba(0,0,0,0.62)",
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
-          color: "white",
-          fontWeight: 700,
-          fontSize: isMobile ? "14px" : "24px",
-          letterSpacing: "0.5px",
-          boxShadow: "0 8px 20px rgba(0,0,0,0.4)",
-          border: "1px solid rgba(255,255,255,0.12)",
-          pointerEvents: "none",
-        }}
-      >
-        {animationLabel} | {channel}
-      </div>
+      {(() => {
+        const statusColor =
+          mode === "LIVE" ? "#34d399" : mode === "HISTORY" ? "#fbbf24" : "#38bdf8";
+        return (
+          <div
+            style={{
+              position: "absolute",
+              top: 18,
+              left: "50%",
+              transform: "translateX(-50%)",
+              zIndex: 3000,
+              display: "flex",
+              alignItems: "center",
+              gap: isMobile ? "8px" : "12px",
+              padding: isMobile ? "8px 14px" : "10px 22px",
+              borderRadius: "18px",
+              background: "rgba(0,0,0,0.62)",
+              backdropFilter: "blur(10px)",
+              WebkitBackdropFilter: "blur(10px)",
+              color: "white",
+              fontWeight: 700,
+              fontSize: isMobile ? "13px" : "22px",
+              letterSpacing: "0.5px",
+              boxShadow: "0 8px 20px rgba(0,0,0,0.4)",
+              border: "1px solid rgba(255,255,255,0.12)",
+              pointerEvents: "none",
+              whiteSpace: "nowrap",
+              maxWidth: "calc(100vw - 36px)",
+            }}
+          >
+            <span
+              style={{
+                width: isMobile ? "8px" : "10px",
+                height: isMobile ? "8px" : "10px",
+                borderRadius: "50%",
+                background: statusColor,
+                flexShrink: 0,
+                animation: mode === "LIVE" ? "livePulse 1.8s infinite" : "none",
+              }}
+            />
+            <span style={{ color: statusColor, fontSize: isMobile ? "11px" : "14px", letterSpacing: "1px" }}>
+              {mode}
+            </span>
+            <span style={{ opacity: 0.35 }}>|</span>
+            <span style={{ fontVariantNumeric: "tabular-nums", overflow: "hidden", textOverflow: "ellipsis" }}>
+              {animationLabel}
+            </span>
+            <span
+              style={{
+                fontSize: isMobile ? "10px" : "13px",
+                fontWeight: 700,
+                padding: isMobile ? "2px 7px" : "3px 10px",
+                borderRadius: "999px",
+                background: "rgba(56,189,248,0.18)",
+                border: "1px solid rgba(56,189,248,0.35)",
+                color: "#7dd3fc",
+                letterSpacing: "0.5px",
+              }}
+            >
+              {channel.replace("IMG_", "")}
+            </span>
+            {frameLoading && (
+              <span
+                style={{
+                  width: isMobile ? "12px" : "16px",
+                  height: isMobile ? "12px" : "16px",
+                  borderRadius: "50%",
+                  border: "2px solid rgba(255,255,255,0.25)",
+                  borderTopColor: "#38bdf8",
+                  animation: "spin 0.7s linear infinite",
+                  flexShrink: 0,
+                }}
+              />
+            )}
+          </div>
+        );
+      })()}
 
       <MapContainer
         key="weather-map"

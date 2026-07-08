@@ -111,6 +111,7 @@ export default function WeatherMapControls({
 
       {showControls && (
         <div
+          className="glass-scroll"
           style={{
             position: "absolute",
             top: 18,
@@ -128,7 +129,7 @@ export default function WeatherMapControls({
             border: "1px solid rgba(255,255,255,0.12)",
             boxShadow: "0 10px 35px rgba(0,0,0,0.45)",
             color: "white",
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "var(--font-inter), sans-serif",
             overflow: "hidden",
           }}
         >
