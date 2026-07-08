@@ -513,7 +513,12 @@ export default function WeatherMap() {
     const inView = (lat: number, lng: number) =>
       lat >= south && lat <= north && lng >= west && lng <= east;
 
+    // Nowcast forecasts declutter a bit more loosely than current rain so they
+    // read as distinct alerts, not a blanket.
+    const nowcastGap = minGap * 1.6;
+
     const grid = new Map<string, true>();
+    const nowcastGrid = new Map<string, true>();
     const nowcast: MosdacAlertFeature[] = [];
     const current: MosdacAlertFeature[] = [];
 
@@ -522,11 +527,21 @@ export default function WeatherMap() {
       if (!coords) continue;
       const [lng, lat] = coords;
 
-      const value = (feature.properties || feature)?.value;
+      const props = (feature.properties || feature) as MosdacAlertFeatureProperties;
+      const value = props.value;
 
-      // Nowcast / cloudburst alerts (few, important, carry ROI) are always kept
-      // — never viewport-culled or capped.
       if (!value) {
+        // Cloudbursts are rare and critical — always shown.
+        const isCloudburst = (props.forecast || "").toString().toLowerCase().includes("cloud");
+        if (isCloudburst) {
+          nowcast.push(feature);
+          continue;
+        }
+        // Nowcast rain: viewport-culled + decluttered like the rain field.
+        if (!inView(lat, lng)) continue;
+        const key = `${Math.floor(lng / nowcastGap)}:${Math.floor(lat / nowcastGap)}`;
+        if (nowcastGrid.has(key)) continue;
+        nowcastGrid.set(key, true);
         nowcast.push(feature);
         continue;
       }
@@ -534,7 +549,6 @@ export default function WeatherMap() {
       // Current-rain is viewport-culled + capped for performance.
       if (!inView(lat, lng) || current.length >= MAX_CURRENT) continue;
 
-      // Current-rain grid: declutter by zoom + hard cap.
       const key = `${Math.floor(lng / minGap)}:${Math.floor(lat / minGap)}`;
       if (grid.has(key)) continue;
       grid.set(key, true);
