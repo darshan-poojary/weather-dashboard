@@ -501,24 +501,13 @@ export default function WeatherMap() {
   // decluttered by zoom (more markers as you zoom in — like MOSDAC), and hard
   // capped so the marker count — and therefore zoom cost — stays bounded.
   const visibleAlerts = useMemo(() => {
-    // Spacing between kept current-rain markers, in degrees. Wide at overview
-    // zoom so they stay sparse (a light scattering, not a blanket) and tighten
-    // as you zoom into a region.
-    const minGap =
-      zoom >= 10
-        ? 0.18
-        : zoom >= 9
-        ? 0.26
-        : zoom >= 8
-        ? 0.4
-        : zoom >= 7
-        ? 0.6
-        : zoom >= 6
-        ? 0.9
-        : zoom >= 5
-        ? 1.5
-        : 2.2;
-    const MAX_CURRENT = 150;
+    // Keep a CONSTANT on-screen spacing between current-rain icons (~64px) at
+    // every zoom. Deriving the degree gap from zoom this way means the visual
+    // density stays steady while zooming — icons don't pop in/out — and you get
+    // finer detail as you zoom in without ever blanketing the overview.
+    const degPerPixel = 360 / (256 * Math.pow(2, zoom));
+    const minGap = Math.max(0.05, 64 * degPerPixel);
+    const MAX_CURRENT = 260;
 
     const [south, west, north, east] = viewBounds ?? [-90, -180, 90, 180];
     const inView = (lat: number, lng: number) =>
@@ -532,17 +521,18 @@ export default function WeatherMap() {
       const coords = feature.geometry?.coordinates;
       if (!coords) continue;
       const [lng, lat] = coords;
-      if (!inView(lat, lng)) continue;
 
       const value = (feature.properties || feature)?.value;
 
-      // Nowcast / cloudburst alerts (few, important, carry ROI) are always kept.
+      // Nowcast / cloudburst alerts (few, important, carry ROI) are always kept
+      // — never viewport-culled or capped.
       if (!value) {
         nowcast.push(feature);
         continue;
       }
 
-      if (current.length >= MAX_CURRENT) continue;
+      // Current-rain is viewport-culled + capped for performance.
+      if (!inView(lat, lng) || current.length >= MAX_CURRENT) continue;
 
       // Current-rain grid: declutter by zoom + hard cap.
       const key = `${Math.floor(lng / minGap)}:${Math.floor(lat / minGap)}`;
