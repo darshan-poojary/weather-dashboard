@@ -254,10 +254,10 @@ body {
   display: none;
 }
 
-/* Place-name labels: dark halo so they stay readable over bright overlays. */
+/* Place-name labels: a whisper of shadow for legibility — not a heavy outline. */
 .map-labels {
-  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.95))
-    drop-shadow(0 0 1.5px rgba(0, 0, 0, 0.85));
+  filter: drop-shadow(0 0 0.6px rgba(0, 0, 0, 0.5));
+  opacity: 0.9;
 }
 
 .leaflet-popup-content-wrapper {
