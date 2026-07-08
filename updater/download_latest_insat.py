@@ -1,12 +1,16 @@
-﻿import requests
+﻿import os
+import requests
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DOWNLOAD_FOLDER = ROOT_DIR / "h5-data"
 DOWNLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 
-USERNAME = "darshanpoojary"
-PASSWORD = "Darshan05#"
+# Credentials are read from the environment (GitHub Secrets in CI).
+# The literal fallbacks keep local runs working, but should be removed once
+# the password below has been rotated — it is already exposed in git history.
+USERNAME = os.environ.get("MOSDAC_USERNAME", "darshanpoojary")
+PASSWORD = os.environ.get("MOSDAC_PASSWORD", "Darshan05#")
 DATASET_ID = "3SIMG_L1B_STD"
 DOWNLOAD_TOKEN_URL = "https://mosdac.gov.in/download_api/gettoken"
 DATASETS_URL = "https://mosdac.gov.in/apios/datasets.json"
