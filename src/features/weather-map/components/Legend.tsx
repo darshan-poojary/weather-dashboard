@@ -1,6 +1,6 @@
 import { memo } from "react";
-import type { Palette } from "./weatherMapTypes";
-import { LEGENDS } from "./weatherMapConfig";
+import type { Palette } from "../types";
+import { LEGENDS } from "../config";
 
 interface WeatherMapLegendProps {
   currentLegend: (typeof LEGENDS)[keyof typeof LEGENDS];

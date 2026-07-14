@@ -32,6 +32,8 @@ export type ThunderstormCell = {
   temp: number;
   count: number;
   severity: string;
+  radius_km: number;
+  updated: string;
   [key: string]: unknown;
 };
 

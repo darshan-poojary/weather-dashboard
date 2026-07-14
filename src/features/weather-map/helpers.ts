@@ -1,4 +1,4 @@
-import type { ThunderstormCell } from "./weatherMapTypes";
+import type { ThunderstormCell } from "./types";
 
 export function createDivIcon(
   leaflet: typeof import("leaflet"),

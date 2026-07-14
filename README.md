@@ -21,7 +21,7 @@ cells, and lets you scrub through recent frames or jump to a historical time.
 ## Architecture
 
 ```
-Browser (Leaflet map, WeatherMap.tsx)
+Browser (Leaflet map, features/weather-map)
    │
    ├── /api/mosdac-wms      → proxies INSAT-3R WMS tiles from MOSDAC
    ├── /api/mosdac-latest   → probes the newest published half-hourly frame
@@ -36,6 +36,27 @@ Updater (updater/, Python) — run every 30 min by GitHub Actions:
 
 The MOSDAC slot logic (frames publish on `:15` / `:45` each hour) lives in
 [`src/lib/mosdac.ts`](src/lib/mosdac.ts) and is shared by all three API routes.
+
+### Project layout
+
+```
+src/
+  app/                     Next.js routes
+    api/mosdac-*/          MOSDAC proxy endpoints (wms, latest, alerts)
+    layout.tsx, page.tsx   root shell + entry (mounts the weather-map feature)
+  features/
+    weather-map/           self-contained map feature
+      components/          WeatherMap (orchestrator), Controls, Legend, CloudPopup
+      config.ts            channels, palettes, legends, grid constants
+      helpers.ts           icon builders + cloud-cover formatting
+      types.ts             shared TypeScript types
+      index.ts             public entry point ({ WeatherMap })
+  lib/
+    mosdac.ts              shared MOSDAC slot/URL logic
+
+updater/                   Python data pipeline (see below)
+public/                    static data + geo boundaries served to the client
+```
 
 > **Note on Next.js:** this repo uses a modified Next.js build. See
 > [`AGENTS.md`](AGENTS.md) — consult `node_modules/next/dist/docs/` before
@@ -68,6 +89,22 @@ and commits any changes to `public/cloud-grid.json` and
 pip install -r updater/requirements.txt
 python updater/update_thunderstorms.py
 ```
+
+## Map boundaries
+
+`public/geo/india-states.geojson` and `india-districts.geojson` are **simplified**
+for fast client rendering (the raw survey-grade boundaries were ~57 MB and caused
+frame drops when zoomed in). If you ever replace them with fresh source data,
+re-simplify with [mapshaper](https://github.com/mbloch/mapshaper) before committing:
+
+```bash
+npx mapshaper raw-states.geojson -simplify 8% keep-shapes \
+  -o public/geo/india-states.geojson precision=0.001 force
+```
+
+8% retains enough detail for high zoom while keeping each file a few MB;
+topology preservation (mapshaper's default) stops shared borders from splitting
+into doubled lines.
 
 ## Deployment
 

@@ -1,4 +1,4 @@
-import type { Palette, WeatherChannel, WeatherMode } from "./weatherMapTypes";
+import type { Palette, WeatherChannel, WeatherMode } from "./types";
 
 export const CHANNELS = [
   {

@@ -1,6 +1,6 @@
 import { memo } from "react";
-import type { Palette, WeatherChannel, WeatherMode } from "./weatherMapTypes";
-import { CHANNELS, MODES, PALETTES } from "./weatherMapConfig";
+import type { Palette, WeatherChannel, WeatherMode } from "../types";
+import { CHANNELS, MODES, PALETTES } from "../config";
 
 interface WeatherMapControlsProps {
   channel: WeatherChannel;

@@ -12,18 +12,18 @@ import type {
   Palette,
   WeatherChannel,
   WeatherMode,
-} from "./weatherMapTypes";
+} from "../types";
 import {
   GRID_DEG,
   LEGENDS,
   PALETTE_GRADIENTS,
-} from "./weatherMapConfig";
-import { createDivIcon, createThunderstormIcon } from "./weatherMapHelpers";
-import type { MosdacAlertFeatureProperties } from "./weatherMapTypes";
-import { snapToSlotDate } from "../lib/mosdac";
-import WeatherMapControls from "./WeatherMapControls";
-import WeatherMapLegend from "./WeatherMapLegend";
-import WeatherMapCloudPopup from "./WeatherMapCloudPopup";
+} from "../config";
+import { createDivIcon, createThunderstormIcon } from "../helpers";
+import type { MosdacAlertFeatureProperties } from "../types";
+import { snapToSlotDate } from "../../../lib/mosdac";
+import WeatherMapControls from "./Controls";
+import WeatherMapLegend from "./Legend";
+import WeatherMapCloudPopup from "./CloudPopup";
 
 const loadLeafletComponent = <T extends ComponentType<Record<string, unknown>>>(name: string) =>
   dynamic(async () => {
@@ -35,7 +35,6 @@ const MapContainer = loadLeafletComponent("MapContainer");
 const TileLayer = loadLeafletComponent("TileLayer");
 const WMSTileLayer = loadLeafletComponent("WMSTileLayer");
 const GeoJSON = loadLeafletComponent("GeoJSON");
-const Popup = loadLeafletComponent("Popup");
 
 const MapEvents = dynamic(
   async () => {
@@ -215,14 +214,18 @@ const AlertLayer = dynamic(
           const marker = L.marker([cell.lat, cell.lon], {
             icon: createThunderstormIcon(L, cell, zoom),
           });
+          const severityLabel =
+            cell.severity === "Severe"
+              ? "🔴 Severe"
+              : cell.severity === "Strong"
+              ? "🟠 Strong"
+              : "🟡 Moderate";
           marker.bindPopup(() =>
             card(
               heading("#facc15", "⚡ THUNDERSTORM CELL") +
-                `<div style="font-size:12px;color:#cbd5e1">Severity: ${
-                  cell.temp < 190 ? "🔴 Severe" : cell.temp < 195 ? "🟠 Strong" : "🟡 Moderate"
-                }<br/>Cloud-top temp: ${cell.temp.toFixed(1)} K<br/>Impact radius: ${Math.round(
-                  Math.sqrt(cell.count) * 2
-                )} km<br/>Cell strength: ${cell.count}</div>`
+                `<div style="font-size:12px;color:#cbd5e1">Severity: ${severityLabel}<br/>Cloud-top temp: ${cell.temp.toFixed(
+                  1
+                )} K<br/>Impact radius: ${cell.radius_km} km<br/>Cell strength: ${cell.count}</div>`
             )
           );
           marker.addTo(group);
@@ -239,6 +242,11 @@ const AlertLayer = dynamic(
   },
   { ssr: false }
 );
+
+// INSAT-3R live frames are half-hourly (:15 / :45). The timeline shows the last
+// FRAME_COUNT frames, stepping back in true 30-minute increments.
+const FRAME_COUNT = 20;
+const SLOT_MS = 30 * 60 * 1000;
 
 export default function WeatherMap() {
   const [opacity, setOpacity] = useState(0.7);
@@ -269,11 +277,8 @@ export default function WeatherMap() {
   const [mosdacAlerts, setMosdacAlerts] = useState<MosdacAlertFeature[]>([]);
   const loadedFrames = useRef(new Set<string>());
 
-  // INSAT-3R live frames are half-hourly (:15 / :45). Anchor the timeline on
-  // the newest frame that actually exists (probed via /api/mosdac-latest) and
-  // step back in true 30-minute increments so animation has no duplicate frames.
-  const FRAME_COUNT = 20;
-  const SLOT_MS = 30 * 60 * 1000;
+  // Anchor the timeline on the newest frame that actually exists (probed via
+  // /api/mosdac-latest) and step back so animation has no duplicate frames.
   const frames = useMemo(() => {
     const anchor = liveDatetime ? new Date(liveDatetime) : snapToSlotDate(new Date());
 
@@ -822,11 +827,7 @@ export default function WeatherMap() {
         />
 
         {cloudPopup && (
-          <WeatherMapCloudPopup
-            cloudPopup={cloudPopup}
-            setCloudPopup={setCloudPopup}
-            Popup={Popup}
-          />
+          <WeatherMapCloudPopup cloudPopup={cloudPopup} setCloudPopup={setCloudPopup} />
         )}
 
         <TileLayer
