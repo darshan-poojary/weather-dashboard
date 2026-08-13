@@ -1,1406 +1,2909 @@
 [
   {
-    "lat": 24.900000000000002,
-    "lon": 82.8,
-    "temp": 211.03187561035156,
-    "count": 48,
-    "severity": "Moderate",
-    "radius_km": 14,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 24.69,
-    "lon": 82.96000000000001,
-    "temp": 209.718505859375,
-    "count": 61,
-    "severity": "Moderate",
-    "radius_km": 16,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.78,
-    "lon": 84.57000000000001,
-    "temp": 201.4821014404297,
-    "count": 119,
-    "severity": "Moderate",
-    "radius_km": 22,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.78,
-    "lon": 84.77,
-    "temp": 203.04925537109375,
-    "count": 135,
-    "severity": "Moderate",
-    "radius_km": 23,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.95,
-    "lon": 90.24,
-    "temp": 203.04925537109375,
-    "count": 82,
-    "severity": "Moderate",
-    "radius_km": 18,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.95,
-    "lon": 90.60000000000001,
-    "temp": 197.58665466308594,
-    "count": 138,
-    "severity": "Moderate",
-    "radius_km": 23,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.78,
-    "lon": 85.28,
-    "temp": 206.5046844482422,
-    "count": 94,
-    "severity": "Moderate",
-    "radius_km": 19,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.91,
-    "lon": 86.4,
-    "temp": 206.02688598632812,
-    "count": 57,
-    "severity": "Moderate",
-    "radius_km": 15,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.78,
-    "lon": 84.25,
-    "temp": 206.5046844482422,
-    "count": 32,
-    "severity": "Moderate",
-    "radius_km": 11,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.87,
-    "lon": 86.2,
-    "temp": 208.8224639892578,
-    "count": 45,
-    "severity": "Moderate",
-    "radius_km": 13,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.87,
-    "lon": 90.76,
-    "temp": 200.9469451904297,
-    "count": 67,
-    "severity": "Moderate",
-    "radius_km": 16,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.53,
-    "lon": 84.25,
-    "temp": 200.40504455566406,
-    "count": 151,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.29,
-    "lon": 84.72,
-    "temp": 197.58665466308594,
-    "count": 144,
-    "severity": "Moderate",
-    "radius_km": 24,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.29,
-    "lon": 84.91,
-    "temp": 195.79908752441406,
-    "count": 156,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.41,
-    "lon": 85.35000000000001,
-    "temp": 196.99942016601562,
-    "count": 146,
-    "severity": "Moderate",
-    "radius_km": 24,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.41,
-    "lon": 86.02,
-    "temp": 197.58665466308594,
-    "count": 154,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.42,
-    "lon": 86.3,
-    "temp": 197.58665466308594,
-    "count": 140,
-    "severity": "Moderate",
-    "radius_km": 24,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.53,
-    "lon": 90.25,
-    "temp": 202.53306579589844,
-    "count": 139,
-    "severity": "Moderate",
-    "radius_km": 24,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.62,
-    "lon": 90.7,
-    "temp": 198.16567993164062,
-    "count": 147,
-    "severity": "Moderate",
-    "radius_km": 24,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.62,
-    "lon": 90.78,
-    "temp": 198.16567993164062,
-    "count": 136,
-    "severity": "Moderate",
-    "radius_km": 23,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.41,
-    "lon": 83.73,
-    "temp": 207.44566345214844,
-    "count": 73,
-    "severity": "Moderate",
-    "radius_km": 17,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.51,
-    "lon": 87.58,
-    "temp": 198.16567993164062,
-    "count": 104,
-    "severity": "Moderate",
-    "radius_km": 20,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.3,
-    "lon": 87.76,
-    "temp": 198.7367706298828,
-    "count": 65,
-    "severity": "Moderate",
-    "radius_km": 16,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.26,
-    "lon": 87.25,
-    "temp": 202.53306579589844,
-    "count": 7,
-    "severity": "Moderate",
-    "radius_km": 5,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.16,
-    "lon": 83.73,
-    "temp": 207.44566345214844,
-    "count": 117,
-    "severity": "Moderate",
-    "radius_km": 22,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.12,
-    "lon": 84.16,
-    "temp": 200.40504455566406,
-    "count": 169,
-    "severity": "Moderate",
-    "radius_km": 26,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.16,
-    "lon": 84.67,
-    "temp": 196.99942016601562,
-    "count": 158,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.25,
-    "lon": 84.91,
-    "temp": 195.79908752441406,
-    "count": 168,
-    "severity": "Moderate",
-    "radius_km": 26,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.0,
-    "lon": 85.46000000000001,
-    "temp": 193.28553771972656,
-    "count": 168,
-    "severity": "Strong",
-    "radius_km": 26,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.8,
-    "lon": 86.12,
-    "temp": 193.92897033691406,
-    "count": 168,
-    "severity": "Strong",
-    "radius_km": 26,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.25,
-    "lon": 86.34,
-    "temp": 198.16567993164062,
-    "count": 155,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.93,
-    "lon": 87.19,
-    "temp": 196.99942016601562,
-    "count": 86,
-    "severity": "Moderate",
-    "radius_km": 19,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.18,
-    "lon": 87.48,
-    "temp": 197.58665466308594,
-    "count": 147,
-    "severity": "Moderate",
-    "radius_km": 24,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.94,
-    "lon": 87.75,
-    "temp": 198.16567993164062,
-    "count": 132,
-    "severity": "Moderate",
-    "radius_km": 23,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.0,
-    "lon": 90.22,
-    "temp": 204.5626983642578,
-    "count": 135,
-    "severity": "Moderate",
-    "radius_km": 23,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.21,
-    "lon": 90.63,
-    "temp": 201.4821014404297,
-    "count": 159,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.25,
-    "lon": 90.96000000000001,
-    "temp": 202.53306579589844,
-    "count": 151,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.19,
-    "lon": 88.35000000000001,
-    "temp": 202.01075744628906,
-    "count": 7,
-    "severity": "Moderate",
-    "radius_km": 5,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 22.22,
-    "lon": 91.27,
-    "temp": 208.8224639892578,
-    "count": 14,
-    "severity": "Moderate",
-    "radius_km": 7,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.78,
-    "lon": 89.13,
-    "temp": 208.8224639892578,
-    "count": 32,
-    "severity": "Moderate",
-    "radius_km": 11,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.67,
-    "lon": 83.25,
-    "temp": 212.31060791015625,
-    "count": 8,
-    "severity": "Moderate",
-    "radius_km": 6,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.63,
-    "lon": 83.72,
-    "temp": 210.16029357910156,
-    "count": 85,
-    "severity": "Moderate",
-    "radius_km": 18,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.71,
-    "lon": 84.19,
-    "temp": 205.54405212402344,
-    "count": 156,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.67,
-    "lon": 84.7,
-    "temp": 199.85621643066406,
-    "count": 156,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.67,
-    "lon": 84.9,
-    "temp": 199.30020141601562,
-    "count": 156,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.64,
-    "lon": 85.61,
-    "temp": 196.40367126464844,
-    "count": 144,
-    "severity": "Moderate",
-    "radius_km": 24,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.68,
-    "lon": 85.76,
-    "temp": 197.58665466308594,
-    "count": 156,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.56,
-    "lon": 86.27,
-    "temp": 200.9469451904297,
-    "count": 152,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.650000000000002,
-    "lon": 87.22,
-    "temp": 200.40504455566406,
-    "count": 90,
-    "severity": "Moderate",
-    "radius_km": 19,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.73,
-    "lon": 87.62,
-    "temp": 198.16567993164062,
-    "count": 138,
-    "severity": "Moderate",
-    "radius_km": 23,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.73,
-    "lon": 87.78,
-    "temp": 199.30020141601562,
-    "count": 42,
-    "severity": "Moderate",
-    "radius_km": 13,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.54,
-    "lon": 89.03,
-    "temp": 206.5046844482422,
-    "count": 130,
-    "severity": "Moderate",
-    "radius_km": 23,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.62,
-    "lon": 89.28,
-    "temp": 208.36801147460938,
-    "count": 13,
-    "severity": "Moderate",
-    "radius_km": 7,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.72,
-    "lon": 90.56,
-    "temp": 205.05604553222656,
-    "count": 44,
-    "severity": "Moderate",
-    "radius_km": 13,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.72,
-    "lon": 90.76,
-    "temp": 205.05604553222656,
-    "count": 69,
-    "severity": "Moderate",
-    "radius_km": 17,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.57,
-    "lon": 91.46000000000001,
-    "temp": 208.36801147460938,
-    "count": 56,
-    "severity": "Moderate",
-    "radius_km": 15,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.41,
-    "lon": 88.39,
-    "temp": 211.8880615234375,
-    "count": 25,
-    "severity": "Moderate",
-    "radius_km": 10,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.78,
-    "lon": 84.14,
-    "temp": 204.06390380859375,
-    "count": 144,
-    "severity": "Moderate",
-    "radius_km": 24,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.23,
-    "lon": 84.73,
-    "temp": 203.55946350097656,
-    "count": 155,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.23,
-    "lon": 85.2,
-    "temp": 199.85621643066406,
-    "count": 159,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.23,
-    "lon": 85.28,
-    "temp": 200.9469451904297,
-    "count": 164,
-    "severity": "Moderate",
-    "radius_km": 26,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.23,
-    "lon": 85.75,
-    "temp": 201.4821014404297,
-    "count": 160,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.240000000000002,
-    "lon": 86.3,
-    "temp": 204.06390380859375,
-    "count": 89,
-    "severity": "Moderate",
-    "radius_km": 19,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.2,
-    "lon": 86.81,
-    "temp": 211.46185302734375,
-    "count": 12,
-    "severity": "Moderate",
-    "radius_km": 7,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.8,
-    "lon": 87.58,
-    "temp": 206.97756958007812,
-    "count": 47,
-    "severity": "Moderate",
-    "radius_km": 14,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.8,
-    "lon": 88.17,
-    "temp": 205.54405212402344,
-    "count": 113,
-    "severity": "Moderate",
-    "radius_km": 21,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.8,
-    "lon": 88.28,
-    "temp": 206.97756958007812,
-    "count": 75,
-    "severity": "Moderate",
-    "radius_km": 17,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.240000000000002,
-    "lon": 91.16,
-    "temp": 209.718505859375,
-    "count": 61,
-    "severity": "Moderate",
-    "radius_km": 16,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 21.12,
-    "lon": 91.31,
-    "temp": 210.16029357910156,
-    "count": 77,
-    "severity": "Moderate",
-    "radius_km": 18,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.900000000000002,
-    "lon": 83.67,
-    "temp": 209.27259826660156,
-    "count": 17,
-    "severity": "Moderate",
-    "radius_km": 8,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.740000000000002,
-    "lon": 84.06,
-    "temp": 208.8224639892578,
-    "count": 13,
-    "severity": "Moderate",
-    "radius_km": 7,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.740000000000002,
-    "lon": 84.60000000000001,
-    "temp": 209.718505859375,
-    "count": 48,
-    "severity": "Moderate",
-    "radius_km": 14,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.66,
-    "lon": 85.23,
-    "temp": 204.5626983642578,
-    "count": 136,
-    "severity": "Moderate",
-    "radius_km": 23,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.67,
-    "lon": 85.27,
-    "temp": 203.55946350097656,
-    "count": 155,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.47,
-    "lon": 85.77,
-    "temp": 208.36801147460938,
-    "count": 93,
-    "severity": "Moderate",
-    "radius_km": 19,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.64,
-    "lon": 87.69,
-    "temp": 207.44566345214844,
-    "count": 146,
-    "severity": "Moderate",
-    "radius_km": 24,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.56,
-    "lon": 88.16,
-    "temp": 204.06390380859375,
-    "count": 155,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.72,
-    "lon": 88.28,
-    "temp": 209.718505859375,
-    "count": 30,
-    "severity": "Moderate",
-    "radius_km": 11,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.27,
-    "lon": 86.93,
-    "temp": 209.27259826660156,
-    "count": 87,
-    "severity": "Moderate",
-    "radius_km": 19,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.27,
-    "lon": 86.7,
-    "temp": 210.59805297851562,
-    "count": 13,
-    "severity": "Moderate",
-    "radius_km": 7,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.22,
-    "lon": 85.57000000000001,
-    "temp": 211.46185302734375,
-    "count": 27,
-    "severity": "Moderate",
-    "radius_km": 10,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.23,
-    "lon": 85.84,
-    "temp": 212.31060791015625,
-    "count": 28,
-    "severity": "Moderate",
-    "radius_km": 11,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.19,
-    "lon": 86.69,
-    "temp": 209.718505859375,
-    "count": 86,
-    "severity": "Moderate",
-    "radius_km": 19,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.23,
-    "lon": 86.93,
-    "temp": 209.27259826660156,
-    "count": 169,
-    "severity": "Moderate",
-    "radius_km": 26,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.240000000000002,
-    "lon": 87.67,
-    "temp": 208.36801147460938,
-    "count": 121,
-    "severity": "Moderate",
-    "radius_km": 22,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 20.240000000000002,
-    "lon": 87.94,
-    "temp": 207.9091033935547,
-    "count": 26,
-    "severity": "Moderate",
-    "radius_km": 10,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 19.71,
-    "lon": 87.22,
-    "temp": 210.16029357910156,
-    "count": 63,
-    "severity": "Moderate",
-    "radius_km": 16,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 18.75,
-    "lon": 85.72,
-    "temp": 208.8224639892578,
-    "count": 60,
-    "severity": "Moderate",
-    "radius_km": 15,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 18.830000000000002,
-    "lon": 85.8,
-    "temp": 208.36801147460938,
-    "count": 48,
-    "severity": "Moderate",
-    "radius_km": 14,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 18.36,
-    "lon": 85.63,
-    "temp": 208.36801147460938,
-    "count": 55,
-    "severity": "Moderate",
-    "radius_km": 15,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 18.48,
-    "lon": 86.25,
-    "temp": 193.28553771972656,
-    "count": 154,
-    "severity": "Strong",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 18.52,
-    "lon": 86.33,
-    "temp": 191.966064453125,
-    "count": 117,
-    "severity": "Strong",
-    "radius_km": 22,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 18.44,
-    "lon": 85.06,
-    "temp": 210.16029357910156,
-    "count": 52,
-    "severity": "Moderate",
-    "radius_km": 14,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 18.29,
-    "lon": 87.36,
-    "temp": 203.04925537109375,
-    "count": 101,
-    "severity": "Moderate",
-    "radius_km": 20,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 18.37,
-    "lon": 87.87,
-    "temp": 206.5046844482422,
-    "count": 104,
-    "severity": "Moderate",
-    "radius_km": 20,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 18.29,
-    "lon": 87.13,
-    "temp": 199.30020141601562,
-    "count": 92,
-    "severity": "Moderate",
-    "radius_km": 19,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 17.85,
-    "lon": 86.0,
-    "temp": 200.40504455566406,
-    "count": 133,
-    "severity": "Moderate",
-    "radius_km": 23,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 18.01,
-    "lon": 86.55,
-    "temp": 199.85621643066406,
-    "count": 169,
-    "severity": "Moderate",
-    "radius_km": 26,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 18.21,
-    "lon": 87.09,
-    "temp": 196.99942016601562,
-    "count": 169,
-    "severity": "Moderate",
-    "radius_km": 26,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 18.21,
-    "lon": 87.28,
-    "temp": 202.01075744628906,
-    "count": 106,
-    "severity": "Moderate",
-    "radius_km": 21,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 18.25,
-    "lon": 87.78,
-    "temp": 210.16029357910156,
-    "count": 10,
-    "severity": "Moderate",
-    "radius_km": 6,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 17.81,
-    "lon": 85.74,
-    "temp": 202.53306579589844,
-    "count": 29,
-    "severity": "Moderate",
-    "radius_km": 11,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 17.650000000000002,
-    "lon": 85.66,
-    "temp": 203.55946350097656,
-    "count": 62,
-    "severity": "Moderate",
-    "radius_km": 16,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 17.73,
-    "lon": 85.85000000000001,
-    "temp": 203.55946350097656,
-    "count": 111,
-    "severity": "Moderate",
-    "radius_km": 21,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 17.73,
-    "lon": 86.35000000000001,
-    "temp": 203.55946350097656,
-    "count": 132,
-    "severity": "Moderate",
-    "radius_km": 23,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 17.740000000000002,
-    "lon": 86.92,
-    "temp": 204.06390380859375,
-    "count": 65,
-    "severity": "Moderate",
-    "radius_km": 16,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 17.34,
-    "lon": 83.78,
-    "temp": 207.9091033935547,
-    "count": 40,
-    "severity": "Moderate",
-    "radius_km": 13,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 17.34,
-    "lon": 83.74,
-    "temp": 206.97756958007812,
-    "count": 57,
-    "severity": "Moderate",
-    "radius_km": 15,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 17.29,
-    "lon": 81.84,
-    "temp": 213.55694580078125,
+    "lat": 37.12,
+    "lon": 88.18,
+    "temp": 209.91610717773438,
     "count": 6,
     "severity": "Moderate",
     "radius_km": 5,
-    "updated": "13-Aug-2026 09:39 UTC"
+    "updated": "13-Aug-2026 15:30 UTC"
   },
   {
-    "lat": 17.26,
-    "lon": 83.25,
-    "temp": 211.8880615234375,
-    "count": 23,
+    "lat": 36.34,
+    "lon": 86.53,
+    "temp": 209.4746856689453,
+    "count": 35,
     "severity": "Moderate",
-    "radius_km": 10,
-    "updated": "13-Aug-2026 09:39 UTC"
+    "radius_km": 12,
+    "updated": "13-Aug-2026 15:30 UTC"
   },
   {
-    "lat": 16.830000000000002,
-    "lon": 81.69,
-    "temp": 211.46185302734375,
-    "count": 82,
-    "severity": "Moderate",
-    "radius_km": 18,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 16.75,
-    "lon": 82.15,
-    "temp": 208.8224639892578,
-    "count": 116,
-    "severity": "Moderate",
-    "radius_km": 22,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 16.830000000000002,
-    "lon": 82.68,
-    "temp": 202.53306579589844,
-    "count": 124,
-    "severity": "Moderate",
-    "radius_km": 22,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 16.79,
-    "lon": 82.75,
-    "temp": 202.53306579589844,
-    "count": 163,
-    "severity": "Moderate",
-    "radius_km": 26,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 17.22,
-    "lon": 83.55,
-    "temp": 206.02688598632812,
-    "count": 125,
-    "severity": "Moderate",
-    "radius_km": 22,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 17.1,
-    "lon": 83.78,
-    "temp": 207.9091033935547,
-    "count": 44,
-    "severity": "Moderate",
-    "radius_km": 13,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 16.48,
-    "lon": 81.24,
-    "temp": 211.46185302734375,
-    "count": 58,
-    "severity": "Moderate",
-    "radius_km": 15,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 16.32,
-    "lon": 81.54,
-    "temp": 209.27259826660156,
-    "count": 129,
-    "severity": "Moderate",
-    "radius_km": 23,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 16.29,
-    "lon": 82.22,
-    "temp": 206.97756958007812,
-    "count": 156,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 16.71,
-    "lon": 82.49,
-    "temp": 204.06390380859375,
-    "count": 156,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 16.4,
-    "lon": 83.05,
-    "temp": 199.85621643066406,
-    "count": 154,
-    "severity": "Moderate",
-    "radius_km": 25,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 16.48,
-    "lon": 83.28,
-    "temp": 202.01075744628906,
-    "count": 136,
-    "severity": "Moderate",
-    "radius_km": 23,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 16.67,
-    "lon": 83.77,
-    "temp": 211.03187561035156,
-    "count": 23,
-    "severity": "Moderate",
-    "radius_km": 10,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 15.75,
-    "lon": 81.73,
-    "temp": 205.54405212402344,
-    "count": 99,
-    "severity": "Moderate",
-    "radius_km": 20,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 15.780000000000001,
-    "lon": 81.81,
-    "temp": 205.05604553222656,
-    "count": 182,
-    "severity": "Moderate",
-    "radius_km": 27,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 16.25,
-    "lon": 82.3,
-    "temp": 205.05604553222656,
-    "count": 169,
-    "severity": "Moderate",
-    "radius_km": 26,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 16.25,
-    "lon": 82.94,
-    "temp": 201.4821014404297,
-    "count": 177,
-    "severity": "Moderate",
-    "radius_km": 27,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 16.09,
-    "lon": 83.39,
-    "temp": 200.9469451904297,
-    "count": 143,
-    "severity": "Moderate",
-    "radius_km": 24,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 16.17,
-    "lon": 81.24,
-    "temp": 209.718505859375,
-    "count": 42,
-    "severity": "Moderate",
-    "radius_km": 13,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 15.63,
-    "lon": 81.24,
-    "temp": 207.44566345214844,
-    "count": 18,
-    "severity": "Moderate",
-    "radius_km": 8,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 15.63,
-    "lon": 81.43,
-    "temp": 203.04925537109375,
-    "count": 91,
-    "severity": "Moderate",
-    "radius_km": 19,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 15.71,
-    "lon": 81.77,
-    "temp": 205.54405212402344,
-    "count": 76,
-    "severity": "Moderate",
-    "radius_km": 17,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 15.71,
-    "lon": 82.56,
-    "temp": 210.16029357910156,
-    "count": 13,
-    "severity": "Moderate",
-    "radius_km": 7,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 15.32,
-    "lon": 83.23,
-    "temp": 211.46185302734375,
-    "count": 11,
-    "severity": "Moderate",
-    "radius_km": 7,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 15.48,
-    "lon": 83.72,
-    "temp": 203.04925537109375,
-    "count": 55,
-    "severity": "Moderate",
-    "radius_km": 15,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 15.48,
-    "lon": 84.03,
-    "temp": 198.7367706298828,
-    "count": 47,
-    "severity": "Moderate",
-    "radius_km": 14,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 14.94,
-    "lon": 83.23,
-    "temp": 207.44566345214844,
-    "count": 10,
-    "severity": "Moderate",
-    "radius_km": 6,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 14.33,
-    "lon": 81.88,
-    "temp": 202.01075744628906,
-    "count": 138,
-    "severity": "Moderate",
-    "radius_km": 23,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 14.48,
-    "lon": 83.12,
-    "temp": 206.02688598632812,
-    "count": 28,
-    "severity": "Moderate",
-    "radius_km": 11,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 14.290000000000001,
-    "lon": 81.25,
-    "temp": 206.02688598632812,
-    "count": 108,
-    "severity": "Moderate",
-    "radius_km": 21,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 14.33,
-    "lon": 82.37,
-    "temp": 206.97756958007812,
-    "count": 81,
-    "severity": "Moderate",
-    "radius_km": 18,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 14.33,
-    "lon": 81.55,
-    "temp": 203.04925537109375,
-    "count": 112,
-    "severity": "Moderate",
-    "radius_km": 21,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 14.18,
-    "lon": 80.69,
-    "temp": 211.8880615234375,
-    "count": 15,
-    "severity": "Moderate",
-    "radius_km": 8,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 14.25,
-    "lon": 81.25,
-    "temp": 204.5626983642578,
-    "count": 61,
-    "severity": "Moderate",
-    "radius_km": 16,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 14.18,
-    "lon": 81.51,
-    "temp": 202.01075744628906,
-    "count": 79,
-    "severity": "Moderate",
-    "radius_km": 18,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 14.25,
-    "lon": 81.96000000000001,
-    "temp": 202.53306579589844,
-    "count": 55,
-    "severity": "Moderate",
-    "radius_km": 15,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 14.25,
-    "lon": 82.26,
-    "temp": 206.97756958007812,
-    "count": 8,
-    "severity": "Moderate",
-    "radius_km": 6,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 14.200000000000001,
-    "lon": 97.21000000000001,
-    "temp": 202.01075744628906,
-    "count": 10,
-    "severity": "Moderate",
-    "radius_km": 6,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 14.24,
-    "lon": 97.37,
-    "temp": 206.02688598632812,
-    "count": 11,
-    "severity": "Moderate",
-    "radius_km": 7,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 14.25,
-    "lon": 98.0,
-    "temp": 211.03187561035156,
-    "count": 8,
-    "severity": "Moderate",
-    "radius_km": 6,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 13.27,
-    "lon": 82.74,
-    "temp": 205.54405212402344,
-    "count": 19,
-    "severity": "Moderate",
-    "radius_km": 9,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 13.27,
-    "lon": 82.78,
-    "temp": 206.02688598632812,
-    "count": 7,
-    "severity": "Moderate",
-    "radius_km": 5,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 13.040000000000001,
-    "lon": 82.48,
-    "temp": 202.01075744628906,
-    "count": 115,
-    "severity": "Moderate",
-    "radius_km": 21,
-    "updated": "13-Aug-2026 09:39 UTC"
-  },
-  {
-    "lat": 13.23,
-    "lon": 82.78,
-    "temp": 205.54405212402344,
+    "lat": 36.33,
+    "lon": 85.83,
+    "temp": 212.06451416015625,
     "count": 20,
     "severity": "Moderate",
     "radius_km": 9,
-    "updated": "13-Aug-2026 09:39 UTC"
+    "updated": "13-Aug-2026 15:30 UTC"
   },
   {
-    "lat": 12.96,
-    "lon": 82.18,
-    "temp": 205.05604553222656,
-    "count": 38,
+    "lat": 36.230000000000004,
+    "lon": 85.69,
+    "temp": 212.89808654785156,
+    "count": 10,
     "severity": "Moderate",
-    "radius_km": 12,
-    "updated": "13-Aug-2026 09:39 UTC"
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
   },
   {
-    "lat": 12.85,
+    "lat": 35.88,
+    "lon": 86.22,
+    "temp": 207.20361328125,
+    "count": 70,
+    "severity": "Moderate",
+    "radius_km": 17,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 35.88,
+    "lon": 86.27,
+    "temp": 207.66671752929688,
+    "count": 106,
+    "severity": "Moderate",
+    "radius_km": 21,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 36.24,
+    "lon": 86.75,
+    "temp": 211.21652221679688,
+    "count": 25,
+    "severity": "Moderate",
+    "radius_km": 10,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 35.97,
+    "lon": 85.12,
+    "temp": 212.48306274414062,
+    "count": 6,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 35.68,
+    "lon": 85.7,
+    "temp": 212.06451416015625,
+    "count": 7,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 35.480000000000004,
+    "lon": 86.15,
+    "temp": 207.20361328125,
+    "count": 76,
+    "severity": "Moderate",
+    "radius_km": 17,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 35.68,
+    "lon": 86.35000000000001,
+    "temp": 207.20361328125,
+    "count": 58,
+    "severity": "Moderate",
+    "radius_km": 15,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 35.74,
+    "lon": 86.95,
+    "temp": 212.06451416015625,
+    "count": 5,
+    "severity": "Moderate",
+    "radius_km": 4,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 35.75,
+    "lon": 87.69,
+    "temp": 205.3032989501953,
+    "count": 5,
+    "severity": "Moderate",
+    "radius_km": 4,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 35.75,
+    "lon": 87.83,
+    "temp": 206.26329040527344,
+    "count": 8,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 35.65,
+    "lon": 87.68,
+    "temp": 204.3225555419922,
+    "count": 40,
+    "severity": "Moderate",
+    "radius_km": 13,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 35.5,
+    "lon": 87.99,
+    "temp": 205.3032989501953,
+    "count": 80,
+    "severity": "Moderate",
+    "radius_km": 18,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 35.47,
+    "lon": 89.18,
+    "temp": 204.3225555419922,
+    "count": 49,
+    "severity": "Moderate",
+    "radius_km": 14,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 35.47,
+    "lon": 89.28,
+    "temp": 205.7858123779297,
+    "count": 63,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 35.26,
+    "lon": 82.04,
+    "temp": 210.35348510742188,
+    "count": 18,
+    "severity": "Moderate",
+    "radius_km": 8,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 35.33,
+    "lon": 89.77,
+    "temp": 208.12525939941406,
+    "count": 6,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 34.82,
+    "lon": 82.04,
+    "temp": 202.8099365234375,
+    "count": 104,
+    "severity": "Moderate",
+    "radius_km": 20,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 35.25,
+    "lon": 87.88,
+    "temp": 204.81558227539062,
+    "count": 9,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 34.87,
+    "lon": 82.27,
+    "temp": 206.73585510253906,
+    "count": 28,
+    "severity": "Moderate",
+    "radius_km": 11,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 35.17,
+    "lon": 89.25,
+    "temp": 206.26329040527344,
+    "count": 14,
+    "severity": "Moderate",
+    "radius_km": 7,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 35.17,
+    "lon": 89.29,
+    "temp": 205.3032989501953,
+    "count": 18,
+    "severity": "Moderate",
+    "radius_km": 8,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 34.87,
+    "lon": 81.5,
+    "temp": 204.81558227539062,
+    "count": 14,
+    "severity": "Moderate",
+    "radius_km": 7,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 34.93,
+    "lon": 85.85000000000001,
+    "temp": 213.71786499023438,
+    "count": 5,
+    "severity": "Moderate",
+    "radius_km": 4,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 34.72,
+    "lon": 82.09,
+    "temp": 206.26329040527344,
+    "count": 15,
+    "severity": "Moderate",
+    "radius_km": 8,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 34.52,
+    "lon": 88.59,
+    "temp": 212.89808654785156,
+    "count": 7,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 34.47,
+    "lon": 88.13,
+    "temp": 210.78692626953125,
+    "count": 24,
+    "severity": "Moderate",
+    "radius_km": 10,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 34.43,
     "lon": 81.59,
-    "temp": 207.9091033935547,
+    "temp": 211.64236450195312,
+    "count": 7,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.85,
+    "lon": 84.18,
+    "temp": 209.02914428710938,
+    "count": 31,
+    "severity": "Moderate",
+    "radius_km": 11,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.95,
+    "lon": 84.41,
+    "temp": 209.4746856689453,
+    "count": 31,
+    "severity": "Moderate",
+    "radius_km": 11,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.8,
+    "lon": 82.84,
+    "temp": 206.26329040527344,
+    "count": 41,
+    "severity": "Moderate",
+    "radius_km": 13,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.75,
+    "lon": 82.71000000000001,
+    "temp": 207.20361328125,
+    "count": 6,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.78,
+    "lon": 87.4,
+    "temp": 209.4746856689453,
+    "count": 10,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.79,
+    "lon": 88.43,
+    "temp": 196.16648864746094,
+    "count": 7,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.7,
+    "lon": 82.84,
+    "temp": 206.26329040527344,
+    "count": 65,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.27,
+    "lon": 83.72,
+    "temp": 193.69186401367188,
+    "count": 47,
+    "severity": "Strong",
+    "radius_km": 14,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.27,
+    "lon": 83.77,
+    "temp": 194.94827270507812,
+    "count": 86,
+    "severity": "Strong",
+    "radius_km": 19,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.7,
+    "lon": 84.27,
+    "temp": 209.4746856689453,
+    "count": 16,
+    "severity": "Moderate",
+    "radius_km": 8,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.480000000000004,
+    "lon": 87.11,
+    "temp": 202.8099365234375,
+    "count": 81,
+    "severity": "Moderate",
+    "radius_km": 18,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.49,
+    "lon": 87.29,
+    "temp": 205.3032989501953,
+    "count": 70,
+    "severity": "Moderate",
+    "radius_km": 17,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.69,
+    "lon": 88.34,
+    "temp": 197.92819213867188,
+    "count": 88,
+    "severity": "Moderate",
+    "radius_km": 19,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.47,
+    "lon": 85.28,
+    "temp": 205.3032989501953,
+    "count": 46,
+    "severity": "Moderate",
+    "radius_km": 14,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.69,
+    "lon": 88.25,
+    "temp": 199.61825561523438,
+    "count": 19,
+    "severity": "Moderate",
+    "radius_km": 9,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.31,
+    "lon": 88.93,
+    "temp": 201.77194213867188,
+    "count": 17,
+    "severity": "Moderate",
+    "radius_km": 8,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.42,
+    "lon": 85.24,
+    "temp": 204.81558227539062,
+    "count": 27,
+    "severity": "Moderate",
+    "radius_km": 10,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.22,
+    "lon": 83.72,
+    "temp": 194.94827270507812,
+    "count": 43,
+    "severity": "Strong",
+    "radius_km": 13,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.22,
+    "lon": 83.85000000000001,
+    "temp": 194.94827270507812,
+    "count": 37,
+    "severity": "Strong",
+    "radius_km": 12,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 32.8,
+    "lon": 84.5,
+    "temp": 207.66671752929688,
+    "count": 31,
+    "severity": "Moderate",
+    "radius_km": 11,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.04,
+    "lon": 85.18,
+    "temp": 209.02914428710938,
+    "count": 32,
+    "severity": "Moderate",
+    "radius_km": 11,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 32.76,
+    "lon": 85.74,
+    "temp": 207.20361328125,
+    "count": 63,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.25,
+    "lon": 87.14,
+    "temp": 207.20361328125,
+    "count": 8,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 33.160000000000004,
+    "lon": 75.56,
+    "temp": 209.4746856689453,
+    "count": 14,
+    "severity": "Moderate",
+    "radius_km": 7,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 32.76,
+    "lon": 85.87,
+    "temp": 205.3032989501953,
+    "count": 69,
+    "severity": "Moderate",
+    "radius_km": 17,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 32.28,
+    "lon": 85.41,
+    "temp": 202.8099365234375,
+    "count": 100,
+    "severity": "Moderate",
+    "radius_km": 20,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 32.71,
+    "lon": 85.87,
+    "temp": 205.3032989501953,
+    "count": 76,
+    "severity": "Moderate",
+    "radius_km": 17,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 32.6,
+    "lon": 83.58,
+    "temp": 208.12525939941406,
+    "count": 8,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 32.410000000000004,
+    "lon": 82.21000000000001,
+    "temp": 210.78692626953125,
     "count": 30,
     "severity": "Moderate",
     "radius_km": 11,
-    "updated": "13-Aug-2026 09:39 UTC"
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 32.32,
+    "lon": 82.52,
+    "temp": 209.91610717773438,
+    "count": 39,
+    "severity": "Moderate",
+    "radius_km": 12,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 32.44,
+    "lon": 76.2,
+    "temp": 211.21652221679688,
+    "count": 7,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 32.28,
+    "lon": 85.19,
+    "temp": 205.7858123779297,
+    "count": 25,
+    "severity": "Moderate",
+    "radius_km": 10,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 32.32,
+    "lon": 89.24,
+    "temp": 211.64236450195312,
+    "count": 5,
+    "severity": "Moderate",
+    "radius_km": 4,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 32.3,
+    "lon": 76.52,
+    "temp": 211.21652221679688,
+    "count": 6,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 32.28,
+    "lon": 89.41,
+    "temp": 205.7858123779297,
+    "count": 9,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 32.21,
+    "lon": 76.52,
+    "temp": 208.57936096191406,
+    "count": 32,
+    "severity": "Moderate",
+    "radius_km": 11,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 32.22,
+    "lon": 82.65,
+    "temp": 209.4746856689453,
+    "count": 11,
+    "severity": "Moderate",
+    "radius_km": 7,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 31.95,
+    "lon": 85.22,
+    "temp": 198.4991455078125,
+    "count": 108,
+    "severity": "Moderate",
+    "radius_km": 21,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 31.86,
+    "lon": 85.3,
+    "temp": 196.7621612548828,
+    "count": 112,
+    "severity": "Moderate",
+    "radius_km": 21,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 32.24,
+    "lon": 85.76,
+    "temp": 209.02914428710938,
+    "count": 12,
+    "severity": "Moderate",
+    "radius_km": 7,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 32.230000000000004,
+    "lon": 89.41,
+    "temp": 207.20361328125,
+    "count": 14,
+    "severity": "Moderate",
+    "radius_km": 7,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 32.09,
+    "lon": 84.48,
+    "temp": 209.4746856689453,
+    "count": 6,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 31.3,
+    "lon": 85.11,
+    "temp": 196.16648864746094,
+    "count": 95,
+    "severity": "Moderate",
+    "radius_km": 19,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 31.720000000000002,
+    "lon": 85.43,
+    "temp": 198.4991455078125,
+    "count": 71,
+    "severity": "Moderate",
+    "radius_km": 17,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 31.38,
+    "lon": 81.22,
+    "temp": 209.4746856689453,
+    "count": 16,
+    "severity": "Moderate",
+    "radius_km": 8,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 31.43,
+    "lon": 81.3,
+    "temp": 207.20361328125,
+    "count": 46,
+    "severity": "Moderate",
+    "radius_km": 14,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 31.43,
+    "lon": 83.51,
+    "temp": 208.12525939941406,
+    "count": 27,
+    "severity": "Moderate",
+    "radius_km": 10,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.830000000000002,
+    "lon": 81.74,
+    "temp": 203.82403564453125,
+    "count": 79,
+    "severity": "Moderate",
+    "radius_km": 18,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.78,
+    "lon": 82.25,
+    "temp": 204.81558227539062,
+    "count": 61,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.79,
+    "lon": 83.71000000000001,
+    "temp": 205.7858123779297,
+    "count": 10,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.79,
+    "lon": 83.76,
+    "temp": 204.81558227539062,
+    "count": 113,
+    "severity": "Moderate",
+    "radius_km": 21,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 31.25,
+    "lon": 85.11,
+    "temp": 202.8099365234375,
+    "count": 17,
+    "severity": "Moderate",
+    "radius_km": 8,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 31.12,
+    "lon": 85.27,
+    "temp": 209.91610717773438,
+    "count": 5,
+    "severity": "Moderate",
+    "radius_km": 4,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 31.02,
+    "lon": 84.28,
+    "temp": 210.78692626953125,
+    "count": 37,
+    "severity": "Moderate",
+    "radius_km": 12,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.78,
+    "lon": 82.3,
+    "temp": 205.3032989501953,
+    "count": 33,
+    "severity": "Moderate",
+    "radius_km": 11,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.95,
+    "lon": 87.21000000000001,
+    "temp": 212.48306274414062,
+    "count": 5,
+    "severity": "Moderate",
+    "radius_km": 4,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.810000000000002,
+    "lon": 87.55,
+    "temp": 207.66671752929688,
+    "count": 33,
+    "severity": "Moderate",
+    "radius_km": 11,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.69,
+    "lon": 81.74,
+    "temp": 204.3225555419922,
+    "count": 28,
+    "severity": "Moderate",
+    "radius_km": 11,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.42,
+    "lon": 82.21000000000001,
+    "temp": 199.06240844726562,
+    "count": 132,
+    "severity": "Moderate",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.37,
+    "lon": 82.29,
+    "temp": 200.16690063476562,
+    "count": 120,
+    "severity": "Moderate",
+    "radius_km": 22,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.28,
+    "lon": 83.66,
+    "temp": 196.7621612548828,
+    "count": 46,
+    "severity": "Moderate",
+    "radius_km": 14,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.47,
+    "lon": 83.79,
+    "temp": 197.34930419921875,
+    "count": 99,
+    "severity": "Moderate",
+    "radius_km": 20,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.740000000000002,
+    "lon": 84.27,
+    "temp": 211.64236450195312,
+    "count": 5,
+    "severity": "Moderate",
+    "radius_km": 4,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.57,
+    "lon": 86.5,
+    "temp": 200.70858764648438,
+    "count": 114,
+    "severity": "Moderate",
+    "radius_km": 21,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.39,
+    "lon": 86.75,
+    "temp": 205.7858123779297,
+    "count": 99,
+    "severity": "Moderate",
+    "radius_km": 20,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.72,
+    "lon": 87.5,
+    "temp": 207.66671752929688,
+    "count": 65,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.47,
+    "lon": 79.13,
+    "temp": 202.8099365234375,
+    "count": 61,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.330000000000002,
+    "lon": 79.73,
+    "temp": 200.70858764648438,
+    "count": 83,
+    "severity": "Moderate",
+    "radius_km": 18,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.38,
+    "lon": 79.82000000000001,
+    "temp": 199.06240844726562,
+    "count": 91,
+    "severity": "Moderate",
+    "radius_km": 19,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.53,
+    "lon": 86.24,
+    "temp": 200.70858764648438,
+    "count": 59,
+    "severity": "Moderate",
+    "radius_km": 15,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.28,
+    "lon": 82.76,
+    "temp": 207.20361328125,
+    "count": 28,
+    "severity": "Moderate",
+    "radius_km": 11,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.32,
+    "lon": 88.25,
+    "temp": 207.66671752929688,
+    "count": 40,
+    "severity": "Moderate",
+    "radius_km": 13,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.32,
+    "lon": 88.29,
+    "temp": 208.57936096191406,
+    "count": 10,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.37,
+    "lon": 80.33,
+    "temp": 201.2435302734375,
+    "count": 32,
+    "severity": "Moderate",
+    "radius_km": 11,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.29,
+    "lon": 85.5,
+    "temp": 204.3225555419922,
+    "count": 26,
+    "severity": "Moderate",
+    "radius_km": 10,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.240000000000002,
+    "lon": 79.18,
+    "temp": 205.3032989501953,
+    "count": 5,
+    "severity": "Moderate",
+    "radius_km": 4,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.240000000000002,
+    "lon": 79.69,
+    "temp": 202.29400634765625,
+    "count": 36,
+    "severity": "Moderate",
+    "radius_km": 12,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.19,
+    "lon": 80.25,
+    "temp": 199.61825561523438,
+    "count": 57,
+    "severity": "Moderate",
+    "radius_km": 15,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.150000000000002,
+    "lon": 80.33,
+    "temp": 197.34930419921875,
+    "count": 95,
+    "severity": "Moderate",
+    "radius_km": 19,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.240000000000002,
+    "lon": 81.74,
+    "temp": 211.64236450195312,
+    "count": 8,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.240000000000002,
+    "lon": 82.21000000000001,
+    "temp": 201.77194213867188,
+    "count": 123,
+    "severity": "Moderate",
+    "radius_km": 22,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.78,
+    "lon": 82.5,
+    "temp": 194.94827270507812,
+    "count": 121,
+    "severity": "Strong",
+    "radius_km": 22,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.19,
+    "lon": 83.19,
+    "temp": 193.04837036132812,
+    "count": 69,
+    "severity": "Strong",
+    "radius_km": 17,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.1,
+    "lon": 83.53,
+    "temp": 195.5619659423828,
+    "count": 60,
+    "severity": "Moderate",
+    "radius_km": 15,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.240000000000002,
+    "lon": 83.79,
+    "temp": 197.92819213867188,
+    "count": 42,
+    "severity": "Moderate",
+    "radius_km": 13,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.2,
+    "lon": 85.54,
+    "temp": 203.82403564453125,
+    "count": 31,
+    "severity": "Moderate",
+    "radius_km": 11,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.25,
+    "lon": 86.22,
+    "temp": 210.35348510742188,
+    "count": 45,
+    "severity": "Moderate",
+    "radius_km": 13,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.76,
+    "lon": 86.67,
+    "temp": 200.70858764648438,
+    "count": 130,
+    "severity": "Moderate",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.84,
+    "lon": 85.05,
+    "temp": 209.91610717773438,
+    "count": 38,
+    "severity": "Moderate",
+    "radius_km": 12,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.94,
+    "lon": 86.76,
+    "temp": 208.57936096191406,
+    "count": 58,
+    "severity": "Moderate",
+    "radius_km": 15,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.13,
+    "lon": 88.06,
+    "temp": 209.4746856689453,
+    "count": 63,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.78,
+    "lon": 88.72,
+    "temp": 209.4746856689453,
+    "count": 43,
+    "severity": "Moderate",
+    "radius_km": 13,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.060000000000002,
+    "lon": 89.17,
+    "temp": 207.20361328125,
+    "count": 41,
+    "severity": "Moderate",
+    "radius_km": 13,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 30.060000000000002,
+    "lon": 89.26,
+    "temp": 207.20361328125,
+    "count": 17,
+    "severity": "Moderate",
+    "radius_km": 8,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.740000000000002,
+    "lon": 80.55,
+    "temp": 202.29400634765625,
+    "count": 59,
+    "severity": "Moderate",
+    "radius_km": 15,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.740000000000002,
+    "lon": 82.25,
+    "temp": 208.12525939941406,
+    "count": 40,
+    "severity": "Moderate",
+    "radius_km": 13,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.650000000000002,
+    "lon": 82.59,
+    "temp": 193.69186401367188,
+    "count": 87,
+    "severity": "Strong",
+    "radius_km": 19,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.650000000000002,
+    "lon": 82.76,
+    "temp": 197.92819213867188,
+    "count": 83,
+    "severity": "Moderate",
+    "radius_km": 18,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.740000000000002,
+    "lon": 84.2,
+    "temp": 201.77194213867188,
+    "count": 12,
+    "severity": "Moderate",
+    "radius_km": 7,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.61,
+    "lon": 84.62,
+    "temp": 202.8099365234375,
+    "count": 12,
+    "severity": "Moderate",
+    "radius_km": 7,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.52,
+    "lon": 85.34,
+    "temp": 209.02914428710938,
+    "count": 22,
+    "severity": "Moderate",
+    "radius_km": 9,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.66,
+    "lon": 86.24,
+    "temp": 202.8099365234375,
+    "count": 20,
+    "severity": "Moderate",
+    "radius_km": 9,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.71,
+    "lon": 86.62,
+    "temp": 200.70858764648438,
+    "count": 84,
+    "severity": "Moderate",
+    "radius_km": 18,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.67,
+    "lon": 86.75,
+    "temp": 205.7858123779297,
+    "count": 6,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.73,
+    "lon": 88.16,
+    "temp": 211.21652221679688,
+    "count": 16,
+    "severity": "Moderate",
+    "radius_km": 8,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.69,
+    "lon": 88.67,
+    "temp": 209.4746856689453,
+    "count": 21,
+    "severity": "Moderate",
+    "radius_km": 9,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.69,
+    "lon": 88.76,
+    "temp": 212.06451416015625,
+    "count": 8,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.38,
+    "lon": 80.22,
+    "temp": 208.12525939941406,
+    "count": 10,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.240000000000002,
+    "lon": 80.52,
+    "temp": 212.48306274414062,
+    "count": 15,
+    "severity": "Moderate",
+    "radius_km": 8,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.84,
+    "lon": 82.71000000000001,
+    "temp": 201.77194213867188,
+    "count": 64,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.84,
+    "lon": 82.75,
+    "temp": 202.8099365234375,
+    "count": 108,
+    "severity": "Moderate",
+    "radius_km": 21,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 29.17,
+    "lon": 86.0,
+    "temp": 209.91610717773438,
+    "count": 32,
+    "severity": "Moderate",
+    "radius_km": 11,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.86,
+    "lon": 86.54,
+    "temp": 205.7858123779297,
+    "count": 39,
+    "severity": "Moderate",
+    "radius_km": 12,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.93,
+    "lon": 83.26,
+    "temp": 209.4746856689453,
+    "count": 10,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.93,
+    "lon": 82.0,
+    "temp": 200.70858764648438,
+    "count": 69,
+    "severity": "Moderate",
+    "radius_km": 17,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.89,
+    "lon": 79.47,
+    "temp": 207.66671752929688,
+    "count": 62,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.76,
+    "lon": 79.77,
+    "temp": 208.57936096191406,
+    "count": 30,
+    "severity": "Moderate",
+    "radius_km": 11,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.85,
+    "lon": 85.19,
+    "temp": 203.82403564453125,
+    "count": 24,
+    "severity": "Moderate",
+    "radius_km": 10,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.89,
+    "lon": 85.27,
+    "temp": 203.82403564453125,
+    "count": 20,
+    "severity": "Moderate",
+    "radius_km": 9,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.86,
+    "lon": 87.04,
+    "temp": 209.4746856689453,
+    "count": 15,
+    "severity": "Moderate",
+    "radius_km": 8,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.87,
+    "lon": 87.72,
+    "temp": 209.4746856689453,
+    "count": 9,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.78,
+    "lon": 87.76,
+    "temp": 207.20361328125,
+    "count": 20,
+    "severity": "Moderate",
+    "radius_km": 9,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.71,
+    "lon": 79.73,
+    "temp": 209.4746856689453,
+    "count": 5,
+    "severity": "Moderate",
+    "radius_km": 4,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.71,
+    "lon": 79.77,
+    "temp": 209.4746856689453,
+    "count": 40,
+    "severity": "Moderate",
+    "radius_km": 13,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.310000000000002,
+    "lon": 80.41,
+    "temp": 202.29400634765625,
+    "count": 119,
+    "severity": "Moderate",
+    "radius_km": 22,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.44,
+    "lon": 82.2,
+    "temp": 200.16690063476562,
+    "count": 132,
+    "severity": "Moderate",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.310000000000002,
+    "lon": 82.45,
+    "temp": 196.7621612548828,
+    "count": 121,
+    "severity": "Moderate",
+    "radius_km": 22,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.44,
+    "lon": 83.0,
+    "temp": 196.16648864746094,
+    "count": 143,
+    "severity": "Moderate",
+    "radius_km": 24,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.67,
+    "lon": 85.14,
+    "temp": 206.73585510253906,
+    "count": 49,
+    "severity": "Moderate",
+    "radius_km": 14,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.72,
+    "lon": 86.45,
+    "temp": 208.57936096191406,
+    "count": 27,
+    "severity": "Moderate",
+    "radius_km": 10,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.69,
+    "lon": 87.62,
+    "temp": 208.12525939941406,
+    "count": 50,
+    "severity": "Moderate",
+    "radius_km": 14,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.740000000000002,
+    "lon": 87.88,
+    "temp": 208.57936096191406,
+    "count": 19,
+    "severity": "Moderate",
+    "radius_km": 9,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.7,
+    "lon": 88.3,
+    "temp": 210.35348510742188,
+    "count": 8,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.27,
+    "lon": 83.62,
+    "temp": 191.0515594482422,
+    "count": 60,
+    "severity": "Strong",
+    "radius_km": 15,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.400000000000002,
+    "lon": 84.71000000000001,
+    "temp": 207.20361328125,
+    "count": 49,
+    "severity": "Moderate",
+    "radius_km": 14,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.310000000000002,
+    "lon": 80.95,
+    "temp": 201.2435302734375,
+    "count": 67,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.26,
+    "lon": 81.33,
+    "temp": 201.2435302734375,
+    "count": 68,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.27,
+    "lon": 83.79,
+    "temp": 191.72869873046875,
+    "count": 10,
+    "severity": "Strong",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.22,
+    "lon": 80.49,
+    "temp": 207.20361328125,
+    "count": 15,
+    "severity": "Moderate",
+    "radius_km": 8,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.22,
+    "lon": 81.24,
+    "temp": 202.29400634765625,
+    "count": 35,
+    "severity": "Moderate",
+    "radius_km": 12,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.18,
+    "lon": 81.45,
+    "temp": 197.92819213867188,
+    "count": 122,
+    "severity": "Moderate",
+    "radius_km": 22,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 27.78,
+    "lon": 82.12,
+    "temp": 196.7621612548828,
+    "count": 141,
+    "severity": "Moderate",
+    "radius_km": 24,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.22,
+    "lon": 82.45,
+    "temp": 197.34930419921875,
+    "count": 130,
+    "severity": "Moderate",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 27.78,
+    "lon": 83.24,
+    "temp": 195.5619659423828,
+    "count": 134,
+    "severity": "Moderate",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.22,
+    "lon": 83.7,
+    "temp": 188.94454956054688,
+    "count": 130,
+    "severity": "Severe",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.22,
+    "lon": 83.79,
+    "temp": 188.94454956054688,
+    "count": 44,
+    "severity": "Severe",
+    "radius_km": 13,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.18,
+    "lon": 84.29,
+    "temp": 203.82403564453125,
+    "count": 66,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.23,
+    "lon": 84.75,
+    "temp": 208.57936096191406,
+    "count": 26,
+    "severity": "Moderate",
+    "radius_km": 10,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.240000000000002,
+    "lon": 87.34,
+    "temp": 210.35348510742188,
+    "count": 17,
+    "severity": "Moderate",
+    "radius_km": 8,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 28.01,
+    "lon": 85.37,
+    "temp": 208.12525939941406,
+    "count": 14,
+    "severity": "Moderate",
+    "radius_km": 7,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 27.650000000000002,
+    "lon": 81.25,
+    "temp": 211.21652221679688,
+    "count": 13,
+    "severity": "Moderate",
+    "radius_km": 7,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 27.6,
+    "lon": 81.66,
+    "temp": 204.81558227539062,
+    "count": 131,
+    "severity": "Moderate",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 27.740000000000002,
+    "lon": 82.24,
+    "temp": 202.29400634765625,
+    "count": 156,
+    "severity": "Moderate",
+    "radius_km": 25,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 27.740000000000002,
+    "lon": 82.37,
+    "temp": 200.70858764648438,
+    "count": 143,
+    "severity": "Moderate",
+    "radius_km": 24,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 27.740000000000002,
+    "lon": 83.24,
+    "temp": 196.7621612548828,
+    "count": 143,
+    "severity": "Moderate",
+    "radius_km": 24,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 27.740000000000002,
+    "lon": 83.28,
+    "temp": 198.4991455078125,
+    "count": 117,
+    "severity": "Moderate",
+    "radius_km": 22,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 27.560000000000002,
+    "lon": 83.78,
+    "temp": 207.20361328125,
+    "count": 8,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.92,
+    "lon": 77.88,
+    "temp": 209.4746856689453,
+    "count": 29,
+    "severity": "Moderate",
+    "radius_km": 11,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 27.21,
+    "lon": 81.38,
+    "temp": 212.48306274414062,
+    "count": 36,
+    "severity": "Moderate",
+    "radius_km": 12,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 27.17,
+    "lon": 82.24,
+    "temp": 204.81558227539062,
+    "count": 78,
+    "severity": "Moderate",
+    "radius_km": 18,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 27.21,
+    "lon": 82.41,
+    "temp": 201.2435302734375,
+    "count": 48,
+    "severity": "Moderate",
+    "radius_km": 14,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 27.21,
+    "lon": 82.78,
+    "temp": 205.7858123779297,
+    "count": 9,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.78,
+    "lon": 80.68,
+    "temp": 211.21652221679688,
+    "count": 20,
+    "severity": "Moderate",
+    "radius_km": 9,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.78,
+    "lon": 80.76,
+    "temp": 211.21652221679688,
+    "count": 17,
+    "severity": "Moderate",
+    "radius_km": 8,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.78,
+    "lon": 80.06,
+    "temp": 210.78692626953125,
+    "count": 9,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.740000000000002,
+    "lon": 80.60000000000001,
+    "temp": 211.64236450195312,
+    "count": 65,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.740000000000002,
+    "lon": 80.76,
+    "temp": 211.64236450195312,
+    "count": 68,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.44,
+    "lon": 84.25,
+    "temp": 194.3250274658203,
+    "count": 137,
+    "severity": "Strong",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.78,
+    "lon": 89.63,
+    "temp": 211.21652221679688,
+    "count": 5,
+    "severity": "Moderate",
+    "radius_km": 4,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.52,
+    "lon": 89.61,
+    "temp": 206.73585510253906,
+    "count": 135,
+    "severity": "Moderate",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.7,
+    "lon": 89.75,
+    "temp": 209.02914428710938,
+    "count": 18,
+    "severity": "Moderate",
+    "radius_km": 8,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.39,
+    "lon": 84.41,
+    "temp": 193.04837036132812,
+    "count": 77,
+    "severity": "Strong",
+    "radius_km": 18,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.26,
+    "lon": 82.85000000000001,
+    "temp": 201.2435302734375,
+    "count": 95,
+    "severity": "Moderate",
+    "radius_km": 19,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.35,
+    "lon": 83.67,
+    "temp": 201.2435302734375,
+    "count": 108,
+    "severity": "Moderate",
+    "radius_km": 21,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.26,
+    "lon": 82.73,
+    "temp": 204.81558227539062,
+    "count": 26,
+    "severity": "Moderate",
+    "radius_km": 10,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.3,
+    "lon": 81.91,
+    "temp": 211.21652221679688,
+    "count": 18,
+    "severity": "Moderate",
+    "radius_km": 8,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.26,
+    "lon": 89.21000000000001,
+    "temp": 210.78692626953125,
+    "count": 7,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.29,
+    "lon": 75.93,
+    "temp": 210.78692626953125,
+    "count": 8,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.25,
+    "lon": 76.01,
+    "temp": 203.82403564453125,
+    "count": 56,
+    "severity": "Moderate",
+    "radius_km": 15,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.16,
+    "lon": 76.27,
+    "temp": 209.02914428710938,
+    "count": 6,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.88,
+    "lon": 80.37,
+    "temp": 212.89808654785156,
+    "count": 23,
+    "severity": "Moderate",
+    "radius_km": 10,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.830000000000002,
+    "lon": 81.71000000000001,
+    "temp": 204.81558227539062,
+    "count": 59,
+    "severity": "Moderate",
+    "radius_km": 15,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.75,
+    "lon": 82.24,
+    "temp": 199.61825561523438,
+    "count": 156,
+    "severity": "Moderate",
+    "radius_km": 25,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.79,
+    "lon": 82.28,
+    "temp": 199.61825561523438,
+    "count": 144,
+    "severity": "Moderate",
+    "radius_km": 24,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.05,
+    "lon": 82.89,
+    "temp": 197.92819213867188,
+    "count": 144,
+    "severity": "Moderate",
+    "radius_km": 24,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.75,
+    "lon": 83.54,
+    "temp": 196.7621612548828,
+    "count": 147,
+    "severity": "Moderate",
+    "radius_km": 24,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.18,
+    "lon": 84.24,
+    "temp": 194.94827270507812,
+    "count": 153,
+    "severity": "Strong",
+    "radius_km": 25,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.22,
+    "lon": 84.41,
+    "temp": 193.69186401367188,
+    "count": 96,
+    "severity": "Strong",
+    "radius_km": 20,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.13,
+    "lon": 89.12,
+    "temp": 209.91610717773438,
+    "count": 55,
+    "severity": "Moderate",
+    "radius_km": 15,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 26.05,
+    "lon": 89.32000000000001,
+    "temp": 209.02914428710938,
+    "count": 47,
+    "severity": "Moderate",
+    "radius_km": 14,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.77,
+    "lon": 77.15,
+    "temp": 212.89808654785156,
+    "count": 6,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.76,
+    "lon": 77.47,
+    "temp": 212.48306274414062,
+    "count": 8,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.740000000000002,
+    "lon": 75.68,
+    "temp": 205.7858123779297,
+    "count": 6,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.69,
+    "lon": 75.76,
+    "temp": 205.3032989501953,
+    "count": 24,
+    "severity": "Moderate",
+    "radius_km": 10,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.72,
+    "lon": 77.19,
+    "temp": 211.64236450195312,
+    "count": 6,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.68,
+    "lon": 77.52,
+    "temp": 210.35348510742188,
+    "count": 36,
+    "severity": "Moderate",
+    "radius_km": 12,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.28,
+    "lon": 80.42,
+    "temp": 209.91610717773438,
+    "count": 69,
+    "severity": "Moderate",
+    "radius_km": 17,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.7,
+    "lon": 81.67,
+    "temp": 205.3032989501953,
+    "count": 129,
+    "severity": "Moderate",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.32,
+    "lon": 82.24,
+    "temp": 197.34930419921875,
+    "count": 143,
+    "severity": "Moderate",
+    "radius_km": 24,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.28,
+    "lon": 82.28,
+    "temp": 196.7621612548828,
+    "count": 132,
+    "severity": "Moderate",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.490000000000002,
+    "lon": 82.81,
+    "temp": 197.34930419921875,
+    "count": 143,
+    "severity": "Moderate",
+    "radius_km": 24,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.41,
+    "lon": 83.7,
+    "temp": 194.3250274658203,
+    "count": 132,
+    "severity": "Strong",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.66,
+    "lon": 83.99,
+    "temp": 193.69186401367188,
+    "count": 132,
+    "severity": "Strong",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.71,
+    "lon": 84.31,
+    "temp": 194.94827270507812,
+    "count": 85,
+    "severity": "Strong",
+    "radius_km": 18,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.41,
+    "lon": 80.86,
+    "temp": 209.91610717773438,
+    "count": 43,
+    "severity": "Moderate",
+    "radius_km": 13,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.37,
+    "lon": 84.91,
+    "temp": 191.72869873046875,
+    "count": 70,
+    "severity": "Strong",
+    "radius_km": 17,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.34,
+    "lon": 87.35000000000001,
+    "temp": 206.73585510253906,
+    "count": 10,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.240000000000002,
+    "lon": 80.42,
+    "temp": 209.4746856689453,
+    "count": 49,
+    "severity": "Moderate",
+    "radius_km": 14,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.240000000000002,
+    "lon": 81.71000000000001,
+    "temp": 210.78692626953125,
+    "count": 5,
+    "severity": "Moderate",
+    "radius_km": 4,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.19,
+    "lon": 82.24,
+    "temp": 197.92819213867188,
+    "count": 64,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.240000000000002,
+    "lon": 82.32000000000001,
+    "temp": 196.7621612548828,
+    "count": 137,
+    "severity": "Moderate",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.240000000000002,
+    "lon": 82.84,
+    "temp": 197.34930419921875,
+    "count": 156,
+    "severity": "Moderate",
+    "radius_km": 25,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.150000000000002,
+    "lon": 83.65,
+    "temp": 196.7621612548828,
+    "count": 144,
+    "severity": "Moderate",
+    "radius_km": 24,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.240000000000002,
+    "lon": 83.86,
+    "temp": 195.5619659423828,
+    "count": 135,
+    "severity": "Moderate",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.16,
+    "lon": 84.7,
+    "temp": 196.16648864746094,
+    "count": 114,
+    "severity": "Moderate",
+    "radius_km": 21,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 25.240000000000002,
+    "lon": 84.83,
+    "temp": 193.04837036132812,
+    "count": 96,
+    "severity": "Strong",
+    "radius_km": 20,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 24.82,
+    "lon": 80.02,
+    "temp": 208.12525939941406,
+    "count": 66,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 24.77,
+    "lon": 80.75,
+    "temp": 211.21652221679688,
+    "count": 8,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 24.69,
+    "lon": 79.74,
+    "temp": 210.78692626953125,
+    "count": 13,
+    "severity": "Moderate",
+    "radius_km": 7,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 24.310000000000002,
+    "lon": 80.23,
+    "temp": 208.12525939941406,
+    "count": 91,
+    "severity": "Moderate",
+    "radius_km": 19,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 24.48,
+    "lon": 80.35000000000001,
+    "temp": 207.66671752929688,
+    "count": 131,
+    "severity": "Moderate",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 24.560000000000002,
+    "lon": 80.75,
+    "temp": 209.91610717773438,
+    "count": 53,
+    "severity": "Moderate",
+    "radius_km": 15,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 24.44,
+    "lon": 82.2,
+    "temp": 209.4746856689453,
+    "count": 95,
+    "severity": "Moderate",
+    "radius_km": 19,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 24.27,
+    "lon": 82.72,
+    "temp": 201.2435302734375,
+    "count": 131,
+    "severity": "Moderate",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 24.73,
+    "lon": 83.12,
+    "temp": 199.61825561523438,
+    "count": 150,
+    "severity": "Moderate",
+    "radius_km": 24,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 24.73,
+    "lon": 83.28,
+    "temp": 203.31988525390625,
+    "count": 38,
+    "severity": "Moderate",
+    "radius_km": 12,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 24.73,
+    "lon": 83.77,
+    "temp": 204.3225555419922,
+    "count": 8,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 24.740000000000002,
+    "lon": 84.77,
+    "temp": 209.02914428710938,
+    "count": 6,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 24.23,
+    "lon": 80.15,
+    "temp": 210.35348510742188,
+    "count": 11,
+    "severity": "Moderate",
+    "radius_km": 7,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 24.23,
+    "lon": 80.31,
+    "temp": 209.02914428710938,
+    "count": 33,
+    "severity": "Moderate",
+    "radius_km": 11,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 24.23,
+    "lon": 81.71000000000001,
+    "temp": 210.35348510742188,
+    "count": 18,
+    "severity": "Moderate",
+    "radius_km": 8,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.85,
+    "lon": 82.23,
+    "temp": 206.73585510253906,
+    "count": 88,
+    "severity": "Moderate",
+    "radius_km": 19,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.77,
+    "lon": 82.39,
+    "temp": 196.7621612548828,
+    "count": 142,
+    "severity": "Moderate",
+    "radius_km": 24,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.77,
+    "lon": 83.15,
+    "temp": 193.04837036132812,
+    "count": 156,
+    "severity": "Strong",
+    "radius_km": 25,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.77,
+    "lon": 83.27,
+    "temp": 200.16690063476562,
+    "count": 63,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 24.02,
+    "lon": 84.4,
+    "temp": 209.02914428710938,
+    "count": 67,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.56,
+    "lon": 81.68,
+    "temp": 210.78692626953125,
+    "count": 39,
+    "severity": "Moderate",
+    "radius_km": 12,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.27,
+    "lon": 82.23,
+    "temp": 198.4991455078125,
+    "count": 156,
+    "severity": "Moderate",
+    "radius_km": 25,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.72,
+    "lon": 82.43,
+    "temp": 196.16648864746094,
+    "count": 144,
+    "severity": "Moderate",
+    "radius_km": 24,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.68,
+    "lon": 83.15,
+    "temp": 189.66006469726562,
+    "count": 156,
+    "severity": "Severe",
+    "radius_km": 25,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.39,
+    "lon": 83.31,
+    "temp": 194.3250274658203,
+    "count": 129,
+    "severity": "Strong",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.7,
+    "lon": 86.35000000000001,
+    "temp": 209.02914428710938,
+    "count": 13,
+    "severity": "Moderate",
+    "radius_km": 7,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.56,
+    "lon": 84.63,
+    "temp": 211.21652221679688,
+    "count": 12,
+    "severity": "Moderate",
+    "radius_km": 7,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.28,
+    "lon": 85.10000000000001,
+    "temp": 201.2435302734375,
+    "count": 15,
+    "severity": "Moderate",
+    "radius_km": 8,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.36,
+    "lon": 85.3,
+    "temp": 204.3225555419922,
+    "count": 36,
+    "severity": "Moderate",
+    "radius_km": 12,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.27,
+    "lon": 83.78,
+    "temp": 210.78692626953125,
+    "count": 6,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.86,
+    "lon": 81.72,
+    "temp": 202.29400634765625,
+    "count": 69,
+    "severity": "Moderate",
+    "radius_km": 17,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.23,
+    "lon": 81.96000000000001,
+    "temp": 199.06240844726562,
+    "count": 156,
+    "severity": "Moderate",
+    "radius_km": 25,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.23,
+    "lon": 82.71000000000001,
+    "temp": 197.34930419921875,
+    "count": 144,
+    "severity": "Moderate",
+    "radius_km": 24,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.19,
+    "lon": 82.99,
+    "temp": 191.72869873046875,
+    "count": 156,
+    "severity": "Strong",
+    "radius_km": 25,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.900000000000002,
+    "lon": 83.62,
+    "temp": 197.92819213867188,
+    "count": 156,
+    "severity": "Moderate",
+    "radius_km": 25,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.11,
+    "lon": 83.78,
+    "temp": 207.66671752929688,
+    "count": 36,
+    "severity": "Moderate",
+    "radius_km": 12,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 23.23,
+    "lon": 85.18,
+    "temp": 201.2435302734375,
+    "count": 44,
+    "severity": "Moderate",
+    "radius_km": 13,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.73,
+    "lon": 81.72,
+    "temp": 203.82403564453125,
+    "count": 125,
+    "severity": "Moderate",
+    "radius_km": 22,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.73,
+    "lon": 81.76,
+    "temp": 202.8099365234375,
+    "count": 154,
+    "severity": "Moderate",
+    "radius_km": 25,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.73,
+    "lon": 82.71000000000001,
+    "temp": 199.61825561523438,
+    "count": 149,
+    "severity": "Moderate",
+    "radius_km": 24,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.73,
+    "lon": 82.87,
+    "temp": 200.16690063476562,
+    "count": 133,
+    "severity": "Moderate",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.73,
+    "lon": 83.42,
+    "temp": 202.8099365234375,
+    "count": 50,
+    "severity": "Moderate",
+    "radius_km": 14,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.57,
+    "lon": 84.72,
+    "temp": 211.64236450195312,
+    "count": 9,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.740000000000002,
+    "lon": 85.44,
+    "temp": 207.20361328125,
+    "count": 33,
+    "severity": "Moderate",
+    "radius_km": 11,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.45,
+    "lon": 85.11,
+    "temp": 209.02914428710938,
+    "count": 86,
+    "severity": "Moderate",
+    "radius_km": 19,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.26,
+    "lon": 86.97,
+    "temp": 208.12525939941406,
+    "count": 8,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.26,
+    "lon": 87.41,
+    "temp": 196.16648864746094,
+    "count": 13,
+    "severity": "Moderate",
+    "radius_km": 7,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.240000000000002,
+    "lon": 81.64,
+    "temp": 207.66671752929688,
+    "count": 36,
+    "severity": "Moderate",
+    "radius_km": 12,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.12,
+    "lon": 82.11,
+    "temp": 200.16690063476562,
+    "count": 74,
+    "severity": "Moderate",
+    "radius_km": 17,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.240000000000002,
+    "lon": 82.51,
+    "temp": 197.34930419921875,
+    "count": 92,
+    "severity": "Moderate",
+    "radius_km": 19,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.240000000000002,
+    "lon": 82.78,
+    "temp": 208.12525939941406,
+    "count": 21,
+    "severity": "Moderate",
+    "radius_km": 9,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.25,
+    "lon": 85.7,
+    "temp": 213.30966186523438,
+    "count": 5,
+    "severity": "Moderate",
+    "radius_km": 4,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 21.93,
+    "lon": 86.72,
+    "temp": 204.81558227539062,
+    "count": 57,
+    "severity": "Moderate",
+    "radius_km": 15,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.13,
+    "lon": 86.05,
+    "temp": 213.30966186523438,
+    "count": 5,
+    "severity": "Moderate",
+    "radius_km": 4,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 21.93,
+    "lon": 86.8,
+    "temp": 200.70858764648438,
+    "count": 155,
+    "severity": "Moderate",
+    "radius_km": 25,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 22.22,
+    "lon": 87.4,
+    "temp": 199.06240844726562,
+    "count": 44,
+    "severity": "Moderate",
+    "radius_km": 13,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 21.56,
+    "lon": 86.74,
+    "temp": 205.7858123779297,
+    "count": 64,
+    "severity": "Moderate",
+    "radius_km": 16,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 21.73,
+    "lon": 86.83,
+    "temp": 202.29400634765625,
+    "count": 133,
+    "severity": "Moderate",
+    "radius_km": 23,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 21.240000000000002,
+    "lon": 86.81,
+    "temp": 209.91610717773438,
+    "count": 12,
+    "severity": "Moderate",
+    "radius_km": 7,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 19.5,
+    "lon": 85.16,
+    "temp": 204.81558227539062,
+    "count": 96,
+    "severity": "Moderate",
+    "radius_km": 20,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 19.51,
+    "lon": 85.35000000000001,
+    "temp": 207.66671752929688,
+    "count": 54,
+    "severity": "Moderate",
+    "radius_km": 15,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 19.38,
+    "lon": 84.73,
+    "temp": 209.4746856689453,
+    "count": 13,
+    "severity": "Moderate",
+    "radius_km": 7,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 19.23,
+    "lon": 84.73,
+    "temp": 210.78692626953125,
+    "count": 8,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 19.23,
+    "lon": 84.85000000000001,
+    "temp": 208.12525939941406,
+    "count": 11,
+    "severity": "Moderate",
+    "radius_km": 7,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 17.41,
+    "lon": 90.37,
+    "temp": 212.89808654785156,
+    "count": 5,
+    "severity": "Moderate",
+    "radius_km": 4,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 11.81,
+    "lon": 76.96000000000001,
+    "temp": 210.35348510742188,
+    "count": 34,
+    "severity": "Moderate",
+    "radius_km": 12,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 11.96,
+    "lon": 77.37,
+    "temp": 211.64236450195312,
+    "count": 24,
+    "severity": "Moderate",
+    "radius_km": 10,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 11.28,
+    "lon": 78.34,
+    "temp": 212.48306274414062,
+    "count": 6,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 10.870000000000001,
+    "lon": 77.98,
+    "temp": 201.77194213867188,
+    "count": 150,
+    "severity": "Moderate",
+    "radius_km": 24,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 10.9,
+    "lon": 78.57000000000001,
+    "temp": 205.7858123779297,
+    "count": 175,
+    "severity": "Moderate",
+    "radius_km": 26,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 11.13,
+    "lon": 78.97,
+    "temp": 207.66671752929688,
+    "count": 77,
+    "severity": "Moderate",
+    "radius_km": 18,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 10.76,
+    "lon": 77.72,
+    "temp": 203.31988525390625,
+    "count": 33,
+    "severity": "Moderate",
+    "radius_km": 11,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 10.65,
+    "lon": 77.73,
+    "temp": 203.31988525390625,
+    "count": 27,
+    "severity": "Moderate",
+    "radius_km": 10,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 10.72,
+    "lon": 77.91,
+    "temp": 201.77194213867188,
+    "count": 57,
+    "severity": "Moderate",
+    "radius_km": 15,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 10.72,
+    "lon": 78.28,
+    "temp": 209.91610717773438,
+    "count": 9,
+    "severity": "Moderate",
+    "radius_km": 6,
+    "updated": "13-Aug-2026 15:30 UTC"
+  },
+  {
+    "lat": 5.29,
+    "lon": 69.69,
+    "temp": 212.48306274414062,
+    "count": 7,
+    "severity": "Moderate",
+    "radius_km": 5,
+    "updated": "13-Aug-2026 15:30 UTC"
   }
 ]
