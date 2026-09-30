@@ -1,63 +1,52 @@
-import {
-  buildMosdacUrl,
-  getFallbackDatetime,
-  MOSDAC_HEADERS,
-} from "../../../lib/mosdac";
+﻿import { buildMosdacUrl, fetchMosdacPng } from "../../../lib/mosdac";
 
-const DEBUG = process.env.NODE_ENV !== "production";
-
-// 1x1 transparent PNG, returned when MOSDAC has no tile for the requested slot.
-const EMPTY_TILE = Buffer.from(
-  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4////fwAJ+wP9KobjigAAAABJRU5ErkJggg==",
-  "base64"
-);
-
-function pngResponse(body: ArrayBuffer | Buffer, cacheControl?: string) {
-  const headers: Record<string, string> = { "Content-Type": "image/png" };
-  if (cacheControl) headers["Cache-Control"] = cacheControl;
-  return new Response(body as BodyInit, { headers });
+function unavailable(status: number) {
+  // A valid image can fire onload even for an HTTP error. Return non-image
+  // data so Leaflet reliably fires tileerror and applies its transparent tile.
+  return Response.json({ available: false, error: status === 400 ? "Invalid map request" : "Satellite imagery unavailable" }, {
+    status,
+    headers: {
+      "Cache-Control": "no-store",
+      "X-MOSDAC-Available": "false",
+    },
+  });
 }
 
 export async function GET(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const targetUrl = buildMosdacUrl(searchParams);
+  const params = new URLSearchParams();
+  new URL(request.url).searchParams.forEach((value, key) => {
+    params.set(key.toLowerCase(), value);
+  });
 
-    // Prepare a one-slot-older fallback in case the requested frame 404s.
-    const fallbackParams = new URLSearchParams(searchParams);
-    fallbackParams.set(
-      "datetime",
-      getFallbackDatetime(searchParams.get("datetime") || "")
-    );
-    const fallbackUrl = buildMosdacUrl(fallbackParams);
-
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000);
-    const response = await fetch(targetUrl, {
-      headers: MOSDAC_HEADERS,
-      signal: controller.signal,
-    });
-    clearTimeout(timeout);
-
-    if (!response.ok) {
-      const fallback = await fetch(fallbackUrl, { headers: MOSDAC_HEADERS });
-      if (fallback.ok) {
-        return pngResponse(await fallback.arrayBuffer());
-      }
-      return pngResponse(EMPTY_TILE);
-    }
-
-    const imageBuffer = await response.arrayBuffer();
-    if (DEBUG) console.log("MOSDAC SIZE:", imageBuffer.byteLength);
-
-    // History frames never change, so cache them hard; live frames briefly.
-    const isHistory = searchParams.has("datetime");
-    return pngResponse(
-      imageBuffer,
-      isHistory ? "public, max-age=86400" : "public, max-age=300"
-    );
-  } catch (error) {
-    console.error("MOSDAC WMS proxy failed:", error);
-    return pngResponse(EMPTY_TILE);
+  const datetime = params.get("datetime");
+  if (datetime !== null && Number.isNaN(new Date(datetime).getTime())) {
+    return unavailable(400);
   }
+
+  // GetMap needs real tile bounds; incomplete preload requests only waste work.
+  const bounds = params.get("bbox")?.split(",");
+  const width = Number(params.get("width"));
+  const height = Number(params.get("height"));
+  if (
+    bounds?.length !== 4 || bounds.some((value) => !value.trim() || !Number.isFinite(Number(value))) ||
+    !Number.isInteger(width) || width < 1 || width > 1024 ||
+    !Number.isInteger(height) || height < 1 || height > 1024
+  ) {
+    return unavailable(400);
+  }
+
+  const image = await fetchMosdacPng(buildMosdacUrl(params));
+  if (!image) return unavailable(502);
+
+  // Never substitute another timestamp: history and animation must represent
+  // exactly the requested frame. Missing frames can become available later.
+  return new Response(image, {
+    headers: {
+      "Content-Type": "image/png",
+      "Cache-Control": datetime
+        ? "public, max-age=86400, s-maxage=86400"
+        : "public, max-age=120, s-maxage=120",
+      "X-MOSDAC-Available": "true",
+    },
+  });
 }

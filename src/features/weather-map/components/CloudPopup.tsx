@@ -18,7 +18,7 @@ function buildCloudPopupHtml(cp: CloudPopup): string {
     <div style="width:160px;background:rgba(10,16,30,0.97);color:#fff;padding:8px;border-radius:14px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.09);box-shadow:0 14px 42px rgba(0,0,0,0.65);font-family:var(--font-inter),sans-serif">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
         <span style="font-size:11px;font-weight:700;letter-spacing:1px;color:#64748b;text-transform:uppercase">&#9729; Cloud Cover</span>
-        <button class="cloud-popup-close" style="background:rgba(255,255,255,0.06);border:none;color:#94a3b8;width:20px;height:20px;border-radius:6px;cursor:pointer;font-size:14px;line-height:20px;text-align:center">&#10005;</button>
+        <button type="button" aria-label="Close cloud cover details" class="cloud-popup-close" style="background:rgba(255,255,255,0.06);border:none;color:#94a3b8;width:20px;height:20px;border-radius:6px;cursor:pointer;font-size:14px;line-height:20px;text-align:center">&#10005;</button>
       </div>
       <div style="display:flex;align-items:flex-end;gap:3px;margin-bottom:8px">
         <span style="font-size:32px;font-weight:800;line-height:1;color:${ccToColor(

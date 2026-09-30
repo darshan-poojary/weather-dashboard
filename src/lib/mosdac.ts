@@ -11,32 +11,13 @@ const MONTHS = [
 ];
 
 function generateMosdacPath(utcDatetime: string) {
-  const date = new Date(utcDatetime);
-
-  // INSAT-3R live frames publish on half-hourly slots. Always resolve to the
-  // most recent valid slot (:15 or :45).
-  let minutes = date.getUTCMinutes();
-
-  if (minutes >= 15 && minutes <= 44) {
-    minutes = 15;
-  } else {
-    // 45 → 59 and 00 → 14 both map to the :45 slot. For 00 → 14 that slot
-    // belongs to the previous hour, so step the hour back.
-    minutes = 45;
-    if (date.getUTCMinutes() <= 14) {
-      date.setUTCHours(date.getUTCHours() - 1);
-    }
-  }
-
-  date.setUTCMinutes(minutes);
-  date.setUTCSeconds(0);
-  date.setUTCMilliseconds(0);
+  const date = snapToSlotDate(new Date(utcDatetime));
 
   const year = date.getUTCFullYear();
   const month = MONTHS[date.getUTCMonth()];
   const day = String(date.getUTCDate()).padStart(2, "0");
   const hours = String(date.getUTCHours()).padStart(2, "0");
-  const mins = String(minutes).padStart(2, "0");
+  const mins = String(date.getUTCMinutes()).padStart(2, "0");
 
   const folder = `${day}${month}`;
   const filename = `3RIMG_${day}${month}${year}_${hours}${mins}_L1B_STD_V01R00.h5`;
@@ -45,7 +26,9 @@ function generateMosdacPath(utcDatetime: string) {
 }
 
 export function buildMosdacUrl(params: URLSearchParams) {
-  const datetime = params.get("datetime");
+  const normalized = new URLSearchParams();
+  params.forEach((value, key) => normalized.set(key.toLowerCase(), value));
+  const datetime = normalized.get("datetime");
 
   // Fall back to the current live slot when datetime is missing or unparseable,
   // instead of a fixed past date, so the proxy self-heals.
@@ -58,7 +41,7 @@ export function buildMosdacUrl(params: URLSearchParams) {
   const url = new URL(generateMosdacPath(utcDatetime));
 
   // Copy incoming params through (uppercased, WMS-style), skipping our own.
-  params.forEach((value, key) => {
+  normalized.forEach((value, key) => {
     if (key !== "_t" && key !== "datetime") {
       url.searchParams.set(key.toUpperCase(), value);
     }
@@ -76,13 +59,14 @@ export function buildMosdacUrl(params: URLSearchParams) {
   url.searchParams.set("BELOWMINCOLOR", "extend");
   url.searchParams.set("ABOVEMAXCOLOR", "extend");
 
-  url.searchParams.set("STYLES", params.get("styles") || "boxfill/greyscale");
+  url.searchParams.set("STYLES", normalized.get("styles") || "boxfill/greyscale");
 
   return url.toString();
 }
 
 export function getFallbackDatetime(utcDatetime: string) {
-  const date = new Date(utcDatetime);
+  const parsed = new Date(utcDatetime);
+  const date = snapToSlotDate(Number.isNaN(parsed.getTime()) ? new Date() : parsed);
   date.setUTCMinutes(date.getUTCMinutes() - 30);
   return date.toISOString();
 }
@@ -103,4 +87,29 @@ export function snapToSlotDate(input: Date): Date {
   }
 
   return date;
+}
+
+// Keep the timeout active while reading the body, and reject WMS XML errors
+// even when the upstream mistakenly responds with HTTP 200.
+export async function fetchMosdacPng(url: string, timeoutMs = 8000) {
+  try {
+    const response = await fetch(url, {
+      headers: MOSDAC_HEADERS,
+      signal: AbortSignal.timeout(timeoutMs),
+      cache: "no-store",
+    });
+    if (!response.ok || !response.headers.get("content-type")?.includes("image/png")) {
+      await response.body?.cancel();
+      return null;
+    }
+
+    const body = await response.arrayBuffer();
+    const signature = new Uint8Array(body, 0, Math.min(body.byteLength, 8));
+    const pngSignature = [137, 80, 78, 71, 13, 10, 26, 10];
+    return signature.length === 8 && pngSignature.every((byte, i) => signature[i] === byte)
+      ? body
+      : null;
+  } catch {
+    return null;
+  }
 }

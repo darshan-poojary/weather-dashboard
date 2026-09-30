@@ -40,7 +40,14 @@ function WeatherMapLegend({
     <>
       {!showAlertLegend && (
         <button
-          onClick={() => setShowAlertLegend(true)}
+          type="button"
+          aria-label="Show weather alerts legend"
+          aria-expanded={false}
+          aria-controls="weather-alerts-legend"
+          onClick={() => {
+            if (isMobile) setShowLegend(false);
+            setShowAlertLegend(true);
+          }}
           style={{
             position: "absolute",
             bottom: bottomInset,
@@ -64,6 +71,9 @@ function WeatherMapLegend({
 
       {showAlertLegend && (
         <div
+          id="weather-alerts-legend"
+          role="region"
+          aria-label="Weather alerts legend"
           style={{
             position: "absolute",
             bottom: bottomInset,
@@ -76,7 +86,7 @@ function WeatherMapLegend({
             padding: isMobile ? "10px" : "12px",
             color: "white",
             minWidth: isMobile ? "0" : "190px",
-            maxWidth: "min(46vw, 220px)",
+            maxWidth: isMobile ? "min(70vw, 260px)" : "min(46vw, 220px)",
             boxShadow: "0 10px 25px rgba(0,0,0,0.45)",
             fontFamily: "var(--font-inter), sans-serif",
           }}
@@ -91,6 +101,10 @@ function WeatherMapLegend({
           >
             <div style={{ fontSize: "14px", fontWeight: 700 }}>Weather Alerts</div>
             <button
+              type="button"
+              aria-label="Hide weather alerts legend"
+              aria-expanded={true}
+              aria-controls="weather-alerts-legend"
               onClick={() => setShowAlertLegend(false)}
               style={{
                 width: "30px",
@@ -146,7 +160,14 @@ function WeatherMapLegend({
 
       {!showLegend && (
         <button
-          onClick={() => setShowLegend(true)}
+          type="button"
+          aria-label="Show temperature legend"
+          aria-expanded={false}
+          aria-controls="weather-temperature-legend"
+          onClick={() => {
+            if (isMobile) setShowAlertLegend(false);
+            setShowLegend(true);
+          }}
           style={{
             position: "absolute",
             bottom: bottomInset,
@@ -169,6 +190,9 @@ function WeatherMapLegend({
 
       {showLegend && (
         <div
+          id="weather-temperature-legend"
+          role="region"
+          aria-label="Temperature legend"
           style={{
             position: "absolute",
             bottom: bottomInset,
@@ -201,6 +225,10 @@ function WeatherMapLegend({
                 />
               </div>
               <button
+                type="button"
+                aria-label="Hide temperature legend"
+                aria-expanded={true}
+                aria-controls="weather-temperature-legend"
                 onClick={() => setShowLegend(false)}
                 style={{
                   width: "38px",

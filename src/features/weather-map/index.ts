@@ -1,3 +1,7 @@
-// Public entry point for the weather-map feature.
-// Import from "@/features/weather-map" rather than reaching into internal files.
-export { default as WeatherMap } from "./components/WeatherMap";
+"use client";
+
+import dynamic from "next/dynamic";
+
+// The map uses browser-only Leaflet APIs and the current clock. Avoid baking
+// a build-time timestamp into HTML that would disagree during hydration.
+export const WeatherMap = dynamic(() => import("./components/WeatherMap"), { ssr: false });

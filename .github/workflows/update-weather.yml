@@ -14,6 +14,7 @@ concurrency:
 jobs:
   update-weather:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     permissions:
       contents: write
@@ -32,7 +33,13 @@ jobs:
       - name: Install dependencies
         run: pip install -r updater/requirements.txt
 
+      - name: Check data pipeline
+        run: python -m unittest discover -s updater -v
+
       - name: Run weather update
+        env:
+          MOSDAC_USERNAME: ${{ secrets.MOSDAC_USERNAME }}
+          MOSDAC_PASSWORD: ${{ secrets.MOSDAC_PASSWORD }}
         run: python updater/update_thunderstorms.py
 
       - name: Commit updated data (only if changed)

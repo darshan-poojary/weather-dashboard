@@ -45,10 +45,10 @@ const MapEvents = dynamic(
     }: {
       onView: (zoom: number, bounds: [number, number, number, number]) => void;
     }) {
-      const report = (map: import("leaflet").Map) => {
+      const report = useCallback((map: import("leaflet").Map) => {
         const b = map.getBounds().pad(0.25);
         onView(map.getZoom(), [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]);
-      };
+      }, [onView]);
       const map = mod.useMapEvents({
         zoomend() {
           report(map);
@@ -57,6 +57,8 @@ const MapEvents = dynamic(
           report(map);
         },
       });
+
+      useEffect(() => { report(map); }, [map, report]);
 
       return null;
     };
@@ -113,6 +115,9 @@ const AlertLayer = dynamic(
       `<div style="min-width:186px;font-family:var(--font-inter),sans-serif;color:#fff;line-height:1.55">${inner}</div>`;
     const row = (label: string, value: string) =>
       `<div style="margin-top:8px;font-size:12px;color:#cbd5e1"><b style="color:#fff">${label}</b><br/>${value}</div>`;
+    const escapeHtml = (value: unknown) => String(value).replace(/[&<>"']/g, (character) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+    })[character]!);
     const heading = (accent: string, text: string) =>
       `<div style="display:flex;align-items:center;gap:8px;font-weight:800;font-size:13px;letter-spacing:.4px;margin-bottom:6px"><span style="width:8px;height:8px;border-radius:50%;background:${accent};box-shadow:0 0 8px ${accent}"></span>${text}</div>`;
 
@@ -181,7 +186,7 @@ const AlertLayer = dynamic(
               return card(
                 heading(accent, isCloudburst ? "CLOUDBURST (NOWCAST)" : "HEAVY RAIN (NOWCAST)") +
                   row("Location", `${lat.toFixed(2)}°N, ${lng.toFixed(2)}°E`) +
-                  (date || time ? row("Forecast issued", `${date} ${time}`) : "") +
+                  (date || time ? row("Forecast issued", escapeHtml(`${date} ${time}`)) : "") +
                   row("Validity", "Next 6 hours") +
                   (radiusKm > 0 ? row("Radius of influence", `${radiusKm.toFixed(1)} km`) : "")
               );
@@ -225,7 +230,8 @@ const AlertLayer = dynamic(
               heading("#facc15", "⚡ THUNDERSTORM CELL") +
                 `<div style="font-size:12px;color:#cbd5e1">Severity: ${severityLabel}<br/>Cloud-top temp: ${cell.temp.toFixed(
                   1
-                )} K<br/>Impact radius: ${cell.radius_km} km<br/>Cell strength: ${cell.count}</div>`
+                )} K<br/>Impact radius: ${cell.radius_km} km<br/>Cell strength: ${cell.count}</div>` +
+                row("Observed", escapeHtml(cell.updated))
             )
           );
           marker.addTo(group);
@@ -247,6 +253,13 @@ const AlertLayer = dynamic(
 // FRAME_COUNT frames, stepping back in true 30-minute increments.
 const FRAME_COUNT = 20;
 const SLOT_MS = 30 * 60 * 1000;
+const EMPTY_TILE = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+
+async function fetchJson<T>(url: string, signal?: AbortSignal): Promise<T> {
+  const response = await fetch(url, { signal, cache: "no-cache" });
+  if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
+  return response.json() as Promise<T>;
+}
 
 export default function WeatherMap() {
   const [opacity, setOpacity] = useState(0.7);
@@ -272,10 +285,22 @@ export default function WeatherMap() {
   const [statesGeoJson, setStatesGeoJson] = useState<GeoJsonObject | null>(null);
   const [districtGeoJson, setDistrictGeoJson] = useState<GeoJsonObject | null>(null);
   const [thunderstormCells, setThunderstormCells] = useState<ThunderstormCell[]>([]);
-  const [cloudPoints, setCloudPoints] = useState<CloudPoint[]>([]);
+  const cloudData = useRef<{ points: CloudPoint[]; loadedAt: number } | null>(null);
+  const cloudRequest = useRef<Promise<CloudPoint[]> | null>(null);
+  const cloudClick = useRef(0);
   const [cloudPopup, setCloudPopup] = useState<CloudPopup | null>(null);
   const [mosdacAlerts, setMosdacAlerts] = useState<MosdacAlertFeature[]>([]);
-  const loadedFrames = useRef(new Set<string>());
+  const [feedErrors, setFeedErrors] = useState<Record<string, string>>({});
+  const [latestStatus, setLatestStatus] = useState("Checking latest frame");
+  const tileFailed = useRef(false);
+  const baseTileFailed = useRef(false);
+  const reportError = useCallback((feed: string, message: string) => {
+    setFeedErrors((previous) => previous[feed] === message ? previous : { ...previous, [feed]: message });
+  }, []);
+  const handleView = useCallback((nextZoom: number, bounds: [number, number, number, number]) => {
+    setZoom(nextZoom);
+    setViewBounds(bounds);
+  }, []);
 
   // Anchor the timeline on the newest frame that actually exists (probed via
   // /api/mosdac-latest) and step back so animation has no duplicate frames.
@@ -293,154 +318,137 @@ export default function WeatherMap() {
   const [frameLoading, setFrameLoading] = useState(false);
 
   useEffect(() => {
+    let wasMobile = false;
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (mobile && !wasMobile) {
+        setShowLegend(false);
+        setShowAlertLegend(false);
+      }
+      wasMobile = mobile;
     };
-
-    checkMobile();
+    const initialLayout = requestAnimationFrame(() => {
+      checkMobile();
+    });
     window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    return () => {
+      cancelAnimationFrame(initialLayout);
+      window.removeEventListener("resize", checkMobile);
+    };
   }, []);
 
   useEffect(() => {
-    fetch("/geo/india-states.geojson")
-      .then((res) => res.json())
-      .then((data) => setStatesGeoJson(data));
+    const controller = new AbortController();
+    fetchJson<GeoJsonObject>("/geo/india-states.geojson", controller.signal)
+      .then(setStatesGeoJson)
+      .catch(() => { if (!controller.signal.aborted) reportError("states", "State boundaries unavailable."); });
+    return () => controller.abort();
+  }, [reportError]);
 
-    fetch("/geo/india-districts.geojson")
-      .then((res) => res.json())
-      .then((data) => setDistrictGeoJson(data));
+  const needsDistricts = zoom >= 8;
+  useEffect(() => {
+    if (!needsDistricts || districtGeoJson) return;
+    const controller = new AbortController();
+    fetchJson<GeoJsonObject>("/geo/india-districts.geojson", controller.signal)
+      .then((data) => { setDistrictGeoJson(data); reportError("districts", ""); })
+      .catch(() => { if (!controller.signal.aborted) reportError("districts", "District boundaries unavailable."); });
+    return () => controller.abort();
+  }, [needsDistricts, districtGeoJson, reportError]);
+
+  useEffect(() => () => {
+    cloudClick.current += 1;
   }, []);
 
   // Track the newest satellite frame that is actually available on MOSDAC.
   useEffect(() => {
-    let active = true;
+    const controller = new AbortController();
 
     const fetchLatest = async () => {
       try {
-        const res = await fetch(
-          "/api/mosdac-latest?layers=IMG_TIR1&styles=boxfill/greyscale"
+        const data = await fetchJson<{ datetime: string | null }>(
+          `/api/mosdac-latest?layers=${channel}&styles=boxfill/${palette}`, controller.signal
         );
-        const data = await res.json();
-        if (active && data?.datetime) {
+        if (!controller.signal.aborted && data?.datetime && Number.isFinite(Date.parse(data.datetime))) {
           setLiveDatetime((prev) => (prev === data.datetime ? prev : data.datetime));
+          setLatestStatus("");
+        } else if (!controller.signal.aborted) {
+          setLatestStatus("Latest frame unavailable");
         }
-      } catch (error) {
-        console.error("Latest-frame probe failed:", error);
+      } catch {
+        if (!controller.signal.aborted) setLatestStatus("Latest frame unavailable");
       }
     };
 
     fetchLatest();
     const interval = setInterval(fetchLatest, 5 * 60 * 1000);
     return () => {
-      active = false;
+      controller.abort();
       clearInterval(interval);
     };
-  }, []);
+  }, [channel, palette]);
 
   useEffect(() => {
-    if (!isPlaying || frames.length === 0 || frameLoading) return;
+    if (mode !== "ANIMATION" || !isPlaying || !showOverlay || frameLoading) return;
 
-    const interval = setInterval(() => {
+    const timeout = setTimeout(() => {
       const nextFrame = currentFrame >= frames.length - 1 ? 0 : currentFrame + 1;
-      setFrameLoading(true);
-      const img = new window.Image();
-
-      img.onload = () => {
-        setCurrentFrame(nextFrame);
-        setDisplayFrame(nextFrame);
-        setFrameLoading(false);
-      };
-
-      img.onerror = () => {
-        setFrameLoading(false);
-      };
-
-      img.src = `/api/mosdac-wms?datetime=${frames[nextFrame]}&layers=${channel}&styles=boxfill/${palette}`;
+      setCurrentFrame(nextFrame);
+      setDisplayFrame(nextFrame);
     }, speed);
 
-    return () => clearInterval(interval);
-  }, [isPlaying, speed, currentFrame, frames, frameLoading, channel, palette]);
+    return () => clearTimeout(timeout);
+  }, [mode, isPlaying, showOverlay, speed, currentFrame, frames.length, frameLoading]);
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchAlerts = async () => {
       try {
-        const response = await fetch("/api/mosdac-alerts");
-        const parsed = await response.json();
-        if (parsed.features) {
+        const parsed = await fetchJson<{ features: MosdacAlertFeature[] }>("/api/mosdac-alerts", controller.signal);
+        if (!controller.signal.aborted && Array.isArray(parsed.features)) {
           setMosdacAlerts(parsed.features);
+          reportError("alerts", "");
         }
-      } catch (error) {
-        console.error("MOSDAC Alerts Error:", error);
+      } catch {
+        if (!controller.signal.aborted) reportError("alerts", "Rain alerts unavailable; previously loaded alerts may be outdated.");
       }
     };
 
     fetchAlerts();
     const interval = setInterval(fetchAlerts, 300000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const preloadFrame = useCallback(
-    (frame: string) => {
-      if (loadedFrames.current.has(frame)) {
-        return;
-      }
-
-      const img = new Image();
-      img.onload = () => {
-        loadedFrames.current.add(frame);
-      };
-      img.src = `/api/mosdac-wms?datetime=${frame}&layers=${channel}&styles=boxfill/${palette}`;
-    },
-    [channel, palette]
-  );
+    return () => { controller.abort(); clearInterval(interval); };
+  }, [reportError]);
 
   useEffect(() => {
-    if (frames.length === 0) return;
-
-    for (let i = 0; i < 4; i++) {
-      const index = currentFrame + i;
-      if (index < frames.length) {
-        preloadFrame(frames[index]);
-      }
-    }
-  }, [currentFrame, frames, preloadFrame]);
-
-  useEffect(() => {
+    const controller = new AbortController();
     const loadStorms = async () => {
       try {
-        const response = await fetch("/thunderstorm-cells.json?t=" + Date.now());
-        const data = await response.json();
+        const data = await fetchJson<ThunderstormCell[]>("/thunderstorm-cells.json", controller.signal);
+        if (controller.signal.aborted) return;
+        if (!Array.isArray(data)) throw new Error("Invalid storm data");
         setThunderstormCells(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    const loadCloudData = async () => {
-      try {
-        const res = await fetch("/cloud-grid.json?" + Date.now());
-        const data = await res.json();
-        setCloudPoints(data);
-      } catch (err) {
-        console.error("Cloud data error", err);
+        const timestamps = data.map((cell) => Date.parse(cell.updated)).filter(Number.isFinite);
+        const newest = timestamps.length ? Math.max(...timestamps) : NaN;
+        reportError("storms", data.length && (!Number.isFinite(newest) || Date.now() - newest > 3 * 60 * 60 * 1000)
+          ? `Storm data is outdated${Number.isFinite(newest) ? ` (updated ${new Date(newest).toISOString().slice(0, 16).replace("T", " ")} UTC)` : ""}.`
+          : "");
+      } catch {
+        if (!controller.signal.aborted) reportError("storms", "Storm data unavailable.");
       }
     };
 
     loadStorms();
-    loadCloudData();
     const stormInterval = setInterval(loadStorms, 1800000);
-    const cloudInterval = setInterval(loadCloudData, 1800000);
     return () => {
+      controller.abort();
       clearInterval(stormInterval);
-      clearInterval(cloudInterval);
     };
-  }, []);
+  }, [reportError]);
 
   function getHistoryUtcDatetime() {
     if (!date || !time) return null;
-    const istDate = new Date(`${date}T${time}:00`);
-    return new Date(istDate.getTime() - 5.5 * 60 * 60 * 1000).toISOString();
+    const istDate = new Date(`${date}T${time}:00+05:30`);
+    return Number.isFinite(istDate.getTime()) ? snapToSlotDate(istDate).toISOString() : null;
   }
 
   // Fallback frame shown before the /api/mosdac-latest probe resolves. Snap to
@@ -496,6 +504,25 @@ export default function WeatherMap() {
   // or the React key, so changing frames redraws in place rather than tearing
   // down and rebuilding the whole tile layer — much smoother LIVE + animation.
   const wmsParams = useMemo(() => ({ datetime: utcDatetime }), [utcDatetime]);
+  const tileEvents = useMemo(() => ({
+    loading: () => { tileFailed.current = false; setFrameLoading(true); },
+    tileerror: () => {
+      tileFailed.current = true;
+      reportError("satellite", "Satellite imagery unavailable for this frame. Try another time or channel.");
+    },
+    load: () => {
+      setFrameLoading(false);
+      if (!tileFailed.current) reportError("satellite", "");
+    },
+  }), [reportError]);
+  const baseTileEvents = useMemo(() => ({
+    loading: () => { baseTileFailed.current = false; },
+    tileerror: () => {
+      baseTileFailed.current = true;
+      reportError("base", "Base map tiles could not load. Check your connection.");
+    },
+    load: () => { if (!baseTileFailed.current) reportError("base", ""); },
+  }), [reportError]);
 
   // The MOSDAC feed carries thousands of alerts. Rendering them all as DOM
   // markers is what made zoom lag. Instead we render only what's on screen,
@@ -559,6 +586,14 @@ export default function WeatherMap() {
     return [...current, ...nowcast];
   }, [mosdacAlerts, zoom, viewBounds]);
 
+  const visibleStorms = useMemo(() => {
+    if (!viewBounds) return [];
+    const [south, west, north, east] = viewBounds;
+    return thunderstormCells.filter((cell) =>
+      cell.lat >= south && cell.lat <= north && cell.lon >= west && cell.lon <= east
+    );
+  }, [thunderstormCells, viewBounds]);
+
   const currentLegend = LEGENDS[channel];
   const currentGradient = PALETTE_GRADIENTS[palette];
 
@@ -608,12 +643,24 @@ export default function WeatherMap() {
   );
 
   const handleMapClick = useCallback(
-    (clickLat: number, clickLon: number) => {
-      if (cloudPoints.length === 0) return;
+    async (clickLat: number, clickLon: number) => {
+      const clickId = ++cloudClick.current;
+      try {
+        // The 3 MB cloud grid is only needed when inspecting a location.
+        if (!cloudData.current || Date.now() - cloudData.current.loadedAt > 1800000) {
+          cloudRequest.current ??= fetchJson<CloudPoint[]>("/cloud-grid.json").finally(() => {
+            cloudRequest.current = null;
+          });
+          const points = await cloudRequest.current;
+          if (!Array.isArray(points)) throw new Error("Invalid cloud grid");
+          cloudData.current = { points, loadedAt: Date.now() };
+        }
+        if (clickId !== cloudClick.current) return;
+        const cloudPoints = cloudData.current.points;
       const gridLat = Math.round(clickLat / GRID_DEG) * GRID_DEG;
       const gridLon = Math.round(clickLon / GRID_DEG) * GRID_DEG;
 
-      const cell = cloudPoints.reduce(
+      const nearest = cloudPoints.reduce(
         (best, p) => {
           const dist = Math.abs(p.gridLat - gridLat) + Math.abs(p.gridLon - gridLon);
           if (!best || dist < best.dist) {
@@ -622,13 +669,27 @@ export default function WeatherMap() {
           return best;
         },
         null as { dist: number; point: CloudPoint } | null
-      )?.point;
+      );
 
-      if (!cell) return;
+      // Do not present a distant cell as an observation at the clicked location.
+      if (!nearest || nearest.dist > GRID_DEG * 2) {
+        setCloudPopup(null);
+        reportError("cloud", "No cloud observation available at this location.");
+        return;
+      }
+      const cell = nearest.point;
+      reportError("cloud", "");
       setCloudPopup({ lat: clickLat, lon: clickLon, cloudCover: cell.cloudCover, temp: cell.temp });
+      } catch {
+        if (clickId === cloudClick.current) reportError("cloud", "Cloud observations unavailable.");
+      }
     },
-    [cloudPoints]
+    [reportError]
   );
+
+  const notices = [mode === "LIVE" ? latestStatus : "Rain, storms and cloud details use the latest observations, independently of the satellite timeline.", ...Object.entries(feedErrors)
+    .filter(([feed]) => (feed !== "satellite" || showOverlay) && (feed !== "storms" || showThunderstorms) && (feed !== "alerts" || showAlerts))
+    .map(([, message]) => message)].filter(Boolean);
 
   return (
     <div style={{ height: "100dvh", width: "100%", overflow: "hidden", background: "#000" }}>
@@ -673,8 +734,9 @@ export default function WeatherMap() {
             style={{
               position: "absolute",
               top: "calc(env(safe-area-inset-top, 0px) + 16px)",
-              left: "50%",
-              transform: "translateX(-50%)",
+              left: isMobile ? "74px" : "50%",
+              right: isMobile ? "16px" : undefined,
+              transform: isMobile ? "none" : "translateX(-50%)",
               zIndex: 3000,
               display: "flex",
               alignItems: "center",
@@ -686,7 +748,7 @@ export default function WeatherMap() {
               WebkitBackdropFilter: "blur(10px)",
               color: "white",
               fontWeight: 700,
-              fontSize: isMobile ? "13px" : "22px",
+              fontSize: isMobile ? "11px" : "22px",
               letterSpacing: "0.5px",
               boxShadow: "0 8px 20px rgba(0,0,0,0.4)",
               border: "1px solid rgba(255,255,255,0.12)",
@@ -726,7 +788,7 @@ export default function WeatherMap() {
             >
               {channel.replace("IMG_", "")}
             </span>
-            {frameLoading && (
+            {showOverlay && frameLoading && (
               <span
                 style={{
                   width: isMobile ? "12px" : "16px",
@@ -743,37 +805,46 @@ export default function WeatherMap() {
         );
       })()}
 
+      {notices.length > 0 && (
+        <div role="status" style={{ position: "absolute", bottom: isMobile ? 68 : 30, left: "50%", transform: "translateX(-50%)", zIndex: 1500, maxWidth: "min(520px, 90vw)", width: "max-content", padding: "8px 12px", borderRadius: 10, background: "rgba(15,23,42,0.92)", color: "#fde68a", fontSize: 12, pointerEvents: "none" }}>
+          {notices.map((notice) => <div key={notice}>{notice}</div>)}
+        </div>
+      )}
+
       <MapContainer
         key="weather-map"
         bounds={[[5, 65], [38, 98]]}
         boundsOptions={{ padding: [20, 20] }}
         maxBounds={[[-5, 55], [42, 105]]}
         minZoom={4}
+        maxZoom={18}
         zoomAnimationThreshold={8}
         preferCanvas={true}
         wheelPxPerZoomLevel={120}
         style={{ height: "100%", width: "100%", backfaceVisibility: "hidden" }}
       >
-        <MapEvents
-          onView={(z, bounds) => {
-            setZoom(z);
-            setViewBounds(bounds);
-          }}
-        />
+        <MapEvents onView={handleView} />
         <MapClickHandler onClick={handleMapClick} />
 
-        <TileLayer attribution="&copy; OpenStreetMap contributors" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+          maxZoom={19}
+          keepBuffer={2}
+          updateWhenIdle={true}
+          eventHandlers={baseTileEvents}
+        />
 
         {statesGeoJson && (
           <>
             <GeoJSON
-              key={`states-casing-${statesZoomBucket}`}
+              key="states-casing"
               data={statesGeoJson as object}
               interactive={false}
               style={statesCasingStyle}
             />
             <GeoJSON
-              key={`states-line-${statesZoomBucket}`}
+              key="states-line"
               data={statesGeoJson as object}
               interactive={false}
               style={statesLineStyle}
@@ -784,13 +855,13 @@ export default function WeatherMap() {
         {zoom >= 8 && !isPlaying && districtGeoJson && (
           <>
             <GeoJSON
-              key={`districts-casing-${districtsZoomBucket}`}
+              key="districts-casing"
               data={districtGeoJson as object}
               interactive={false}
               style={districtCasingStyle}
             />
             <GeoJSON
-              key={`districts-line-${districtsZoomBucket}`}
+              key="districts-line"
               data={districtGeoJson as object}
               interactive={false}
               style={districtLineStyle}
@@ -798,7 +869,7 @@ export default function WeatherMap() {
           </>
         )}
 
-        <WMSTileLayer
+        {showOverlay && <WMSTileLayer
           key={`${channel}-${palette}`}
           url="/api/mosdac-wms"
           params={wmsParams}
@@ -808,19 +879,21 @@ export default function WeatherMap() {
           styles={`boxfill/${palette}`}
           format="image/png"
           transparent={true}
-          opacity={showOverlay ? opacity : 0}
+          opacity={opacity}
           version="1.3.0"
-          keepBuffer={4}
-          updateWhenIdle={false}
+          keepBuffer={2}
+          updateWhenIdle={true}
           updateWhenZooming={false}
           tileSize={256}
           zIndex={100}
           attribution="MOSDAC"
-        />
+          eventHandlers={tileEvents}
+          errorTileUrl={EMPTY_TILE}
+        />}
 
         <AlertLayer
           alerts={visibleAlerts}
-          storms={thunderstormCells}
+          storms={visibleStorms}
           zoom={zoom}
           showAlerts={showAlerts}
           showThunderstorms={showThunderstorms}
@@ -830,13 +903,6 @@ export default function WeatherMap() {
           <WeatherMapCloudPopup cloudPopup={cloudPopup} setCloudPopup={setCloudPopup} />
         )}
 
-        <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png"
-          attribution="&copy; OpenStreetMap & CARTO"
-          className="map-labels"
-          opacity={1}
-          zIndex={650}
-        />
       </MapContainer>
 
       <WeatherMapLegend

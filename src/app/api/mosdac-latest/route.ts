@@ -1,68 +1,63 @@
-import { buildMosdacUrl, snapToSlotDate } from "../../../lib/mosdac";
+﻿import { buildMosdacUrl, fetchMosdacPng, snapToSlotDate } from "../../../lib/mosdac";
 
-const MOSDAC_HEADERS = {
-  Referer: "https://www.mosdac.gov.in/live/index_one.php?url_name=india",
-  Origin: "https://www.mosdac.gov.in",
-};
-
-// How many 30-min slots back to probe before giving up.
 const MAX_CANDIDATES = 6;
 const SLOT_MS = 30 * 60 * 1000;
+const LAYERS = new Set(["IMG_TIR1", "IMG_TIR2", "IMG_MIR"]);
+const STYLES = new Set(["boxfill/greyscale", "boxfill/rainbow", "boxfill/redblue", "boxfill/ferret"]);
 
-// A tiny GetMap over India — enough to tell "frame exists" (200/png, ~KBs)
-// from "not ready yet" (404, tiny xml error).
-function buildProbeUrl(datetimeIso: string, layers: string, styles: string) {
-  const params = new URLSearchParams();
-  params.set("datetime", datetimeIso);
-  params.set("layers", layers);
-  params.set("styles", styles);
-  params.set("crs", "EPSG:4326");
-  params.set("bbox", "5,65,38,98");
-  params.set("width", "48");
-  params.set("height", "48");
-  return buildMosdacUrl(params);
-}
+type LatestFrame = { datetime: string | null; probedBack: number; available: boolean };
+// These maps have at most 12 entries (the supported layer/palette combinations).
+const cache = new Map<string, { value: LatestFrame; expires: number }>();
+const pending = new Map<string, Promise<LatestFrame>>();
 
-async function frameExists(datetimeIso: string, layers: string, styles: string) {
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 6000);
-    const res = await fetch(buildProbeUrl(datetimeIso, layers, styles), {
-      headers: MOSDAC_HEADERS,
-      signal: controller.signal,
-    });
-    clearTimeout(timeout);
-
-    const contentType = res.headers.get("content-type") || "";
-    return res.ok && contentType.includes("image");
-  } catch {
-    return false;
-  }
+async function findLatest(layers: string, styles: string): Promise<LatestFrame> {
+  const newestSlot = snapToSlotDate(new Date());
+  // Probe tiny images in parallel so an outage takes at most six seconds,
+  // rather than six successive network timeouts. Always select the newest hit.
+  const candidates = await Promise.all(
+    Array.from({ length: MAX_CANDIDATES }, async (_, i) => {
+      const datetime = new Date(newestSlot.getTime() - i * SLOT_MS).toISOString();
+      const params = new URLSearchParams({
+        datetime, layers, styles,
+        crs: "EPSG:4326", bbox: "5,65,38,98", width: "48", height: "48",
+      });
+      const image = await fetchMosdacPng(buildMosdacUrl(params), 6000);
+      return image ? { datetime, probedBack: i, available: true } : null;
+    })
+  );
+  return candidates.find((candidate) => candidate !== null)
+    ?? { datetime: null, probedBack: -1, available: false };
 }
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const layers = searchParams.get("layers") || "IMG_TIR1";
   const styles = searchParams.get("styles") || "boxfill/greyscale";
-
-  const newestSlot = snapToSlotDate(new Date());
-
-  for (let i = 0; i < MAX_CANDIDATES; i++) {
-    const candidate = new Date(newestSlot.getTime() - i * SLOT_MS);
-    const iso = candidate.toISOString();
-
-    if (await frameExists(iso, layers, styles)) {
-      return Response.json(
-        { datetime: iso, probedBack: i },
-        { headers: { "Cache-Control": "public, max-age=120" } }
-      );
-    }
+  if (!LAYERS.has(layers) || !STYLES.has(styles)) {
+    return Response.json({ error: "Unsupported layer or palette" }, { status: 400 });
   }
 
-  // Nothing responded — fall back to a safely-old slot so the UI still shows something.
-  const fallback = new Date(newestSlot.getTime() - 2 * SLOT_MS).toISOString();
-  return Response.json(
-    { datetime: fallback, probedBack: -1 },
-    { headers: { "Cache-Control": "public, max-age=60" } }
-  );
+  const key = `${layers}:${styles}`;
+  let result = cache.get(key);
+  if (!result || result.expires <= Date.now()) {
+    let work = pending.get(key);
+    if (!work) {
+      work = findLatest(layers, styles).then((value) => {
+        cache.set(key, { value, expires: Date.now() + (value.available ? 120_000 : 15_000) });
+        return value;
+      }).finally(() => pending.delete(key));
+      pending.set(key, work);
+    }
+    const value = await work;
+    result = { value, expires: cache.get(key)!.expires };
+  }
+
+  return Response.json(result.value, {
+    status: result.value.available ? 200 : 503,
+    headers: {
+      "Cache-Control": result.value.available
+        ? `public, max-age=${Math.max(0, Math.floor((result.expires - Date.now()) / 1000))}`
+        : "no-store",
+    },
+  });
 }

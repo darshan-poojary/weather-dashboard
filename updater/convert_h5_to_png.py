@@ -62,10 +62,13 @@ SAMPLE_STEP = 4             # subsample stride when aggregating the grid
 
 
 def find_latest_h5_file() -> Path:
-    files = sorted(H5_FOLDER.glob("*.h5"))
+    files = list(H5_FOLDER.glob("*.h5"))
     if not files:
         raise FileNotFoundError("No H5 files found in h5-data")
-    return files[-1]
+    # INSAT filenames contain day/month text, so alphabetical sorting can pick
+    # an older granule across day and month boundaries. The downloader publishes
+    # the newest completed download atomically, giving it the latest mtime.
+    return max(files, key=lambda path: path.stat().st_mtime_ns)
 
 
 def load_channel_temperature(h5: h5py.File, data_key: str, lut_key: str) -> np.ndarray:
@@ -243,8 +246,13 @@ def build_cloud_grid(
 
 
 def save_json(data, path: Path, indent: int | None = None) -> None:
-    with path.open("w", encoding="utf-8") as handle:
-        json.dump(data, handle, indent=indent, allow_nan=False)
+    temporary_path = path.with_suffix(path.suffix + ".tmp")
+    try:
+        with temporary_path.open("w", encoding="utf-8") as handle:
+            json.dump(data, handle, indent=indent, allow_nan=False, separators=(",", ":") if indent is None else None)
+        temporary_path.replace(path)
+    finally:
+        temporary_path.unlink(missing_ok=True)
 
 
 def main() -> None:

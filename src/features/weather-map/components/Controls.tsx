@@ -69,11 +69,11 @@ function WeatherMapControls({
 }: WeatherMapControlsProps) {
   const changeMode = (item: WeatherMode) => {
     setMode(item);
+    if (item !== "ANIMATION") setIsPlaying(false);
 
     if (item === "LIVE") {
       setDate("");
       setTime("");
-      setIsPlaying(false);
       setCurrentFrame(lastFrameIndex);
       setDisplayFrame(lastFrameIndex);
     }
@@ -88,6 +88,10 @@ function WeatherMapControls({
     <>
       {!showControls && (
         <button
+          type="button"
+          aria-label="Show controls"
+          aria-expanded={false}
+          aria-controls="weather-map-controls"
           onClick={() => setShowControls(true)}
           style={{
             position: "absolute",
@@ -112,14 +116,17 @@ function WeatherMapControls({
 
       {showControls && (
         <div
+          id="weather-map-controls"
           className="glass-scroll"
+          role="region"
+          aria-label="Weather map controls"
           style={{
             position: "absolute",
-            top: "calc(env(safe-area-inset-top, 0px) + 16px)",
+            top: `calc(env(safe-area-inset-top, 0px) + ${isMobile ? 72 : 16}px)`,
             left: "calc(env(safe-area-inset-left, 0px) + 16px)",
             animation: isMobile ? "none" : "glassFloat 6s ease-in-out infinite",
-            zIndex: 2000,
-            maxHeight: "calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 32px)",
+            zIndex: isMobile ? 10000 : 2000,
+            maxHeight: `calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - ${isMobile ? 150 : 32}px)`,
             overflowY: "auto",
             width: isMobile ? "min(88vw, 340px)" : "340px",
             padding: isMobile ? "16px" : "18px",
@@ -154,6 +161,10 @@ function WeatherMapControls({
             </h2>
 
             <button
+              type="button"
+              aria-label="Hide controls"
+              aria-expanded={true}
+              aria-controls="weather-map-controls"
               onClick={() => setShowControls(false)}
               style={{
                 width: "38px",
@@ -177,6 +188,8 @@ function WeatherMapControls({
             {MODES.map((item) => (
               <button
                 key={item}
+                type="button"
+                aria-pressed={mode === item}
                 onClick={() => changeMode(item)}
                 style={{
                   flex: 1,
@@ -201,11 +214,12 @@ function WeatherMapControls({
             ))}
           </div>
 
-          <label>
+          <label htmlFor="weather-channel">
             <b>Channel</b>
           </label>
 
           <select
+            id="weather-channel"
             value={channel}
             onChange={(e) => setChannel(e.target.value as WeatherChannel)}
             style={{
@@ -235,11 +249,12 @@ function WeatherMapControls({
             ))}
           </select>
 
-          <label>
+          <label htmlFor="weather-palette">
             <b>Palette</b>
           </label>
 
           <select
+            id="weather-palette"
             value={palette}
             onChange={(e) => setPalette(e.target.value as Palette)}
             style={{
@@ -302,11 +317,13 @@ function WeatherMapControls({
             </label>
           </div>
 
-          <label>
+          <label htmlFor="weather-opacity">
             <b>Opacity:</b> {opacity}
           </label>
 
           <input
+            id="weather-opacity"
+            aria-label="Opacity"
             type="range"
             min="0"
             max="1"
@@ -334,17 +351,22 @@ function WeatherMapControls({
               <h3>Animation</h3>
 
               <button
+                type="button"
+                aria-pressed={isPlaying}
                 onClick={() => setIsPlaying(!isPlaying)}
                 style={{ padding: "8px 14px", cursor: "pointer", marginBottom: "10px" }}
               >
                 {isPlaying ? "Pause" : "Play"}
               </button>
 
-              <label>
+              <label htmlFor="weather-animation-speed">
                 <b>Speed</b>
               </label>
 
               <input
+                id="weather-animation-speed"
+                aria-label="Animation speed"
+                aria-valuetext={`${speed} milliseconds per frame`}
                 type="range"
                 min="3500"
                 max="5000"
@@ -360,6 +382,8 @@ function WeatherMapControls({
               <p>{animationLabel}</p>
 
               <input
+                aria-label="Animation frame"
+                aria-valuetext={animationLabel}
                 type="range"
                 min="0"
                 max={lastFrameIndex}
@@ -381,22 +405,24 @@ function WeatherMapControls({
 
               <h3>History Mode</h3>
 
-              <label>
+              <label htmlFor="weather-history-date">
                 <b>Date (IST)</b>
               </label>
 
               <input
+                id="weather-history-date"
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 style={{ width: "100%", marginBottom: "10px" }}
               />
 
-              <label>
+              <label htmlFor="weather-history-time">
                 <b>Time (IST)</b>
               </label>
 
               <input
+                id="weather-history-time"
                 type="time"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}

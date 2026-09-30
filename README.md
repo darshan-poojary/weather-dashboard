@@ -18,6 +18,17 @@ cells, and lets you scrub through recent frames or jump to a historical time.
 - **India boundaries** — state and district outlines with a legible "cased
   line" style that stays readable over any palette.
 
+The base map uses the standard OpenStreetMap tiles and needs no API key.
+The previous CARTO label overlay was removed because unauthenticated CARTO
+tiles now contain an "API key required" watermark. Place names remain part
+of the OpenStreetMap base. Keep its attribution visible and follow the
+[tile usage policy](https://operations.osmfoundation.org/policies/tiles/).
+
+District boundaries load when zoomed in; the cloud grid loads on the first
+map click. Animation waits for the displayed tiles instead of downloading
+separate full-frame images. Unavailable upstream feeds and outdated storm
+snapshots are identified on the map.
+
 ## Architecture
 
 ```
@@ -75,7 +86,16 @@ Other scripts:
 npm run build    # production build
 npm run start    # serve the production build
 npm run lint     # eslint
+npm run typecheck # TypeScript
+npm test          # API regression tests (offline)
+npm run test:e2e  # browser regression tests; build first
 ```
+
+For browser tests, install Chromium once with `npx playwright install chromium`.
+The tests start the production server on port 3100 and mock external weather
+and map services for repeatability. They cover map layers, lazy loading,
+history time zones, animation, failure states, and mobile controls; they do
+not prove external service availability.
 
 ## Data updater
 
@@ -87,8 +107,18 @@ and commits any changes to `public/cloud-grid.json` and
 
 ```bash
 pip install -r updater/requirements.txt
+python -m unittest discover -s updater -v
 python updater/update_thunderstorms.py
 ```
+
+Set `MOSDAC_USERNAME` and `MOSDAC_PASSWORD` in your local environment before
+running an update. For GitHub Actions, configure repository secrets with those
+same names. No credentials are embedded in the downloader. Rotate any password
+previously committed to this repository, including the former fallback value.
+
+The checked-in storm snapshot is dated **14 July 2026**. It will remain outdated
+until the authenticated updater succeeds and the refreshed files are deployed.
+The satellite tile feed is separate from these static cloud/storm products.
 
 ## Map boundaries
 
