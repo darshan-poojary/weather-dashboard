@@ -36,6 +36,15 @@ const TileLayer = loadLeafletComponent("TileLayer");
 const WMSTileLayer = loadLeafletComponent("WMSTileLayer");
 const GeoJSON = loadLeafletComponent("GeoJSON");
 
+const cartoApiKey = process.env.NEXT_PUBLIC_CARTO_API_KEY;
+const baseMapUrl = cartoApiKey
+  ? `https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=${cartoApiKey}`
+  : "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+
+const baseMapAttribution =
+  cartoApiKey
+    ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+    : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 const MapEvents = dynamic(
   async () => {
     const mod = await import("react-leaflet");
@@ -827,8 +836,8 @@ export default function WeatherMap() {
         <MapClickHandler onClick={handleMapClick} />
 
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution={baseMapAttribution}
+          url={baseMapUrl}
           maxZoom={19}
           keepBuffer={2}
           updateWhenIdle={true}

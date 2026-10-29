@@ -18,11 +18,10 @@ cells, and lets you scrub through recent frames or jump to a historical time.
 - **India boundaries** — state and district outlines with a legible "cased
   line" style that stays readable over any palette.
 
-The base map uses the standard OpenStreetMap tiles and needs no API key.
-The previous CARTO label overlay was removed because unauthenticated CARTO
-tiles now contain an "API key required" watermark. Place names remain part
-of the OpenStreetMap base. Keep its attribution visible and follow the
-[tile usage policy](https://operations.osmfoundation.org/policies/tiles/).
+The base map uses CARTO's light basemap when `NEXT_PUBLIC_CARTO_API_KEY` is
+configured, and falls back to standard OpenStreetMap tiles otherwise. The
+CARTO key is included in browser tile requests, so restrict it to your
+application's domains in CARTO. Keep the map attribution visible.
 
 District boundaries load when zoomed in; the cloud grid loads on the first
 map click. Animation waits for the displayed tiles instead of downloading
@@ -79,6 +78,10 @@ public/                    static data + geo boundaries served to the client
 npm install
 npm run dev      # http://localhost:3000
 ```
+
+For authenticated CARTO tiles, set `NEXT_PUBLIC_CARTO_API_KEY` in `.env.local`
+for local development and in your deployment environment before building.
+Without it, the map uses OpenStreetMap tiles.
 
 Other scripts:
 

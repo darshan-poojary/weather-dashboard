@@ -1,6 +1,7 @@
 ﻿import { buildMosdacUrl, fetchMosdacPng, snapToSlotDate } from "../../../lib/mosdac";
 
-const MAX_CANDIDATES = 6;
+const PROBE_BATCH_SIZE = 6;
+const MAX_CANDIDATES = 24;
 const SLOT_MS = 30 * 60 * 1000;
 const LAYERS = new Set(["IMG_TIR1", "IMG_TIR2", "IMG_MIR"]);
 const STYLES = new Set(["boxfill/greyscale", "boxfill/rainbow", "boxfill/redblue", "boxfill/ferret"]);
@@ -12,21 +13,28 @@ const pending = new Map<string, Promise<LatestFrame>>();
 
 async function findLatest(layers: string, styles: string): Promise<LatestFrame> {
   const newestSlot = snapToSlotDate(new Date());
-  // Probe tiny images in parallel so an outage takes at most six seconds,
-  // rather than six successive network timeouts. Always select the newest hit.
-  const candidates = await Promise.all(
-    Array.from({ length: MAX_CANDIDATES }, async (_, i) => {
-      const datetime = new Date(newestSlot.getTime() - i * SLOT_MS).toISOString();
-      const params = new URLSearchParams({
-        datetime, layers, styles,
-        crs: "EPSG:4326", bbox: "5,65,38,98", width: "48", height: "48",
-      });
-      const image = await fetchMosdacPng(buildMosdacUrl(params), 6000);
-      return image ? { datetime, probedBack: i, available: true } : null;
-    })
-  );
-  return candidates.find((candidate) => candidate !== null)
-    ?? { datetime: null, probedBack: -1, available: false };
+  // Probe nearby slots in parallel, then look further back only when recent
+  // frames are missing. This handles delayed publications without multiplying
+  // requests during normal operation.
+  for (let batchStart = 0; batchStart < MAX_CANDIDATES; batchStart += PROBE_BATCH_SIZE) {
+    const batchSize = Math.min(PROBE_BATCH_SIZE, MAX_CANDIDATES - batchStart);
+    const candidates = await Promise.all(
+      Array.from({ length: batchSize }, async (_, offset) => {
+        const i = batchStart + offset;
+        const datetime = new Date(newestSlot.getTime() - i * SLOT_MS).toISOString();
+        const params = new URLSearchParams({
+          datetime, layers, styles,
+          crs: "EPSG:4326", bbox: "5,65,38,98", width: "48", height: "48",
+        });
+        const image = await fetchMosdacPng(buildMosdacUrl(params), 6000);
+        return image ? { datetime, probedBack: i, available: true } : null;
+      })
+    );
+    const latest = candidates.find((candidate) => candidate !== null);
+    if (latest) return latest;
+  }
+
+  return { datetime: null, probedBack: -1, available: false };
 }
 
 export async function GET(request: Request) {

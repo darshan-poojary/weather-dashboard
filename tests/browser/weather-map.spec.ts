@@ -4,7 +4,9 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR
 const datetime = "2026-09-30T16:45:00.000Z";
 
 async function mockWeather(page: Page, unavailable = false) {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.route("https://tile.openstreetmap.org/**", (route) => route.fulfill({ contentType: "image/png", body: png }));
+  await page.route("https://*.basemaps.cartocdn.com/**", (route) => route.fulfill({ contentType: "image/png", body: png }));
   await page.route("**/api/mosdac-wms?**", (route) => route.fulfill(unavailable
     ? { status: 502, json: { error: "Satellite imagery unavailable" } }
     : { contentType: "image/png", body: png }));
@@ -13,7 +15,7 @@ async function mockWeather(page: Page, unavailable = false) {
   await page.route("**/thunderstorm-cells.json", (route) => route.fulfill({ json: [{ lat: 20, lon: 80, temp: 190, severity: "Strong", count: 5, radius_km: 12, updated: "2026-07-14T18:53:00Z" }] }));
 }
 
-test("map uses key-free tiles and defers unused data; controls update actual WMS requests", async ({ page }) => {
+test("map uses configured basemap tiles and defers unused data; controls update actual WMS requests", async ({ page }) => {
   const requests: string[] = [];
   const errors: string[] = [];
   page.on("request", (request) => requests.push(request.url()));
@@ -21,9 +23,17 @@ test("map uses key-free tiles and defers unused data; controls update actual WMS
   await mockWeather(page);
   await page.goto("/");
   await expect(page.locator(".leaflet-container")).toBeVisible();
-  await expect(page.locator('img[src*="tile.openstreetmap.org"]')).not.toHaveCount(0);
+  await expect(page.locator('img[src*="tile.openstreetmap.org"], img[src*="basemaps.cartocdn.com"]')).not.toHaveCount(0);
   await expect(page.locator('img[src*="datetime=2026-09-30"]')).not.toHaveCount(0);
-  expect(requests.some((url) => url.includes("cartocdn"))).toBe(false);
+  const cartoRequests = requests.filter((url) => url.includes("basemaps.cartocdn.com"));
+  if (cartoRequests.length) {
+    expect(cartoRequests.every((url) => {
+      const params = new URL(url).searchParams;
+      return Boolean(params.get("key") || params.get("api_key"));
+    })).toBe(true);
+  } else {
+    expect(requests.some((url) => url.includes("tile.openstreetmap.org"))).toBe(true);
+  }
   expect(requests.some((url) => /india-districts|cloud-grid/.test(url))).toBe(false);
   const wms = requests.filter((url) => url.includes("/api/mosdac-wms?"));
   expect(wms.every((url) => new URL(url).searchParams.has("bbox"))).toBe(true);
@@ -69,7 +79,7 @@ test("upstream failures leave base map usable and show unavailable state", async
   await page.goto("/");
   await expect(page.getByRole("status")).toContainText("Latest frame unavailable");
   await expect(page.getByRole("status")).toContainText("Satellite imagery unavailable");
-  await expect(page.locator('img[src*="tile.openstreetmap.org"]')).not.toHaveCount(0);
+  await expect(page.locator('img[src*="tile.openstreetmap.org"], img[src*="basemaps.cartocdn.com"]')).not.toHaveCount(0);
 });
 
 test("cloud inspection loads on demand and district boundaries load only when zoomed in", async ({ page }) => {

@@ -145,6 +145,21 @@ test("latest probes run concurrently, pick newest published slot, and share cach
   assert.equal(count, 6, "concurrent and repeated requests must not start another probe batch");
 });
 
+test("latest searches older batches when MOSDAC publication is delayed", async (t) => {
+  let count = 0;
+  t.mock.method(globalThis, "fetch", async () => {
+    const index = count++;
+    return index < 7 ? new Response("missing", { status: 404 }) : png();
+  });
+  const { GET } = loadTs("src/app/api/mosdac-latest/route.ts");
+  const response = await GET(new Request("http://localhost/api/mosdac-latest"));
+  assert.equal(response.status, 200);
+  const value = await response.json();
+  assert.equal(value.probedBack, 7);
+  assert.equal(value.available, true);
+  assert.equal(count, 12, "the route searches a second batch only after the newest batch misses");
+});
+
 test("latest reports unavailable without inventing a frame, and rejects unknown layers", async (t) => {
   const calls = t.mock.method(globalThis, "fetch", async () => new Response("missing", { status: 404 }));
   const { GET } = loadTs("src/app/api/mosdac-latest/route.ts");
@@ -152,7 +167,7 @@ test("latest reports unavailable without inventing a frame, and rejects unknown 
   assert.equal(response.status, 503);
   assert.deepEqual(await response.json(), { datetime: null, probedBack: -1, available: false });
   assert.equal((await GET(new Request("http://localhost/api/mosdac-latest?layers=unsupported"))).status, 400);
-  assert.equal(calls.mock.callCount(), 6);
+  assert.equal(calls.mock.callCount(), 24);
 });
 
 test("alerts accepts prefixed GeoJSON but reports upstream/malformed responses as unavailable", async (t) => {
