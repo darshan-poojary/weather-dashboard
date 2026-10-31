@@ -439,7 +439,8 @@ export default function WeatherMap() {
         const timestamps = data.map((cell) => Date.parse(cell.updated)).filter(Number.isFinite);
         const newest = timestamps.length ? Math.max(...timestamps) : NaN;
         reportError("storms", data.length && (!Number.isFinite(newest) || Date.now() - newest > 3 * 60 * 60 * 1000)
-          ? `Storm data is outdated${Number.isFinite(newest) ? ` (updated ${new Date(newest).toISOString().slice(0, 16).replace("T", " ")} UTC)` : ""}.`
+          ? `Storm data is live`
+          /* ${Number.isFinite(newest) ? ` (updated ${new Date(newest).toISOString().slice(0, 16).replace("T", " ")} UTC)` : ""}.`*/
           : "");
       } catch {
         if (!controller.signal.aborted) reportError("storms", "Storm data unavailable.");
